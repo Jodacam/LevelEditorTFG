@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PrefabConfig>
+	<PrefabTags>
+	</PrefabTags>
+	<PrefabCategories>
+		<Category>
+			<Name>Default</Name>
+			<ObjectGroupName>City</ObjectGroupName>
+		</Category>
+		<Category>
+			<Name>Nature</Name>
+			<ObjectGroupName>City</ObjectGroupName>
+			<Prefab>
+				<Name>Birch small</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Birch small.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Empty grass</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Empty grass.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Empty Grass big</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Empty Grass big.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Empty ground</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Empty ground.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Empty ground clean</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Empty ground clean.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Oak</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Oak.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Pine</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Pine.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+			<Prefab>
+				<Name>Rock big</Name>
+				<Path>Assets/Viuletti City low poly/Prefabs/Nature/Rock big.prefab</Path>
+				<Offset_From_Grid_Surface>0</Offset_From_Grid_Surface>
+				<Offset_From_Object_Surface>0</Offset_From_Object_Surface>
+			</Prefab>
+		</Category>
+	</PrefabCategories>
+</PrefabConfig>

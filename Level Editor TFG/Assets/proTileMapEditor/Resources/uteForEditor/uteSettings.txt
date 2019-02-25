@@ -1,0 +1,1 @@
+1:rotL:auto:256:256:isometric-perspective
