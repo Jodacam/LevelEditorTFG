@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
   m_Name: Window
   m_EditorClassIdentifier: 
-  name: Windo
+  name: 
+  mapSize: {x: 0, y: 0}
