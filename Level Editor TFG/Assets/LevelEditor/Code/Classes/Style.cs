@@ -14,8 +14,14 @@ public static class Style
     public const string BUTTON_TEXT_LOAD = "Load Level";
 
     public const string BUTTON_TEXT_NEW = "New Level";
+
+    public const string BUTTON_TEXT_LOAD_DATABASE = "Load Prefab Collection";
+
+    public const string BUTTON_TEXT_NEW_DATABASE = "Create Prefab Collection";
     public const string LABLE_MAP_SIZE = "Map Size";
     public const string LABLE_MAP_SCALE = "Map Scale";
+
+     public const string LABLE_NO_DATABASE = "You Have to Load a Collection to add objects";
 
     public static readonly GUIContent LABLE_ENUM_EDIT_MODE = EditorGUIUtility.TrTextContent("Editing Mode", "Mode of editing");
     #endregion

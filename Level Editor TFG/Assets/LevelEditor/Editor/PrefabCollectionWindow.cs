@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 
 public class PrefabCollectionWindow : EditorWindow
 {
@@ -22,20 +23,52 @@ public class PrefabCollectionWindow : EditorWindow
         Select
     }
 
+
+    private class PrefabCollectionCreatorWindow : EditorWindow
+    {
+        public static PrefabCollectionCreatorWindow CreateWindow(PrefabCollectionWindow owner)
+        {
+            var window = PrefabCollectionCreatorWindow.CreateInstance<PrefabCollectionCreatorWindow>();
+            window.title = "Hello there";
+            window.ShowUtility();
+            window.dataBase = CreateInstance<PrefabDataBase>();
+            window.dataBase.name = "New";
+            return window;
+        }
+
+        PrefabDataBase dataBase;
+
+        private void OnGUI()
+        {        
+            GUILayout.Label(title);
+            dataBase.name = EditorGUILayout.TextField("Name",dataBase.name);
+            if(GUILayout.Button("Save"))
+            {          
+                this.Close();
+            }
+        }
+
+        
+    }
+
+
     static Mode actualMode;
     static GameObject selectObject;
+
+    bool isPicking = false;
+    static PrefabDataBase dataBase;
     Vector2 scrollPosition = Vector2.zero;
     void OnFocus()
     {
         // Remove delegate listener if it has previously
         // been assigned.
         SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-        
+
         // Add (or re-add) the delegate.
         SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 
     }
-    
+
 
 
 
@@ -73,16 +106,81 @@ public class PrefabCollectionWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, true);
         actualMode = (Mode)EditorGUILayout.EnumPopup(Style.LABLE_ENUM_EDIT_MODE, actualMode);
-        
-
-
-
-
-
+        DoOptions();
+        DoPrefabSelector();
         GUILayout.EndScrollView();
+        DoPicker();
     }
 
+    private void DoPicker()
+    {
+        string commandName = Event.current.commandName;
+        if (commandName == "ObjectSelectorClosed")
+        {
+            OnPick();
+        }
 
+    }
+
+     private void OnPick()
+    {
+        if (isPicking)
+        {
+            PrefabDataBase pickedObject = (PrefabDataBase)EditorGUIUtility.GetObjectPickerObject();
+            if (pickedObject != null)
+            {
+
+                isPicking = false;
+                Repaint();
+            }
+        }
+    }
+
+    private void DoPrefabSelector()
+    {
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button(Style.BUTTON_TEXT_LOAD_DATABASE))
+        {
+            Load();
+        }
+
+        if (GUILayout.Button(Style.BUTTON_TEXT_NEW_DATABASE))
+        {
+            CreateNew();
+        }
+        EditorGUILayout.EndHorizontal();
+        if(dataBase != null)
+        {
+
+        }
+        else
+        {
+            GUILayout.Label(Style.LABLE_NO_DATABASE);
+        }
+
+    }
+
+    private void CreateNew()
+    {
+        var window = PrefabCollectionCreatorWindow.CreateWindow(this);
+    }
+
+    private void Load()
+    {
+        int controlID = EditorGUIUtility.GetControlID(FocusType.Passive);
+        isPicking = true;
+        EditorGUIUtility.ShowObjectPicker<PrefabDataBase>(null, false, "", controlID);
+    }
+
+    private void DoOptions()
+    {
+
+    }
+
+    void OnCreateDatBase(PrefabDataBase data)
+    {
+        dataBase = data;
+    }
     void OnAdd()
     {
         RaycastHit hit;
@@ -92,8 +190,8 @@ public class PrefabCollectionWindow : EditorWindow
         if (Physics.Raycast(ray, out hit))
         {
             var t = hit.transform.GetComponent<GridTerrain>();
-            t.GetClampPosition(selectObject,hit);
-            
+            t.GetClampPosition(selectObject, hit);
+
         }
 
     }
