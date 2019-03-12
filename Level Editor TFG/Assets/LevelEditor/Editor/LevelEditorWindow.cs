@@ -64,11 +64,18 @@ public class LevelEditorWindow : EditorWindow
     private void DoGrid()
     {
         Vector2Int mapSize = Editlevel.mapSize;
+        Vector2 mapScale = Editlevel.mapScale;
         mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE,mapSize);
+        mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
+        if (!mapSize.Equals(Editlevel.mapSize) || !mapScale.Equals(Editlevel.mapScale))
+        {
+            Editlevel.mapSize = mapSize;
+            Editlevel.mapScale = mapScale;
+            CreateGrid();
+        }
 
 
-
-        Editlevel.mapSize = mapSize;
+        
 
     }
 
@@ -104,21 +111,22 @@ public class LevelEditorWindow : EditorWindow
 
     void Save()
     {
-        Level n = Editlevel;
-        string exist = AssetDatabase.GetAssetPath(n);
+        
+        string exist = AssetDatabase.GetAssetPath(Editlevel);
         if (string.IsNullOrEmpty(exist))
         {
-            AssetDatabase.CreateAsset(n, "Assets/Resources/" + Editlevel.name + ".asset");
+            AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
         }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         EditorUtility.FocusProjectWindow();
-        Selection.activeObject = n;
+        Selection.activeObject = Editlevel;
     }
 
     private void NewMap()
     {
          Editlevel = (Level)CreateInstance(typeof(Level));
+         levelSerialized = new SerializedObject(Editlevel);
          Editlevel.name = "New Level";
          Editlevel.mapSize = new Vector2Int(10,10);
          Editlevel.xcellSize = 1;
@@ -152,12 +160,17 @@ public class LevelEditorWindow : EditorWindow
 
     private void CreateGrid()
     {
+        if(Editlevel.terrainGrid != null)
+        {
+            DestroyImmediate(Editlevel.terrainGrid.gameObject);
+        }
         GameObject plane = new GameObject("BaseTerrain",typeof(GridTerrain));
         plane.AddComponent<MeshFilter>();
         MeshRenderer e =  plane.AddComponent<MeshRenderer>();
         plane.transform.SetPositionAndRotation(Vector3.zero,Quaternion.identity);
         plane.GetComponent<GridTerrain>().CreateGrid(Editlevel.xcellSize,Editlevel.ycellSize,Editlevel.mapSize);
-        e.material = new Material(Shader.Find("Standard"));
+        Editlevel.terrainGrid = plane.GetComponent<GridTerrain>();
+        
         
     }
     #endregion

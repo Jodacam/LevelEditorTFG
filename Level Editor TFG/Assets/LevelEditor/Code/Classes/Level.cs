@@ -5,12 +5,17 @@ public class Level : ScriptableObject {
     //Clase para guardar todos los string necesarios para la serialización del nivel. Suele ser mucho más sencillo si tengo que cambiar una variable.
     public static class LevelProperties{
         public const string NAME = "name";
+        
     }
+    [HideInInspector]
+    public GridTerrain terrainGrid;
     public string name;
-
     public Vector2Int mapSize;
-    public float xcellSize;
+    public Vector2 mapScale;
 
-    public float ycellSize;
+
+
+    public float xcellSize { get { return mapScale.x; } set { mapScale.x = value; } }
+    public float ycellSize { get { return mapScale.y; } set { mapScale.y = value; } }
 
 }

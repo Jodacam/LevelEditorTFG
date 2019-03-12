@@ -10,7 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
-  m_Name: Window
+  m_Name: Level
   m_EditorClassIdentifier: 
-  name: 
-  mapSize: {x: 0, y: 0}
+  terrainGrid: {fileID: 0}
+  name: Patata
+  mapSize: {x: 5, y: 5}
+  mapScale: {x: 1, y: 1}
