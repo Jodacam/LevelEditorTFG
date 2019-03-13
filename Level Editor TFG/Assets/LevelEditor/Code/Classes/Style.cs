@@ -14,6 +14,7 @@ public static class Style
     public const string BUTTON_TEXT_LOAD = "Load Level";
 
     public const string BUTTON_TEXT_NEW = "New Level";
+    public const string BUTTON_TEXT_NEW_PREFAB = "Add Prefab";
 
     public const string BUTTON_TEXT_LOAD_DATABASE = "Load Prefab Collection";
 
@@ -21,8 +22,10 @@ public static class Style
     public const string LABLE_MAP_SIZE = "Map Size";
     public const string LABLE_MAP_SCALE = "Map Scale";
 
-     public const string LABLE_NO_DATABASE = "You Have to Load a Collection to add objects";
+    public const string LABLE_NO_DATABASE = "You Have to Load a Collection to add objects";
+    public const string LABLE_DATABASE_TITLE = "Prefab Collection : {0}";
 
     public static readonly GUIContent LABLE_ENUM_EDIT_MODE = EditorGUIUtility.TrTextContent("Editing Mode", "Mode of editing");
+    public const  string PREFAB_FIELD = "Prefab";
     #endregion
 }
