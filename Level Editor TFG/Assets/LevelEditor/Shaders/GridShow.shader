@@ -9,9 +9,9 @@ Shader "LevelEditor/GridShow"
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Overlay" }
+		Tags { "RenderType"="Opaque" }
 		LOD 100
-		ZTest Always
+		
 
 		Pass
 		{

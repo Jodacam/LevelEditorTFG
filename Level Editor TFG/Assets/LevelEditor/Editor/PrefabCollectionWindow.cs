@@ -2,6 +2,7 @@
 using UnityEditor;
 using System;
 using System.Collections.Generic;
+using static PrefabContainer;
 
 namespace Editor
 {
@@ -15,8 +16,10 @@ namespace Editor
         {
             PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
             window.getPrefab = window.GetPrefab;
-            window.name = Style.TITLE_PREFAB_COLLECTION_WINDOW;
+            window.title = Style.TITLE_PREFAB_COLLECTION_WINDOW;
             window.minSize = new Vector2(350, 250);
+            window.maxSize = new Vector2(350, 1000);
+            window.selectObject = new SceneObjectContainer();
             window.Show();
         }
 
@@ -64,15 +67,15 @@ namespace Editor
 
 
         }
-
+        
 
         static Mode actualMode;
-        static GameObject selectObject;
-
+        public SceneObjectContainer selectObject;
+        
         bool isPicking = false;
         static PrefabDataBase dataBase;
         Vector2 scrollPosition = Vector2.zero;
-        Action<PrefabContainer> getPrefab;
+        Action<PrefabContainer,PrefabAction> getPrefab;
        
 
         
@@ -101,6 +104,7 @@ namespace Editor
         void OnSceneGUI(SceneView sceneView)
         {
             // Do your drawing here using Handles.
+            
             Handles.BeginGUI();
             switch (actualMode)
             {
@@ -208,11 +212,18 @@ namespace Editor
 
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-            if (Physics.Raycast(ray, out hit))
+            if (selectObject.HasObject)
             {
-                var t = hit.transform.GetComponent<GridTerrain>();
-                t.GetClampPosition(selectObject, hit);
+                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                {
+                    var t = hit.transform.GetComponent<GridTerrain>();
+                    Vector3 position = t.GetClampPosition(selectObject, hit);
 
+                }
+            }
+            else
+            {
+                Debug.Log("No hay objeto seleccionado");
             }
 
         }
@@ -223,10 +234,40 @@ namespace Editor
         }
 
 
-        private void GetPrefab(PrefabContainer container)
+        private void GetPrefab(PrefabContainer container,PrefabAction action)
         {
-            Debug.Log(container.prefab.name);
-            selectObject = container.prefab;
+            switch (action)
+            {
+                case PrefabAction.Select:
+                    SelectPrefab(container);
+                    break;
+                case PrefabAction.Delete:
+                    DeletePrefab(container);
+                    break;
+                case PrefabAction.Reload:
+                    Reload(container);
+                    break;
+            }
+            
+        }
+
+        private void SelectPrefab(PrefabContainer container)
+        {
+            selectObject.SetObjectInfo(container);
+        }
+
+        private void DeletePrefab(PrefabContainer container)
+        {
+            dataBase.prefabList.Remove(container);
+            if(selectObject.realObject.GetInstanceID() == container.prefab.GetInstanceID())
+            {
+                selectObject.SetToNull();
+            }
+        }
+
+        private void Reload(PrefabContainer container)
+        {
+            container.preview = AssetPreview.GetAssetPreview(container.prefab);
         }
 
     }

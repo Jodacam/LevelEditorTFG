@@ -10,6 +10,10 @@ public class GridTerrain : MonoBehaviour {
          public const string SHADER_PROPERTY_GRIDSCALEX = "_GridSizeX";
         public const string SHADER_PROPERTY_GRIDSCALEY = "_GridSizeY";
     }
+
+
+
+
     public int xSize, ySize;
     public float xScale,yScale;
     private MeshFilter mesh;
@@ -18,6 +22,7 @@ public class GridTerrain : MonoBehaviour {
 
     public void CreateGrid(float xS,float yS,Vector2Int size)
     {
+        gameObject.layer = LayerMask.NameToLayer("Grid");
         mesh = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         Mesh m = new Mesh();
@@ -61,10 +66,14 @@ public class GridTerrain : MonoBehaviour {
         {
             for (int x = 0; x < xSize; x++, ti += 6, vi++)
             {
+
+                //Esto es cada celda, tengo que ver una forma de identificar esto.
                 triangles[ti] = vi;
                 triangles[ti + 3] = triangles[ti + 2] = vi + 1;
                 triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
                 triangles[ti + 5] = vi + xSize + 2;
+
+
             }
         }
         return triangles;
@@ -77,9 +86,36 @@ public class GridTerrain : MonoBehaviour {
         meshRenderer.sharedMaterial.SetFloat(GridTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY, yScale);
     }
 
-    public void GetClampPosition(GameObject selectObject, RaycastHit hit)
+    public Vector3 GetClampPosition(SceneObjectContainer selectObject, RaycastHit hit)
     {
         //TODO
-        selectObject.transform.position = hit.point;
+
+        Vector3 point = Vector3.zero;
+        point.x = Mathf.Round(hit.point.x / xScale) * xScale;
+        point.z = Mathf.Round(hit.point.z / yScale) * yScale;
+        int triangle = hit.triangleIndex;
+        point.y = hit.point.y;
+        selectObject.preview.transform.position = point;
+
+        MeshCollider meshCollider = hit.collider as MeshCollider;
+        if (meshCollider == null || meshCollider.sharedMesh == null)
+            return Vector3.zero;
+
+        Mesh mesh = meshCollider.sharedMesh;
+        Vector3[] vertices = mesh.vertices;
+        int[] triangles = mesh.triangles;
+        Vector3 p0 = vertices[triangles[hit.triangleIndex * 3 + 0]];
+        Vector3 p1 = vertices[triangles[hit.triangleIndex * 3 + 1]];
+        Vector3 p2 = vertices[triangles[hit.triangleIndex * 3 + 2]];
+        Transform hitTransform = hit.collider.transform;
+        p0 = hitTransform.TransformPoint(p0);
+        p1 = hitTransform.TransformPoint(p1);
+        p2 = hitTransform.TransformPoint(p2);
+        Debug.DrawLine(p0, p1);
+        Debug.DrawLine(p1, p2);
+        Debug.DrawLine(p2, p0);
+
+
+        return point;
     }
 }
