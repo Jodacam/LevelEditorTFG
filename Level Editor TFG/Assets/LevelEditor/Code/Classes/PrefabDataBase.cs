@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using static PrefabContainer;
 
+[Serializable]
 public class PrefabDataBase : ScriptableObject
 {
 #if UNITY_EDITOR
@@ -22,8 +23,8 @@ public class PrefabDataBase : ScriptableObject
             window.title = "Create Prefab";
             window.maxSize = new Vector2(300, 100);
             window.minSize = window.maxSize;
-            window.container = CreateInstance<PrefabContainer>();
-            window.container.Init();
+            window.container = new PrefabContainer();
+           
             window.dataBase = data;
             window.createObject = window.CreateObject;
             window.Owner = owner;
@@ -47,6 +48,10 @@ public class PrefabDataBase : ScriptableObject
     }
 #endif
 
+    public void Init()
+    {
+        prefabList = new List<PrefabContainer>();
+    }
     public string dataBaseName;
 
     public List<PrefabContainer> prefabList;
@@ -110,6 +115,9 @@ public class PrefabDataBase : ScriptableObject
         container.preview = AssetPreview.GetAssetPreview(container.prefab);
 
         prefabList.Add(container);
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
 
 
     }

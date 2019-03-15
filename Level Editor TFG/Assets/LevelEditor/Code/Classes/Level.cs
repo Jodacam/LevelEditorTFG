@@ -7,8 +7,9 @@ public class Level : ScriptableObject {
         public const string NAME = "name";
         
     }
-    [HideInInspector]
+    
     public GridTerrain terrainGrid;
+
     public string name;
     public Vector2Int mapSize;
     public Vector2 mapScale;

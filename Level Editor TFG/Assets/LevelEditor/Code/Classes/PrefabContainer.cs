@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
-
-public class PrefabContainer : ScriptableObject
+[Serializable]
+public class PrefabContainer 
 {
 
     public enum PrefabAction
@@ -11,13 +11,17 @@ public class PrefabContainer : ScriptableObject
         Delete,
         Reload
     }
+    
+
+
+
     public GameObject prefab;
     public Vector2Int cellSize;
     [HideInInspector]
     public Texture2D preview;
 
 
-    internal void Init()
+    public PrefabContainer()
     {
         prefab = null;
         cellSize = Vector2Int.one;

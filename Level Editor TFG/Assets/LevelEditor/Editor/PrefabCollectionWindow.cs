@@ -43,6 +43,7 @@ namespace Editor
                 window.title = "Collection Creator";
                 window.ShowUtility();
                 window.dataBase = CreateInstance<PrefabDataBase>();
+                window.dataBase.Init();
                 window.dataBase.dataBaseName = "New";
                 window.dataBase.prefabList = new List<PrefabContainer>();
                 window.maxSize = new Vector2(300, 100);
@@ -263,11 +264,18 @@ namespace Editor
             {
                 selectObject.SetToNull();
             }
+
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         private void Reload(PrefabContainer container)
         {
             container.preview = AssetPreview.GetAssetPreview(container.prefab);
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
     }

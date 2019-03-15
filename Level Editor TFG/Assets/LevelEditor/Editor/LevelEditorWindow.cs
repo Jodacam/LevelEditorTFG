@@ -118,7 +118,11 @@ namespace Editor
             {
                 AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
             }
+
+            PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+".prefab");
+
             AssetDatabase.SaveAssets();
+            
             AssetDatabase.Refresh();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = Editlevel;

@@ -20,6 +20,8 @@ public class GridTerrain : MonoBehaviour {
     private MeshRenderer meshRenderer;
     private MeshCollider collider;
 
+
+
     public void CreateGrid(float xS,float yS,Vector2Int size)
     {
         gameObject.layer = LayerMask.NameToLayer("Grid");
@@ -32,7 +34,7 @@ public class GridTerrain : MonoBehaviour {
         xScale = xS;
         yScale = yS;
         m.vertices = CreateVertex();
-		m.triangles = CreateTris();
+        m.triangles = CreateTris(m);
         m.RecalculateNormals();
         mesh.mesh = m;
         SetMaterial();
@@ -59,8 +61,9 @@ public class GridTerrain : MonoBehaviour {
         return vertex;
     }
 
-    private int[] CreateTris()
+    private int[] CreateTris(Mesh mesh)
     {
+        
         int[] triangles = new int[xSize * ySize * 6];
         for (int ti = 0, vi = 0, y = 0; y < ySize; y++, vi++)
         {
@@ -68,11 +71,16 @@ public class GridTerrain : MonoBehaviour {
             {
 
                 //Esto es cada celda, tengo que ver una forma de identificar esto.
+                Vector3[] QuadPoints = new Vector3[4] { mesh.vertices[vi], mesh.vertices[vi+1], mesh.vertices[vi+xSize+1], mesh.vertices[vi+xSize+2] };
+                // El centro de la celda en espacio local. Dado que es asi con Transform.TransformPoint(Vector3) puedo convetirlo a posiciones reales, por lo que el plano puede estar en cualquier parte.
+                // El centro es la media de todo los puntos, por lo que es el centro encontrado en el plano que forman los 4 vertices.
+                //
+                Vector3 MiddlePoint = (QuadPoints[0] + QuadPoints[1] + QuadPoints[2] + QuadPoints[3]) / 4;
                 triangles[ti] = vi;
                 triangles[ti + 3] = triangles[ti + 2] = vi + 1;
                 triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
                 triangles[ti + 5] = vi + xSize + 2;
-
+                
 
             }
         }
@@ -81,11 +89,12 @@ public class GridTerrain : MonoBehaviour {
 
     private void SetMaterial()
     {
-        meshRenderer.material = new Material(Shader.Find(GridTerrain.GridTerrainProperties.MATERIAL_GRID_SHADER));
-        meshRenderer.sharedMaterial.SetFloat(GridTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEX, xScale);
-        meshRenderer.sharedMaterial.SetFloat(GridTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY, yScale);
+        meshRenderer.material = new Material(Shader.Find(GridTerrainProperties.MATERIAL_GRID_SHADER));
+        meshRenderer.sharedMaterial.SetFloat(GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEX, xScale);
+        meshRenderer.sharedMaterial.SetFloat(GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY, yScale);
     }
 
+    
     public Vector3 GetClampPosition(SceneObjectContainer selectObject, RaycastHit hit)
     {
         //TODO
@@ -111,9 +120,9 @@ public class GridTerrain : MonoBehaviour {
         p0 = hitTransform.TransformPoint(p0);
         p1 = hitTransform.TransformPoint(p1);
         p2 = hitTransform.TransformPoint(p2);
-        Debug.DrawLine(p0, p1);
-        Debug.DrawLine(p1, p2);
-        Debug.DrawLine(p2, p0);
+        Debug.DrawLine(p0, p1,Color.green);
+        Debug.DrawLine(p1, p2, Color.white);
+        Debug.DrawLine(p2, p0,Color.blue);
 
 
         return point;
