@@ -13,7 +13,7 @@ public class GridTerrain : MonoBehaviour {
 
 
 
-
+    private Level owner;
     public int xSize, ySize;
     public float xScale,yScale;
     private MeshFilter mesh;
@@ -22,71 +22,28 @@ public class GridTerrain : MonoBehaviour {
 
 
 
-    public void CreateGrid(float xS,float yS,Vector2Int size)
+
+    //En un principio Grid terrain tenia toda la lógica del grid. Dado que es un Monobehaviour, no se puede serializar y por lo tanto tiene que estar en Level.
+    public void Init (float xS,float yS,Vector2Int size,Mesh m,Level o)
     {
-        gameObject.layer = LayerMask.NameToLayer("Grid");
-        mesh = GetComponent<MeshFilter>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        Mesh m = new Mesh();
-        m.name = "Procedular";
+       
+        
         xSize = size.x;
         ySize = size.y;
         xScale = xS;
         yScale = yS;
-        m.vertices = CreateVertex();
-        m.triangles = CreateTris(m);
-        m.RecalculateNormals();
+        gameObject.layer = LayerMask.NameToLayer("Grid");
+        mesh = GetComponent<MeshFilter>();
+        meshRenderer = GetComponent<MeshRenderer>();
         mesh.mesh = m;
         SetMaterial();
         collider = gameObject.AddComponent<MeshCollider>();
         collider.sharedMesh = m;
-        
-
-
-
-
+        owner = o;
     }
 
 
-    private Vector3[] CreateVertex()
-    {
-        Vector3[] vertex = new Vector3[(xSize + 1) * (ySize + 1)];
-        for (int i = 0, y = 0; y <= ySize; y++)
-        {
-            for (int j = 0; j <= xSize; j++, i++)
-            {
-                vertex[i] = new Vector3(j * xScale, 0, y * yScale);
-            }
-        }
-        return vertex;
-    }
-
-    private int[] CreateTris(Mesh mesh)
-    {
-        
-        int[] triangles = new int[xSize * ySize * 6];
-        for (int ti = 0, vi = 0, y = 0; y < ySize; y++, vi++)
-        {
-            for (int x = 0; x < xSize; x++, ti += 6, vi++)
-            {
-
-                //Esto es cada celda, tengo que ver una forma de identificar esto.
-                Vector3[] QuadPoints = new Vector3[4] { mesh.vertices[vi], mesh.vertices[vi+1], mesh.vertices[vi+xSize+1], mesh.vertices[vi+xSize+2] };
-                // El centro de la celda en espacio local. Dado que es asi con Transform.TransformPoint(Vector3) puedo convetirlo a posiciones reales, por lo que el plano puede estar en cualquier parte.
-                // El centro es la media de todo los puntos, por lo que es el centro encontrado en el plano que forman los 4 vertices.
-                //
-                Vector3 MiddlePoint = (QuadPoints[0] + QuadPoints[1] + QuadPoints[2] + QuadPoints[3]) / 4;
-                triangles[ti] = vi;
-                triangles[ti + 3] = triangles[ti + 2] = vi + 1;
-                triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
-                triangles[ti + 5] = vi + xSize + 2;
-                
-
-            }
-        }
-        return triangles;
-    }
-
+    
     private void SetMaterial()
     {
         meshRenderer.material = new Material(Shader.Find(GridTerrainProperties.MATERIAL_GRID_SHADER));
@@ -95,36 +52,20 @@ public class GridTerrain : MonoBehaviour {
     }
 
     
-    public Vector3 GetClampPosition(SceneObjectContainer selectObject, RaycastHit hit)
+    public Vector3 GetClampPosition( RaycastHit hit)
     {
         //TODO
-
         Vector3 point = Vector3.zero;
         point.x = Mathf.Round(hit.point.x / xScale) * xScale;
         point.z = Mathf.Round(hit.point.z / yScale) * yScale;
         int triangle = hit.triangleIndex;
         point.y = hit.point.y;
-        selectObject.preview.transform.position = point;
+        
+        return owner.GetCellPosition(triangle);
+    }
 
-        MeshCollider meshCollider = hit.collider as MeshCollider;
-        if (meshCollider == null || meshCollider.sharedMesh == null)
-            return Vector3.zero;
-
-        Mesh mesh = meshCollider.sharedMesh;
-        Vector3[] vertices = mesh.vertices;
-        int[] triangles = mesh.triangles;
-        Vector3 p0 = vertices[triangles[hit.triangleIndex * 3 + 0]];
-        Vector3 p1 = vertices[triangles[hit.triangleIndex * 3 + 1]];
-        Vector3 p2 = vertices[triangles[hit.triangleIndex * 3 + 2]];
-        Transform hitTransform = hit.collider.transform;
-        p0 = hitTransform.TransformPoint(p0);
-        p1 = hitTransform.TransformPoint(p1);
-        p2 = hitTransform.TransformPoint(p2);
-        Debug.DrawLine(p0, p1,Color.green);
-        Debug.DrawLine(p1, p2, Color.white);
-        Debug.DrawLine(p2, p0,Color.blue);
-
-
-        return point;
+    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex)
+    {
+        owner.SetIntoCell(selectObject,triangleIndex);
     }
 }

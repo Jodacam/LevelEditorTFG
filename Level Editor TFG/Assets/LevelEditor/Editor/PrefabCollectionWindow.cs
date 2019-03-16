@@ -209,6 +209,7 @@ namespace Editor
         }
         void OnAdd()
         {
+            Event e = Event.current;
             RaycastHit hit;
 
             Vector2 guiPosition = Event.current.mousePosition;
@@ -218,8 +219,12 @@ namespace Editor
                 if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
                 {
                     var t = hit.transform.GetComponent<GridTerrain>();
-                    Vector3 position = t.GetClampPosition(selectObject, hit);
-
+                    Vector3 c = t.GetClampPosition(hit);
+                    selectObject.preview.transform.position = c;
+                    if(e.button == 0 && e.type == EventType.MouseDown)
+                    {
+                        t.SetObjetIntoCell(selectObject,hit.triangleIndex);
+                    }
                 }
             }
             else

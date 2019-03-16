@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
-  m_Name: New Level
+  m_Name: OtherLevel
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
   terrainGameObjec: {fileID: 0}
@@ -316,6 +316,6 @@ MonoBehaviour:
   - position: {x: 0, y: 0, z: 0}
     cellObject: {fileID: 0}
     cellInfo: 0
-  name: New Level
+  name: OtherLevel
   mapSize: {x: 10, y: 10}
   mapScale: {x: 1, y: 1}

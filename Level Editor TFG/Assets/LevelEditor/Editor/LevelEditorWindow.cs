@@ -118,9 +118,15 @@ namespace Editor
             {
                 AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
             }
-
-            PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+".prefab");
-
+            
+            if(!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps"+Editlevel.name))
+                AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps",Editlevel.name);
+            
+            
+            
+            AssetDatabase.AddObjectToAsset(Editlevel.terrainMesh,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/Mesh.mesh");
+            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.name+".prefab");
+           
             AssetDatabase.SaveAssets();
             
             AssetDatabase.Refresh();
@@ -161,21 +167,24 @@ namespace Editor
             EditorGUIUtility.ShowObjectPicker<Level>(null, false, "", controlID);
         }
 
-        private void LoadGrid() { }
+        private void LoadGrid() 
+        {
+
+            Editlevel.LoadGrid();
+
+        }
 
         private void CreateGrid()
         {
             if (Editlevel.terrainGrid != null)
             {
-                DestroyImmediate(Editlevel.terrainGrid.gameObject);
+                Editlevel.ReCreateGrid();
             }
-            GameObject plane = new GameObject("BaseTerrain", typeof(GridTerrain));
-            plane.AddComponent<MeshFilter>();
-            MeshRenderer e = plane.AddComponent<MeshRenderer>();
-            plane.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-            plane.GetComponent<GridTerrain>().CreateGrid(Editlevel.xcellSize, Editlevel.ycellSize, Editlevel.mapSize);
-            Editlevel.terrainGrid = plane.GetComponent<GridTerrain>();
-
+            else
+            {
+                Editlevel.CreateGrid();
+           
+            }
 
         }
         #endregion
