@@ -15,8 +15,6 @@ Shader "LevelEditor/GridShow"
 
 		Pass
 		{
-         		Blend SrcAlpha OneMinusSrcAlpha
-         		Offset -20, -20
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

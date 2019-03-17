@@ -20,3 +20,18 @@ MonoBehaviour:
   - prefab: {fileID: 1644410597926446, guid: 9ba64372b9e08374193a9865323748cd, type: 3}
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
+  - prefab: {fileID: 1131628691654494, guid: 5c6ccde0684f68f4f9de1e388495c480, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+  - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+  - prefab: {fileID: 100000, guid: 161dbbb4309c9eb4081f7e6636fbf826, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+  - prefab: {fileID: 100000, guid: fe70c4b6f0e82334ab55dca6f225aac8, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+  - prefab: {fileID: 1370723493970886, guid: 45dcbc0d02a319949b685e7d70deacb4, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}

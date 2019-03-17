@@ -16,4 +16,12 @@ public class Cell {
     {
         position = middlePoint;
     }
+
+    internal void UpdatePosition(Transform t)
+    {
+        if(cellObject != null)
+        {
+            cellObject.transform.position = t.TransformPoint(position);
+        }
+    }
 }

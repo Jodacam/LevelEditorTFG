@@ -30,6 +30,8 @@ namespace Editor
         {
             None,
             Add,
+
+            Remove,
             Select
         }
 
@@ -68,18 +70,18 @@ namespace Editor
 
 
         }
-        
+
 
         static Mode actualMode;
         public SceneObjectContainer selectObject;
-        
+
         bool isPicking = false;
         static PrefabDataBase dataBase;
         Vector2 scrollPosition = Vector2.zero;
-        Action<PrefabContainer,PrefabAction> getPrefab;
-       
+        Action<PrefabContainer, PrefabAction> getPrefab;
 
-        
+        static float rotation;
+
 
         void OnFocus()
         {
@@ -105,7 +107,7 @@ namespace Editor
         void OnSceneGUI(SceneView sceneView)
         {
             // Do your drawing here using Handles.
-            
+
             Handles.BeginGUI();
             switch (actualMode)
             {
@@ -117,11 +119,13 @@ namespace Editor
                     break;
                 case Mode.Select:
                     break;
+                case Mode.Remove:
+                    OnRemove();
+                    break;
             }
             // Do your drawing here using GUI.
             Handles.EndGUI();
         }
-
 
 
 
@@ -175,7 +179,7 @@ namespace Editor
             EditorGUILayout.EndHorizontal();
             if (dataBase != null)
             {
-                dataBase.ShowGUI(this,getPrefab);
+                dataBase.ShowGUI(this, getPrefab);
             }
             else
             {
@@ -221,26 +225,53 @@ namespace Editor
                     var t = hit.transform.GetComponent<GridTerrain>();
                     Vector3 c = t.GetClampPosition(hit);
                     selectObject.preview.transform.position = c;
-                    if(e.button == 0 && e.type == EventType.MouseDown)
+                    if (e.button == 0 && e.type == EventType.MouseDown)
                     {
-                        t.SetObjetIntoCell(selectObject,hit.triangleIndex);
+                        t.SetObjetIntoCell(selectObject, hit.triangleIndex);
                     }
                 }
+
+                if(e.control && e.type == EventType.KeyDown)
+                {
+                    selectObject.preview.transform.Rotate(0,90,0,Space.World);
+                }
+
             }
+
             else
             {
                 Debug.Log("No hay objeto seleccionado");
             }
 
         }
+        private void OnRemove()
+        {
+            Event e = Event.current;
+            RaycastHit hit;
 
+
+            Vector2 guiPosition = Event.current.mousePosition;
+
+            if (e.button == 0 && e.type == EventType.MouseDown)
+            {
+                Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
+                if (selectObject.HasObject)
+                {
+                    if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                    {
+                        GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
+                        ter.SetIntoCell(null,hit.triangleIndex);
+                    }
+                }
+            }
+        }
         public void AddPrefabToDataBase(PrefabContainer container)
         {
             dataBase.AddPrefab(container);
         }
 
 
-        private void GetPrefab(PrefabContainer container,PrefabAction action)
+        private void GetPrefab(PrefabContainer container, PrefabAction action)
         {
             switch (action)
             {
@@ -254,7 +285,7 @@ namespace Editor
                     Reload(container);
                     break;
             }
-            
+
         }
 
         private void SelectPrefab(PrefabContainer container)
@@ -265,7 +296,7 @@ namespace Editor
         private void DeletePrefab(PrefabContainer container)
         {
             dataBase.prefabList.Remove(container);
-            if(selectObject.realObject.GetInstanceID() == container.prefab.GetInstanceID())
+            if (selectObject.realObject.GetInstanceID() == container.prefab.GetInstanceID())
             {
                 selectObject.SetToNull();
             }

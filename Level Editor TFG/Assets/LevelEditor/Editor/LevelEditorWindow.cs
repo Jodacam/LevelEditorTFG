@@ -15,7 +15,7 @@ namespace Editor
         public static void OpenWindow()
         {
             LevelEditorWindow window = (LevelEditorWindow)EditorWindow.GetWindow(typeof(LevelEditorWindow));
-            window.name = Style.TITLE_LEVEL_EDITOR_WINDOW;
+            window.title = Style.TITLE_LEVEL_EDITOR_WINDOW;
             window.Show();
         }
         #endregion
@@ -68,6 +68,14 @@ namespace Editor
             Vector2 mapScale = Editlevel.mapScale;
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
+            if(mapSize.x <=0)
+            {
+                mapSize.x = 1;
+            }
+            if(mapSize.y <=0)
+            {
+                mapSize.y = 1;
+            }
             if (!mapSize.Equals(Editlevel.mapSize) || !mapScale.Equals(Editlevel.mapScale))
             {
                 Editlevel.mapSize = mapSize;
@@ -119,16 +127,21 @@ namespace Editor
                 AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
             }
             
-            if(!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps"+Editlevel.name))
-                AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps",Editlevel.name);
+            if(!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name))
+                 AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps",Editlevel.name);
             
             
-            
-            AssetDatabase.AddObjectToAsset(Editlevel.terrainMesh,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/Mesh.mesh");
-            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.name+".prefab");
+            exist = AssetDatabase.GetAssetPath(Editlevel.terrainMesh);
+            if (string.IsNullOrEmpty(exist))
+            {
+                 AssetDatabase.CreateAsset(Editlevel.terrainMesh,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.terrainMesh.name+".mesh");
+                 AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.material,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/Material.mat");
+            }
            
-            AssetDatabase.SaveAssets();
             
+            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.name+".prefab");
+            EditorUtility.SetDirty(Editlevel);
+            AssetDatabase.SaveAssets();        
             AssetDatabase.Refresh();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = Editlevel;
@@ -136,6 +149,8 @@ namespace Editor
 
         private void NewMap()
         {
+            if(Editlevel != null)
+                DestroyImmediate(Editlevel.terrainGrid.gameObject);
             Editlevel = (Level)CreateInstance(typeof(Level));
             levelSerialized = new SerializedObject(Editlevel);
             Editlevel.name = "New Level";
@@ -151,6 +166,7 @@ namespace Editor
                 Level pickedObject = (Level)EditorGUIUtility.GetObjectPickerObject();
                 if (pickedObject != null)
                 {
+                    DestroyImmediate(Editlevel.terrainGrid.gameObject);
                     Editlevel = pickedObject;
                     levelSerialized = new SerializedObject(Editlevel);
                     LoadGrid();
