@@ -26,6 +26,8 @@ public static class Style
     public const string LABLE_DATABASE_TITLE = "Prefab Collection : {0}";
 
     public static readonly GUIContent LABLE_ENUM_EDIT_MODE = EditorGUIUtility.TrTextContent("Editing Mode", "Mode of editing");
+
+    public static readonly GUIContent LABLE_AUTOSIZE = EditorGUIUtility.TrTextContent("Autosize","If this is marked, the object will have its first render as size of the objet");
     public const  string PREFAB_FIELD = "Prefab";
     #endregion
 }

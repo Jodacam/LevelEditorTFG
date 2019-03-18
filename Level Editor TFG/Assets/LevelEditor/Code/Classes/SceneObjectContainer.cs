@@ -10,6 +10,8 @@ public class SceneObjectContainer
     public int ySize { get { return objectInfo.cellSize.x; } }
     public GameObject realObject { get { return objectInfo.prefab; } }
     public bool HasObject { get { return objectInfo != null; } }
+
+    public Vector3 Size {get{return objectInfo.sizeBounds;}}
     public void SetObjectInfo(PrefabContainer prefab)
     {
         

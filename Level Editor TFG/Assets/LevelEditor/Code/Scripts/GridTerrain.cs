@@ -22,7 +22,7 @@ public class GridTerrain : MonoBehaviour
     private MeshFilter mesh;
     public MeshRenderer meshRenderer;
     private MeshCollider collider;
-    [HideInInspector]
+    
     [SerializeField]
     public Cell[] cells;
     Dictionary<int, Cell> triangleToCells;
@@ -192,17 +192,9 @@ public class GridTerrain : MonoBehaviour
     public void SetIntoCell(SceneObjectContainer obj, int triangleIndex)
     {
         Cell c = GetCell(triangleIndex);
-        if (c.cellObject != null)
-        {
-            if (Application.isPlaying)
-                Destroy(c.cellObject);
-            else
-                DestroyImmediate(c.cellObject);
-        }
         if(obj != null)
-            c.cellObject = Instantiate(obj.preview, obj.preview.transform.position,obj.preview.transform.rotation, transform);
-        else
-            c.cellObject = null;
+           c.AddObject(obj,transform);
+       
     }
 
 
@@ -213,7 +205,7 @@ public class GridTerrain : MonoBehaviour
 
     public Vector3 GetCellPosition(int x)
     {
-        return transform.TransformPoint(GetCell(x).position);
+        return transform.TransformPoint(GetCell(x).lastObjectPos);
     }
 
     public int GetCellInfo(int x, int y)
@@ -221,9 +213,9 @@ public class GridTerrain : MonoBehaviour
         return cells[getIndex(x, y)].cellInfo;
     }
 
-    public GameObject GetCellObject(int x, int y)
+    public GameObject GetCellObject(int x, int y,int layer)
     {
-        return cells[getIndex(x, y)].cellObject;
+        return GetCell(x,y).GetObject(layer);
     }
 
     Cell GetCell(int triangle)
@@ -231,8 +223,22 @@ public class GridTerrain : MonoBehaviour
         return triangleToCells[triangle * 3];
     }
 
+    Cell GetCell(int x, int y)
+    {
+        return cells[getIndex(x,y)];
+    }
+
     int getIndex(int x, int y)
     {
         return x + (y * xSize);
     }
+
+    public void InitComponents()
+    {
+        mesh = GetComponent<MeshFilter>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        collider = GetComponent<MeshCollider>();
+    }
+
+    public void Remove(int triangleIndex) => GetCell(triangleIndex).RemoveLast();
 }

@@ -14,24 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dataBaseName: Ciudad
   prefabList:
+  - prefab: {fileID: 1037655780390000, guid: 794931ad8054d8f4485bc161f83a2a14, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+    sizeBounds: {x: 1.9999998, y: 0.125, z: 2}
   - prefab: {fileID: 1056816346895226, guid: fce1307539b865c4d942dfa642eab7ec, type: 3}
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
-  - prefab: {fileID: 1644410597926446, guid: 9ba64372b9e08374193a9865323748cd, type: 3}
-    cellSize: {x: 1, y: 1}
-    preview: {fileID: 0}
-  - prefab: {fileID: 1131628691654494, guid: 5c6ccde0684f68f4f9de1e388495c480, type: 3}
-    cellSize: {x: 1, y: 1}
-    preview: {fileID: 0}
-  - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
-    cellSize: {x: 1, y: 1}
-    preview: {fileID: 0}
+    sizeBounds: {x: 2.0738935, y: 2.5327249, z: 1.384259}
   - prefab: {fileID: 100000, guid: 161dbbb4309c9eb4081f7e6636fbf826, type: 3}
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
-  - prefab: {fileID: 100000, guid: fe70c4b6f0e82334ab55dca6f225aac8, type: 3}
+    sizeBounds: {x: 2.0000005, y: 0.10000011, z: 2.0000002}
+  - prefab: {fileID: 1416031260457768, guid: f133fe363b3d09e40b5bf2b268253326, type: 3}
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
-  - prefab: {fileID: 1370723493970886, guid: 45dcbc0d02a319949b685e7d70deacb4, type: 3}
+    sizeBounds: {x: 2.0000005, y: 0.1000001, z: 2.0000002}
+  - prefab: {fileID: 1914973339172262, guid: f79ac4e821519164194463f7fa336938, type: 3}
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
+    sizeBounds: {x: 2.0000005, y: 0.100000076, z: 2.0000005}
+  - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+    sizeBounds: {x: 2, y: 1.772338, z: 2}
+  - prefab: {fileID: 1958872332763838, guid: 47168710cae13564398951978cf51b02, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+    sizeBounds: {x: 2, y: 1.2131255, z: 1.9999999}

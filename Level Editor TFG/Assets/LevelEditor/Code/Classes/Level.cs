@@ -49,4 +49,9 @@ public class Level : ScriptableObject {
             
     }
 
+    public void InitLevel(Vector3 position, Transform levelParent)
+    {
+        terrainGrid = Instantiate(terrainGameObjec,position,Quaternion.identity,levelParent).GetComponent<GridTerrain>();
+        terrainGrid.ReDoDictionary();
+    }
 }

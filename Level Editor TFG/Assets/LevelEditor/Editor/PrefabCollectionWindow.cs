@@ -255,14 +255,14 @@ namespace Editor
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-                if (selectObject.HasObject)
-                {
+                
                     if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
                     {
                         GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
-                        ter.SetIntoCell(null,hit.triangleIndex);
+                        //ter.SetIntoCell(null,hit.triangleIndex);
+                        ter.Remove(hit.triangleIndex);
                     }
-                }
+                
             }
         }
         public void AddPrefabToDataBase(PrefabContainer container)
