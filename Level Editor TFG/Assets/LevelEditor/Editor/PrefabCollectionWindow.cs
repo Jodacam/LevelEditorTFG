@@ -79,7 +79,7 @@ namespace Editor
         static PrefabDataBase dataBase;
         Vector2 scrollPosition = Vector2.zero;
         Action<PrefabContainer, PrefabAction> getPrefab;
-
+        RaycastHit hit;
         static float rotation;
 
 
@@ -118,6 +118,7 @@ namespace Editor
                     OnAdd();
                     break;
                 case Mode.Select:
+                    OnSelect();
                     break;
                 case Mode.Remove:
                     OnRemove();
@@ -127,7 +128,21 @@ namespace Editor
             Handles.EndGUI();
         }
 
+        private void OnSelect()
+        {
+            Event e = Event.current;
+            Vector2 guiPosition = Event.current.mousePosition;
+            Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
+            if (e.button == 0 && e.type == EventType.MouseDown){
+                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                {
+                    var terrain = hit.transform.GetComponent<GridTerrain>();
+                    var selectedCell = terrain.GetCell(hit.triangleIndex);
+                    selectedCell.Edit(this);
 
+                }
+            }
+        }
 
         private void OnGUI()
         {
@@ -214,7 +229,7 @@ namespace Editor
         void OnAdd()
         {
             Event e = Event.current;
-            RaycastHit hit;
+
 
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
@@ -231,9 +246,9 @@ namespace Editor
                     }
                 }
 
-                if(e.control && e.type == EventType.KeyDown)
+                if (e.control && e.type == EventType.KeyDown)
                 {
-                    selectObject.preview.transform.Rotate(0,90,0,Space.World);
+                    selectObject.preview.transform.Rotate(0, 90, 0, Space.World);
                 }
 
             }
@@ -247,7 +262,7 @@ namespace Editor
         private void OnRemove()
         {
             Event e = Event.current;
-            RaycastHit hit;
+
 
 
             Vector2 guiPosition = Event.current.mousePosition;
@@ -255,14 +270,14 @@ namespace Editor
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-                
-                    if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
-                    {
-                        GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
-                        //ter.SetIntoCell(null,hit.triangleIndex);
-                        ter.Remove(hit.triangleIndex);
-                    }
-                
+
+                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                {
+                    GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
+                    //ter.SetIntoCell(null,hit.triangleIndex);
+                    ter.Remove(hit.triangleIndex);
+                }
+
             }
         }
         public void AddPrefabToDataBase(PrefabContainer container)

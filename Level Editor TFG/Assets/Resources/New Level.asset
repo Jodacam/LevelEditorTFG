@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
-  m_Name: Nivel
+  m_Name: New Level
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
-  terrainGameObjec: {fileID: 2122278256217824071, guid: dec59c6ca24612346a7bfc82b0867614,
+  terrainGameObjec: {fileID: 3054813657452773342, guid: 3b24c0c369af1e54cbdbd15d39033fa2,
     type: 3}
-  terrainMesh: {fileID: 4300000, guid: 7c020599de81b89448372cd020258848, type: 2}
-  name: Nivel
-  mapSize: {x: 4, y: 4}
+  terrainMesh: {fileID: 4300000, guid: f77ba38d455acaf49a346ca110390a1b, type: 2}
+  name: New Level
+  mapSize: {x: 5, y: 5}
   mapScale: {x: 4, y: 4}

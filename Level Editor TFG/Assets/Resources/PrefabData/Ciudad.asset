@@ -42,3 +42,7 @@ MonoBehaviour:
     cellSize: {x: 1, y: 1}
     preview: {fileID: 0}
     sizeBounds: {x: 2, y: 1.2131255, z: 1.9999999}
+  - prefab: {fileID: 1054857813390848, guid: f6a7de34eda02fa4c8c69ce438f649a5, type: 3}
+    cellSize: {x: 1, y: 1}
+    preview: {fileID: 0}
+    sizeBounds: {x: 1.4999998, y: 0.5, z: 1.5}

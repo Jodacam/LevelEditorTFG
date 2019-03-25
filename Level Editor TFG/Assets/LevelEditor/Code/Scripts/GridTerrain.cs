@@ -218,7 +218,7 @@ public class GridTerrain : MonoBehaviour
         return GetCell(x,y).GetObject(layer);
     }
 
-    Cell GetCell(int triangle)
+    public Cell GetCell(int triangle)
     {
         return triangleToCells[triangle * 3];
     }

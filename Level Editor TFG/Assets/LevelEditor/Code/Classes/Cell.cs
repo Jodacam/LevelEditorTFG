@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor;
+
 [Serializable]
 public class Cell
 {
@@ -14,6 +16,21 @@ public class Cell
         public float yOffset;
 
         public Vector3 realPosition;
+
+        #if UNITY_EDITOR
+        public void ShowGUI(EditorWindow window)
+        {
+            var preview = AssetPreview.GetAssetPreview(gameObject);
+            if(GUILayout.Button(preview))
+            {
+                Selection.activeGameObject = gameObject;
+            }
+            if(GUILayout.Button(EditorGUIUtility.IconContent("LookDevClose@2x")))
+            {
+                    Debug.Log("Delete");
+            }
+        }
+        #endif
     }
     //Posición en cordenadas de la malla, dado que el nivel se puede instanciar en un lugar que no sea el 0,0 se tendra que acceder mediante el nivel.
     public Vector3 position;
@@ -25,8 +42,8 @@ public class Cell
     public Vector3 lastObjectPos
     {
         get
-        {   
-            return objectList.Count>0 ? objectList.Last().realPosition : position;
+        {
+            return objectList.Count > 0 ? objectList.Last().realPosition : position;
         }
     }
 
@@ -87,4 +104,59 @@ public class Cell
     {
         return objectList[layer].gameObject;
     }
+
+#if UNITY_EDITOR
+
+    class CellEditWindow : EditorWindow
+    {
+        public static CellEditWindow CreateWindow(Cell owner)
+        {
+            var window =  GetWindow(typeof(CellEditWindow)) as CellEditWindow;
+            window.owner = owner;
+            window.maxSize = new Vector2(300, 100);
+            window.minSize = window.maxSize;
+            window.ShowUtility();
+            return window;
+        }
+
+        Cell owner;
+        private void OnGUI()
+        {
+            GUILayout.Label("Cell Properties");
+            owner.cellInfo = EditorGUILayout.IntField("Cell Info", owner.cellInfo);
+            GUILayout.Label("Objects");
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(minSize.x), GUILayout.MinWidth(50));
+            int number = 0;
+            try
+            {
+                foreach (var prefab in owner.objectList)
+                {
+                    prefab.ShowGUI(this);
+                    number++;
+                    if (number > 3)
+                    {
+                        EditorGUILayout.EndHorizontal();
+                        number = 0;
+                        EditorGUILayout.BeginVertical();
+                        Rect rect = EditorGUILayout.GetControlRect(false, 1);
+                        rect.height = 1;
+                        EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
+                        EditorGUILayout.EndVertical();
+                        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(minSize.x), GUILayout.MinWidth(50));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            EditorGUILayout.EndHorizontal();
+
+        }
+    }
+    public void Edit(EditorWindow window)
+    {
+        CellEditWindow.CreateWindow(this);
+    }
+#endif
 }
