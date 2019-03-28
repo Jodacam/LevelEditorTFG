@@ -12,7 +12,7 @@ public class SceneObjectContainer
     public bool HasObject { get { return objectInfo != null; } }
 
     public Vector3 Size {get{return((PrefabContainer)objectInfo).sizeBounds;}}
-
+    public Vector3 Pivot { get { return objectInfo.pivot; } }
     public float Heigth {get{return GetAsWall().height;}}
     public void SetObjectInfo(Container prefab)
     {

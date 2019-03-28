@@ -9,6 +9,8 @@ using UnityEditor;
 //Para facilitarme algunas funciones, como crear botones, o abrir popUps.
 public static class GUIAuxiliar
 {
+    public const string PATH_LEVEL_EDITOR = "Assets/LevelEditor/";
+    public const string PATH_LEVEL_EDITOR_ICON = PATH_LEVEL_EDITOR + "UI/Icons/";
     //Todas las funciones de boton que creo que voy a usar, con etiquetas,imagenes o GUIcontents
     #region Button
     public static T Button<T>(Delegate onClick, string label, params GUILayoutOption[] options)

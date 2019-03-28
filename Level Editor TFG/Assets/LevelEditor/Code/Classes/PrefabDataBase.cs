@@ -23,7 +23,7 @@ public class PrefabDataBase : ScriptableObject
             
             ContainerWindowCreator window = CreateInstance<ContainerWindowCreator>();
             window.title = "Create Prefab";
-            window.maxSize = new Vector2(300, 100);
+            window.maxSize = new Vector2(300, 300);
             window.minSize = window.maxSize;
             window.container = tipe;   
             window.dataBase = data;
@@ -149,14 +149,18 @@ public class PrefabDataBase : ScriptableObject
 
     public void AddPrefab(PrefabContainer container)
     {
+  
         //TODO vamos a hacer una imagen con el objeto, lo vamos a colocar en el 0,0 coger una camara virtual, renderizar solo ese objeto y pegar la textura.
         container.preview = AssetPreview.GetAssetPreview(container.prefab);
+        while (AssetPreview.IsLoadingAssetPreview(container.prefab.GetInstanceID()))
+        {
+            container.preview = AssetPreview.GetAssetPreview(container.prefab);
+        }
         prefabList.Add(container);
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
-
     public void AddPrefab(Container container)
     {
         Type t = container.GetType();

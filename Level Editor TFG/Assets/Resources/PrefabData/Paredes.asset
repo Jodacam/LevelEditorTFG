@@ -16,5 +16,8 @@ MonoBehaviour:
   prefabList:
   - prefab: {fileID: 100000, guid: 0ae8d45dc8f27d544820653040a3b108, type: 3}
     preview: {fileID: 0}
+    pivot: {x: 0, y: 0, z: 0}
+    autoPivot: 0
     cellSize: {x: 1, y: 1}
     sizeBounds: {x: 3.9999995, y: 6.4084935, z: 3.9999995}
+  Walls: []

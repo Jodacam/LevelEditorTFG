@@ -12,8 +12,7 @@ public class WallContainer : Container
 
         private bool autosize = true;
 
-        public Vector3 pivot;
-
+       
 
 
 

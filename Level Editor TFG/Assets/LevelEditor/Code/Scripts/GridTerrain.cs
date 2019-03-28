@@ -180,6 +180,7 @@ public class GridTerrain : MonoBehaviour
     {
         //TODO
         int triangle = hit.triangleIndex;
+
         return GetCellPosition(triangle);
     }
 

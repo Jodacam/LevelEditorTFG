@@ -37,7 +37,7 @@ namespace Editor
         {
 
             EditorGUI.BeginChangeCheck();
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, true);
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
             levelSerialized.UpdateIfRequiredOrScript();
             EditorGUILayout.PropertyField(levelSerialized.FindProperty(Level.LevelProperties.NAME));
 

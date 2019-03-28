@@ -17,6 +17,7 @@ namespace Editor
         {
             PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
             window.getPrefab = window.GetPrefab;
+            
             window.title = Style.TITLE_PREFAB_COLLECTION_WINDOW;
             window.minSize = new Vector2(350, 250);
             window.maxSize = new Vector2(350, 1000);
@@ -72,7 +73,7 @@ namespace Editor
 
         }
 
-
+        static Sprite Cancel;
         static Mode actualMode;
         public SceneObjectContainer selectObject;
 
@@ -81,6 +82,7 @@ namespace Editor
         Vector2 scrollPosition = Vector2.zero;
         Action<Container, PrefabAction> getPrefab;
         RaycastHit hit;
+        static Vector3 offset;
         static float rotation;
 
 
@@ -149,7 +151,7 @@ namespace Editor
         private void OnGUI()
         {
             EditorGUI.BeginChangeCheck();
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true);
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
             actualMode = (Mode)EditorGUILayout.EnumPopup(Style.LABLE_ENUM_EDIT_MODE, actualMode);
             DoOptions();
             DoPrefabSelector();
@@ -219,7 +221,7 @@ namespace Editor
 
         private void DoOptions()
         {
-
+            offset = EditorGUILayout.Vector3Field("Offset", offset);
         }
 
         void OnCreateDataBase(PrefabDataBase data)
@@ -241,7 +243,8 @@ namespace Editor
                 {
                     var t = hit.transform.GetComponent<GridTerrain>();
                     Vector3 c = t.GetClampPosition(hit);
-                    selectObject.preview.transform.position = c;
+
+                    selectObject.preview.transform.position = c-selectObject.Pivot;
                     if (e.button == 0 && e.type == EventType.MouseDown)
                     {
                         t.SetObjetIntoCell(selectObject, hit.triangleIndex);
@@ -250,7 +253,7 @@ namespace Editor
 
                 if (e.control && e.type == EventType.KeyDown)
                 {
-                    selectObject.preview.transform.Rotate(0, 90, 0, Space.World);
+                    selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0,1,0),90);
                 }
 
             }

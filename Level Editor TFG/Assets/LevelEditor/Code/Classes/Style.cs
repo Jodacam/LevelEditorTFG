@@ -15,6 +15,7 @@ public static class Style
 
     public const string BUTTON_TEXT_NEW = "New Level";
     public const string BUTTON_TEXT_NEW_PREFAB = "Add Prefab";
+    public const string BUTTON_TEXT_NEW_WALL = "Add new wall prefab";
 
     public const string BUTTON_TEXT_LOAD_DATABASE = "Load Prefab Collection";
 
@@ -28,6 +29,7 @@ public static class Style
     public static readonly GUIContent LABLE_ENUM_EDIT_MODE = EditorGUIUtility.TrTextContent("Editing Mode", "Mode of editing");
 
     public static readonly GUIContent LABLE_AUTOSIZE = EditorGUIUtility.TrTextContent("Autosize","If this is marked, the object will have its first render as size of the objet");
+    public static readonly GUIContent LABLE_AUTOPIVOT = EditorGUIUtility.TrTextContent("Automatic Pivot", "If this is marked, the object will get the pivot in to the center of the mesh");
     public const  string PREFAB_FIELD = "Prefab";
     #endregion
 }

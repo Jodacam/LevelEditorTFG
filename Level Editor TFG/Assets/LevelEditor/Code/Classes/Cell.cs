@@ -14,12 +14,13 @@ public class Cell
     {
         public GameObject gameObject;
         public float yOffset;
-
+        public Vector3 pivot;
         public Vector3 realPosition;
 
         #if UNITY_EDITOR
         public void ShowGUI(EditorWindow window)
         {
+            
             var preview = AssetPreview.GetAssetPreview(gameObject);
             if(GUILayout.Button(preview))
             {
@@ -34,7 +35,7 @@ public class Cell
     }
     //Posición en cordenadas de la malla, dado que el nivel se puede instanciar en un lugar que no sea el 0,0 se tendra que acceder mediante el nivel.
 
-
+    [Serializable]
     public class WallInfo
     {
         public WallInfo(){}
@@ -51,6 +52,7 @@ public class Cell
         public float height;
         public bool transitable;
     }
+
     public Vector3 position;
     public List<ObjectInfo> objectList;
     public WallInfo[] walls;
@@ -62,7 +64,7 @@ public class Cell
     {
         get
         {
-            return objectList.Count > 0 ? objectList.Last().realPosition : position;
+            return objectList.Count > 0 ? objectList.Last().realPosition + objectList.Last().pivot: position;
         }
     }
 
@@ -89,21 +91,23 @@ public class Cell
     //Añade un objeto a la lista de la celda.
     internal void AddObject(SceneObjectContainer obj, Transform t)
     {
-
+        Transform parent = t;
         ObjectInfo newInfo = new ObjectInfo();
         if (objectList.Count >= 1)
         {
 
             var last = objectList.Last();
-            newInfo.realPosition = new Vector3(last.realPosition.x, last.realPosition.y + last.yOffset, last.realPosition.z);
+            newInfo.realPosition = (new Vector3(last.realPosition.x, last.realPosition.y + last.yOffset, last.realPosition.z) - obj.Pivot)+last.pivot;
+            parent= last.gameObject.transform;
 
         }
         else
         {
-            newInfo.realPosition = position;
+            newInfo.realPosition = position - obj.Pivot;
         }
         newInfo.yOffset = obj.Size.y;
-        newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.preview.transform.rotation, t);
+        newInfo.pivot = obj.Pivot;
+        newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.preview.transform.rotation, parent);
         objectList.Add(newInfo);
     }
 
@@ -142,11 +146,12 @@ public class Cell
 
     class CellEditWindow : EditorWindow
     {
+        Vector2 scrollPosition;
         public static CellEditWindow CreateWindow(Cell owner)
         {
             var window =  CellEditWindow.CreateInstance<CellEditWindow>();
             window.owner = owner;
-            window.maxSize = new Vector2(300, 100);
+            window.maxSize = new Vector2(500, 250);
             window.minSize = window.maxSize;
             window.ShowUtility();
             return window;
@@ -155,6 +160,7 @@ public class Cell
         Cell owner;
         private void OnGUI()
         {
+            EditorGUILayout.BeginScrollView(scrollPosition, false, false);
             GUILayout.Label("Cell Properties");
             owner.cellInfo = EditorGUILayout.IntField("Cell Info", owner.cellInfo);
             GUILayout.Label("Objects");

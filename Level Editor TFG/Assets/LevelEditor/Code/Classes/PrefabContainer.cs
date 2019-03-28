@@ -8,11 +8,6 @@ public class PrefabContainer : Container
 {
 
 
-
-
-
-
-
     public Vector2Int cellSize;
     [HideInInspector]
 
@@ -43,10 +38,13 @@ public class PrefabContainer : Container
         }
 
         EditorGUILayout.BeginHorizontal(maxW, GUILayout.MaxHeight(25));
-        GUIAuxiliar.Button(EditorGUIUtility.IconContent("LookDevClose@2x"), prefabAction, this, PrefabAction.Delete);
+        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+        
+        GUIAuxiliar.Button(EditorGUIUtility.TrIconContent(iconCancel), prefabAction, this, PrefabAction.Delete);
         GUIAuxiliar.Button(EditorGUIUtility.IconContent("LookDevResetEnv@2x"), prefabAction, this, PrefabAction.Reload);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
+        
     }
 
 
@@ -56,14 +54,16 @@ public class PrefabContainer : Container
         prefab = (GameObject)EditorGUILayout.ObjectField(Style.PREFAB_FIELD, prefab, typeof(GameObject), false);
         if (prefab != null)
         {
+            Renderer render = prefab.GetComponentInChildren<Renderer>();
             autosize = EditorGUILayout.Toggle(Style.LABLE_AUTOSIZE,autosize);
             if (autosize)
             {
-                Renderer render = prefab.GetComponentInChildren<Renderer>();
+                
                 if (render != null)
                 {
                     Bounds b = render.bounds;
-                    sizeBounds = b.extents;
+                    sizeBounds = b.size;
+                    
 
                 }
             }
@@ -71,7 +71,26 @@ public class PrefabContainer : Container
             {
                 sizeBounds = EditorGUILayout.Vector3Field("Bounds Size",sizeBounds);
             }
+
+            autoPivot = EditorGUILayout.Toggle(Style.LABLE_AUTOPIVOT,autoPivot);
+            if (autoPivot)
+            {
+
+                if (render != null)
+                {
+                    Bounds b = render.bounds;
+                    float y = render.bounds.center.y;
+                    pivot = render.transform.InverseTransformPoint(b.center);
+                    pivot.y -= y;
+
+                }
+            }
+            else
+            {
+                pivot = EditorGUILayout.Vector3Field("Pivot", pivot);
+            }
         }
+        
         cellSize = EditorGUILayout.Vector2IntField("Cell Size", cellSize);
     }
 
