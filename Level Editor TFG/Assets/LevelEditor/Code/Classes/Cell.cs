@@ -33,8 +33,27 @@ public class Cell
         #endif
     }
     //Posición en cordenadas de la malla, dado que el nivel se puede instanciar en un lugar que no sea el 0,0 se tendra que acceder mediante el nivel.
+
+
+    public class WallInfo
+    {
+        public WallInfo(){}
+        public WallInfo(WallContainer c,Transform t,Vector3 position)
+        {
+            height = c.height;
+            transitable = true;
+            this.position = position;
+            //TODO
+            prefabObject = GameObject.Instantiate(c.prefab, position, c.prefab.transform.rotation, t);
+        }
+        public GameObject prefabObject;
+        public Vector3 position;
+        public float height;
+        public bool transitable;
+    }
     public Vector3 position;
     public List<ObjectInfo> objectList;
+    public WallInfo[] walls;
 
     //TODO Posiblemente otra clase que contenga algo de información, como el tipo de suelo etc
     public int cellInfo;
@@ -51,6 +70,10 @@ public class Cell
     {
         position = middlePoint;
         objectList = new List<ObjectInfo>();
+        walls = new WallInfo[4];
+        for(int i = 0; i<walls.Length; i++){
+            walls[i] = new WallInfo(){height = 0,transitable = true,prefabObject = null};
+        }
     }
 
     internal void UpdatePosition(Transform t)
@@ -91,11 +114,7 @@ public class Cell
             return;
         }
         ObjectInfo info = objectList.Last();
-        if (Application.isPlaying)
-            GameObject.Destroy(info.gameObject);
-        else
-            GameObject.DestroyImmediate(info.gameObject);
-
+        GUIAuxiliar.Destroy(info.gameObject);   
         objectList.Remove(info);
 
     }
@@ -105,13 +124,27 @@ public class Cell
         return objectList[layer].gameObject;
     }
 
+
+    internal void AddWall(SceneObjectContainer obj,Transform t,int wallIndex)
+    {
+        WallInfo preWall = walls[wallIndex];
+        if(preWall.prefabObject != null)
+        {
+            GUIAuxiliar.Destroy(preWall.prefabObject);
+        }
+        WallInfo wall = new WallInfo(obj.GetAsWall(),t,preWall.position);      
+        walls[wallIndex] = wall;
+        
+
+     
+    }
 #if UNITY_EDITOR
 
     class CellEditWindow : EditorWindow
     {
         public static CellEditWindow CreateWindow(Cell owner)
         {
-            var window =  GetWindow(typeof(CellEditWindow)) as CellEditWindow;
+            var window =  CellEditWindow.CreateInstance<CellEditWindow>();
             window.owner = owner;
             window.maxSize = new Vector2(300, 100);
             window.minSize = window.maxSize;

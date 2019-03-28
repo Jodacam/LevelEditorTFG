@@ -1,32 +1,18 @@
-﻿using UnityEngine;
-using UnityEditor;
+using UnityEngine;
 using System;
+using UnityEditor;
 using static Container;
-
 [Serializable]
-public class PrefabContainer : Container
-{
-
-
-
-
-
-
-
-    public Vector2Int cellSize;
-    [HideInInspector]
-
-    //Tamaño de la caja contenedora desde el centro del objeto
-    public Vector3 sizeBounds;
-
-    private bool autosize = true;
-
-    public PrefabContainer()
+public class WallContainer : Container
     {
-        prefab = null;
-        cellSize = Vector2Int.one;
-        preview = null;
-    }
+
+
+        //Tamaño de la caja contenedora desde el centro del objeto
+        public float  height;
+
+        private bool autosize = true;
+
+        public Vector3 pivot;
 
 
 
@@ -63,17 +49,17 @@ public class PrefabContainer : Container
                 if (render != null)
                 {
                     Bounds b = render.bounds;
-                    sizeBounds = b.extents;
+                    height = b.extents.y;
 
                 }
             }
             else
             {
-                sizeBounds = EditorGUILayout.Vector3Field("Bounds Size",sizeBounds);
+                height = EditorGUILayout.FloatField("Height",height);
             }
         }
-        cellSize = EditorGUILayout.Vector2IntField("Cell Size", cellSize);
+        
     }
 
 #endif
-}
+    }

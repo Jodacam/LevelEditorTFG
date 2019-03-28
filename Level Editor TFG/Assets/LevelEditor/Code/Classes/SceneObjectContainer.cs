@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class SceneObjectContainer
 {
-    private PrefabContainer objectInfo;
+    private Container objectInfo;
     public GameObject preview;
-    public int xSize { get { return objectInfo.cellSize.x; } }
-    public int ySize { get { return objectInfo.cellSize.x; } }
+    public int xSize { get { return ((PrefabContainer)objectInfo).cellSize.x; } }
+    public int ySize { get { return ((PrefabContainer)objectInfo).cellSize.x; } }
     public GameObject realObject { get { return objectInfo.prefab; } }
     public bool HasObject { get { return objectInfo != null; } }
 
-    public Vector3 Size {get{return objectInfo.sizeBounds;}}
-    public void SetObjectInfo(PrefabContainer prefab)
+    public Vector3 Size {get{return((PrefabContainer)objectInfo).sizeBounds;}}
+
+    public float Heigth {get{return GetAsWall().height;}}
+    public void SetObjectInfo(Container prefab)
     {
         
         if (preview != null)
@@ -26,5 +28,15 @@ public class SceneObjectContainer
     {
         GameObject.DestroyImmediate(preview);
         objectInfo = null;
+    }
+
+    internal WallContainer GetAsWall()
+    {
+        return (WallContainer) objectInfo;
+    }
+
+    internal PrefabContainer GetAsPrefab()
+    {
+        return (PrefabContainer) objectInfo;
     }
 }

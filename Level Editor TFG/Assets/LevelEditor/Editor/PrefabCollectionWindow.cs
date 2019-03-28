@@ -3,6 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 using static PrefabContainer;
+using static Container;
 
 namespace Editor
 {
@@ -32,7 +33,7 @@ namespace Editor
             Add,
 
             Remove,
-            Select
+            Edit
         }
 
 
@@ -78,7 +79,7 @@ namespace Editor
         bool isPicking = false;
         static PrefabDataBase dataBase;
         Vector2 scrollPosition = Vector2.zero;
-        Action<PrefabContainer, PrefabAction> getPrefab;
+        Action<Container, PrefabAction> getPrefab;
         RaycastHit hit;
         static float rotation;
 
@@ -117,7 +118,7 @@ namespace Editor
                 case Mode.Add:
                     OnAdd();
                     break;
-                case Mode.Select:
+                case Mode.Edit:
                     OnSelect();
                     break;
                 case Mode.Remove:
@@ -133,7 +134,8 @@ namespace Editor
             Event e = Event.current;
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-            if (e.button == 0 && e.type == EventType.MouseDown){
+            if (e.button == 0 && e.type == EventType.MouseDown)
+            {
                 if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
                 {
                     var terrain = hit.transform.GetComponent<GridTerrain>();
@@ -286,20 +288,34 @@ namespace Editor
         }
 
 
-        private void GetPrefab(PrefabContainer container, PrefabAction action)
+        private void GetPrefab(Container cont, PrefabAction action)
         {
-            switch (action)
+
+
+            Type t = cont.GetType();
+
+            if (t == typeof(PrefabContainer))
             {
-                case PrefabAction.Select:
-                    SelectPrefab(container);
-                    break;
-                case PrefabAction.Delete:
-                    DeletePrefab(container);
-                    break;
-                case PrefabAction.Reload:
-                    Reload(container);
-                    break;
+                PrefabContainer container = (PrefabContainer)cont;
+                switch (action)
+                {
+                    case PrefabAction.Select:
+                        SelectPrefab(container);
+                        break;
+                    case PrefabAction.Delete:
+                        DeletePrefab(container);
+                        break;
+                    case PrefabAction.Reload:
+                        Reload(container);
+                        break;
+                }
+
             }
+            else if (t == typeof(WallContainer))
+            {
+
+            }
+
 
         }
 

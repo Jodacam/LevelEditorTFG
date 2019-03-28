@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b8754878a790f4bbfbf582792cd0f0, type: 3}
+  m_Name: ConParedes
+  m_EditorClassIdentifier: 
+  dataBaseName: ConParedes
+  prefabList:
+  - prefab: {fileID: 100000, guid: 0ae8d45dc8f27d544820653040a3b108, type: 3}
+    preview: {fileID: 0}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 3.9999995, y: 6.4084935, z: 3.9999995}
+  - prefab: {fileID: 100000, guid: 7decb8c0b6b53b443a60404984e3c804, type: 3}
+    preview: {fileID: 0}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 1.9999998, y: 0.099999994, z: 2}
+  Walls:
+  - prefab: {fileID: 100000, guid: 161dbbb4309c9eb4081f7e6636fbf826, type: 3}
+    preview: {fileID: 0}
+    height: 0.10000011
+    pivot: {x: 0, y: 0, z: 0}

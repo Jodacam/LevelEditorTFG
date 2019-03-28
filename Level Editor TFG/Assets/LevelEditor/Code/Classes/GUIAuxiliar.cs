@@ -125,7 +125,19 @@ public static class GUIAuxiliar
     }
 
     #endregion
-
+    #region Objects
+    //Cuando usas Destroy en el editor, necesitas usar Destroy Inmediate, pero si estas en play, necesitas usar Destroy
+    public static void Destroy(UnityEngine.Object o)
+    {
+        if(Application.isPlaying)
+        {
+            GameObject.Destroy(o);
+        }else
+        {
+           GameObject.DestroyImmediate(o);
+        }
+    }
+    #endregion
 }
 
 #endif
