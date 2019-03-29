@@ -45,7 +45,7 @@ public class Cell
             transitable = true;
             this.position = position;
             //TODO
-            prefabObject = GameObject.Instantiate(c.prefab, position, c.prefab.transform.rotation, t);
+            prefabObject = GameObject.Instantiate(c.prefab, c.prefab.transform.position, c.prefab.transform.rotation, t);
         }
         public GameObject prefabObject;
         public Vector3 position;
@@ -56,6 +56,7 @@ public class Cell
     public Vector3 position;
     public List<ObjectInfo> objectList;
     public WallInfo[] walls;
+    public Vector2 size;
 
     //TODO Posiblemente otra clase que contenga algo de información, como el tipo de suelo etc
     public int cellInfo;
@@ -68,7 +69,7 @@ public class Cell
         }
     }
 
-    public Cell(Vector3 middlePoint)
+    public Cell(Vector3 middlePoint,Vector2 Size)
     {
         position = middlePoint;
         objectList = new List<ObjectInfo>();
@@ -76,6 +77,13 @@ public class Cell
         for(int i = 0; i<walls.Length; i++){
             walls[i] = new WallInfo(){height = 0,transitable = true,prefabObject = null};
         }
+        size = Size;
+
+        walls[0].position = position + new Vector3(0,0,size.y);
+        walls[1].position = position + new Vector3(size.x,0,0);
+        walls[2].position = position + new Vector3(0,0,-size.y);
+        walls[3].position = position + new Vector3(-size.x, 0, 0);
+
     }
 
     internal void UpdatePosition(Transform t)
@@ -89,7 +97,7 @@ public class Cell
 
 
     //Añade un objeto a la lista de la celda.
-    internal void AddObject(SceneObjectContainer obj, Transform t)
+    internal void AddObject(SceneObjectContainer obj, Transform t,Vector3 offset)
     {
         Transform parent = t;
         ObjectInfo newInfo = new ObjectInfo();
@@ -97,13 +105,13 @@ public class Cell
         {
 
             var last = objectList.Last();
-            newInfo.realPosition = (new Vector3(last.realPosition.x, last.realPosition.y + last.yOffset, last.realPosition.z) - obj.Pivot)+last.pivot;
+            newInfo.realPosition = (new Vector3(last.realPosition.x, last.realPosition.y + last.yOffset, last.realPosition.z))+last.pivot +offset;
             parent= last.gameObject.transform;
 
         }
         else
         {
-            newInfo.realPosition = position - obj.Pivot;
+            newInfo.realPosition = obj.Position+offset;
         }
         newInfo.yOffset = obj.Size.y;
         newInfo.pivot = obj.Pivot;
@@ -196,6 +204,11 @@ public class Cell
     public void Edit(EditorWindow window)
     {
         CellEditWindow.CreateWindow(this);
+    }
+
+    internal Vector3 GetWallPosition(int wallPos)
+    {
+        return walls[wallPos].position;
     }
 #endif
 }

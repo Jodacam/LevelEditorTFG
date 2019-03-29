@@ -17,7 +17,7 @@ namespace Editor
         {
             PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
             window.getPrefab = window.GetPrefab;
-            
+
             window.title = Style.TITLE_PREFAB_COLLECTION_WINDOW;
             window.minSize = new Vector2(350, 250);
             window.maxSize = new Vector2(350, 1000);
@@ -73,6 +73,7 @@ namespace Editor
 
         }
 
+        #region Variables
         static Sprite Cancel;
         static Mode actualMode;
         public SceneObjectContainer selectObject;
@@ -84,7 +85,10 @@ namespace Editor
         RaycastHit hit;
         static Vector3 offset;
         static float rotation;
-
+        static bool allowOffset = false;
+        static bool usingWalls = false;
+        static int wallPos = 0;
+        #endregion
 
         void OnFocus()
         {
@@ -159,6 +163,10 @@ namespace Editor
             DoPicker();
         }
 
+
+
+
+
         private void DoPicker()
         {
             string commandName = Event.current.commandName;
@@ -221,7 +229,9 @@ namespace Editor
 
         private void DoOptions()
         {
-            offset = EditorGUILayout.Vector3Field("Offset", offset);
+            allowOffset = EditorGUILayout.Toggle("Use Offset", allowOffset);
+            if (allowOffset)
+                offset = EditorGUILayout.Vector3Field("Offset", offset);
         }
 
         void OnCreateDataBase(PrefabDataBase data)
@@ -234,36 +244,61 @@ namespace Editor
         {
             Event e = Event.current;
 
-
+            Vector3 off = allowOffset ? offset : Vector3.zero;
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
             if (selectObject.HasObject)
             {
                 if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
                 {
-                    var t = hit.transform.GetComponent<GridTerrain>();
-                    Vector3 c = t.GetClampPosition(hit);
 
-                    selectObject.preview.transform.position = c-selectObject.Pivot;
-                    if (e.button == 0 && e.type == EventType.MouseDown)
+                    if (!usingWalls)
                     {
-                        t.SetObjetIntoCell(selectObject, hit.triangleIndex);
+                        AddingObject(e, off);
+                    }
+                    else
+                    {
+                        AddingWall(e, off);
                     }
                 }
-
-                if (e.control && e.type == EventType.KeyDown)
-                {
-                    selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0,1,0),90);
-                }
-
-            }
-
-            else
-            {
-                Debug.Log("No hay objeto seleccionado");
             }
 
         }
+
+        private void AddingWall(Event e, Vector3 off)
+        {
+            var t = hit.transform.GetComponent<GridTerrain>();
+            Vector3 position = t.GetWallClampPosition(hit, wallPos);
+            selectObject.preview.transform.position = position - selectObject.Pivot + off;
+            if (e.button == 0 && e.type == EventType.MouseDown)
+            {
+                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos,off);
+            }
+            if (e.control && e.type == EventType.KeyDown)
+            {
+                selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0, 1, 0), 90);
+                wallPos = (wallPos + 1) % 4;
+            }
+        }
+
+        private void AddingObject(Event e,Vector3 off)
+        {
+            var t = hit.transform.GetComponent<GridTerrain>();
+            Vector3 c = t.GetClampPosition(hit);
+
+            selectObject.preview.transform.position = c - selectObject.Pivot + off;
+            if (e.button == 0 && e.type == EventType.MouseDown)
+            {
+                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off);
+            }
+
+
+            if (e.control && e.type == EventType.KeyDown)
+            {
+                selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0, 1, 0), 90);
+            }
+        }
+
         private void OnRemove()
         {
             Event e = Event.current;
@@ -290,7 +325,7 @@ namespace Editor
             dataBase.AddPrefab(container);
         }
 
-
+        #region Prefabs Functions
         private void GetPrefab(Container cont, PrefabAction action)
         {
 
@@ -311,15 +346,38 @@ namespace Editor
                     case PrefabAction.Reload:
                         Reload(container);
                         break;
+                    case PrefabAction.Edit:
+                        Edit(container);
+                        break;
                 }
 
             }
             else if (t == typeof(WallContainer))
             {
-
+                WallContainer container = (WallContainer)cont;
+                switch (action)
+                {
+                    case PrefabAction.Select:
+                        SelectPrefab(container);
+                        break;
+                    case PrefabAction.Delete:
+                        DeletePrefab(container);
+                        break;
+                    case PrefabAction.Reload:
+                        Reload(container);
+                        break;
+                    case PrefabAction.Edit:
+                        Edit(container);
+                        break;
+                }
             }
 
 
+        }
+
+        private void Edit(PrefabContainer container)
+        {
+            dataBase.ShowEditWindow(this, container);
         }
 
         private void SelectPrefab(PrefabContainer container)
@@ -348,5 +406,39 @@ namespace Editor
             AssetDatabase.Refresh();
         }
 
+
+
+
+        private void Edit(WallContainer container)
+        {
+            dataBase.ShowEditWindow(this, container);
+        }
+
+        private void SelectPrefab(WallContainer container)
+        {
+            selectObject.SetObjectInfo(container);
+        }
+
+        private void DeletePrefab(WallContainer container)
+        {
+            dataBase.Walls.Remove(container);
+            if (selectObject.realObject.GetInstanceID() == container.prefab.GetInstanceID())
+            {
+                selectObject.SetToNull();
+            }
+
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        private void Reload(WallContainer container)
+        {
+            container.Reload(this);
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        #endregion
     }
 }

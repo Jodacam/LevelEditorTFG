@@ -15,17 +15,25 @@ public class PrefabDataBase : ScriptableObject
         Container container;
         PrefabDataBase dataBase;
         EditorWindow Owner;
+        bool edit;
         Action createObject;
-        public static Func<EditorWindow, PrefabDataBase, Container,EditorWindow> create = CreateWindow;
+        public static Func<EditorWindow, PrefabDataBase,Container,EditorWindow> create = CreateWindow;
 
         public static ContainerWindowCreator CreateWindow(EditorWindow owner, PrefabDataBase data,Container tipe)
         {
             
             ContainerWindowCreator window = CreateInstance<ContainerWindowCreator>();
             window.title = "Create Prefab";
+            window.edit = false;
+            window = DoStyle(owner,data,tipe,window);
+            return window;
+        }
+
+        private static ContainerWindowCreator DoStyle(EditorWindow owner, PrefabDataBase data, Container tipe, ContainerWindowCreator window)
+        {
             window.maxSize = new Vector2(300, 300);
             window.minSize = window.maxSize;
-            window.container = tipe;   
+            window.container = tipe;
             window.dataBase = data;
             window.createObject = window.CreateObject;
             window.Owner = owner;
@@ -33,16 +41,28 @@ public class PrefabDataBase : ScriptableObject
             return window;
         }
 
+        public static ContainerWindowCreator CreateEditWindow(EditorWindow owner, PrefabDataBase data, Container tipe)
+        {
+
+            ContainerWindowCreator window = CreateInstance<ContainerWindowCreator>();
+            window.title = "Edit Prefab";
+            window.edit = true;
+            window = DoStyle(owner, data, tipe, window);
+            return window;
+        }
+
 
         private void OnGUI()
         {
             container.ShowGUIEdit(this);
-            GUIAuxiliar.Button(createObject, Style.BUTTON_TEXT_NEW_PREFAB);
+            GUIAuxiliar.Button(createObject, !edit ? Style.BUTTON_TEXT_NEW_PREFAB : Style.BUTTON_TEXT_EDIT_PREFAB);
         }
 
         private void CreateObject()
         {
-            dataBase.AddPrefab(container);
+            if(!edit)
+                dataBase.AddPrefab(container);
+            container.Reload(Owner);
             Owner.Repaint();
             Close();
         }
@@ -119,7 +139,7 @@ public class PrefabDataBase : ScriptableObject
             {
                 number++;
                 prefab.ShowGUI(window, getPrefab);
-                if (number > 3)
+                if (number > 2)
                 {
                     EditorGUILayout.EndHorizontal();
                     number = 0;
@@ -144,7 +164,7 @@ public class PrefabDataBase : ScriptableObject
     {
 
         GUIAuxiliar.Button<EditorWindow>(Style.BUTTON_TEXT_NEW_PREFAB, ContainerWindowCreator.create, window, this,new PrefabContainer());
-        GUIAuxiliar.Button<EditorWindow>(Style.BUTTON_TEXT_NEW_PREFAB, ContainerWindowCreator.create, window, this,new WallContainer());
+        GUIAuxiliar.Button<EditorWindow>(Style.BUTTON_TEXT_NEW_WALL, ContainerWindowCreator.create, window, this,new WallContainer());
     }
 
     public void AddPrefab(PrefabContainer container)
@@ -182,5 +202,13 @@ public class PrefabDataBase : ScriptableObject
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
+
+    public void ShowEditWindow(EditorWindow editor, Container container)
+    {
+
+        ContainerWindowCreator.CreateEditWindow(editor, this, container);
+    }
+
+
 #endif
 }

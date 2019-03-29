@@ -11,7 +11,8 @@ public class WallContainer : Container
         public float  height;
 
         private bool autosize = true;
-
+        public bool transitable = false;
+        
        
 
 
@@ -19,20 +20,44 @@ public class WallContainer : Container
 #if UNITY_EDITOR
     private GUILayoutOption maxW = GUILayout.MaxWidth(100);
     private GUILayoutOption maxH = GUILayout.MaxHeight(50);
+    private GUILayoutOption maxWButton = GUILayout.MaxWidth(100 / 3);
+    private GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
     public override void ShowGUI(EditorWindow window, Action<Container, PrefabAction> prefabAction)
     {
         EditorGUILayout.BeginVertical();
         if (GUILayout.Button(preview, maxW, maxH))
         {
-            prefabAction.DynamicInvoke(this, PrefabAction.Select);
+            prefabAction.Invoke(this, PrefabAction.Select);
         }
 
-        EditorGUILayout.BeginHorizontal(maxW, GUILayout.MaxHeight(25));
-        GUIAuxiliar.Button(EditorGUIUtility.IconContent("LookDevClose@2x"), prefabAction, this, PrefabAction.Delete);
-        GUIAuxiliar.Button(EditorGUIUtility.IconContent("LookDevResetEnv@2x"), prefabAction, this, PrefabAction.Reload);
+        EditorGUILayout.BeginHorizontal(maxW, maxHButton);
+        GUIStyle style = new GUIStyle(GUI.skin.button);
+
+        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+
+        Texture2D reload = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
+
+
+        Texture2D edit = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
+
+        if (GUILayout.Button(iconCancel, style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Delete);
+        }
+        if (GUILayout.Button(reload, style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Reload);
+        }
+
+        if (GUILayout.Button(edit, style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Edit);
+        }
+
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
     }
+
 
 
 
@@ -48,7 +73,7 @@ public class WallContainer : Container
                 if (render != null)
                 {
                     Bounds b = render.bounds;
-                    height = b.extents.y;
+                    height = b.size.y;
 
                 }
             }
@@ -57,6 +82,7 @@ public class WallContainer : Container
                 height = EditorGUILayout.FloatField("Height",height);
             }
         }
+        transitable = EditorGUILayout.Toggle("Transitable", transitable);
         
     }
 

@@ -29,25 +29,46 @@ public class PrefabContainer : Container
 #if UNITY_EDITOR
     private GUILayoutOption maxW = GUILayout.MaxWidth(100);
     private GUILayoutOption maxH = GUILayout.MaxHeight(50);
+    private GUILayoutOption maxWButton = GUILayout.MaxWidth(100/3);
+    private GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
     public override void ShowGUI(EditorWindow window, Action<Container, PrefabAction> prefabAction)
     {
         EditorGUILayout.BeginVertical();
         if (GUILayout.Button(preview, maxW, maxH))
         {
-            prefabAction.DynamicInvoke(this, PrefabAction.Select);
+            prefabAction.Invoke(this, PrefabAction.Select);
         }
 
-        EditorGUILayout.BeginHorizontal(maxW, GUILayout.MaxHeight(25));
-        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+        EditorGUILayout.BeginHorizontal(maxW,maxHButton);
+        GUIStyle style = new GUIStyle(GUI.skin.button);
         
-        GUIAuxiliar.Button(EditorGUIUtility.TrIconContent(iconCancel), prefabAction, this, PrefabAction.Delete);
-        GUIAuxiliar.Button(EditorGUIUtility.IconContent("LookDevResetEnv@2x"), prefabAction, this, PrefabAction.Reload);
+        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+
+        Texture2D reload = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
+
+
+        Texture2D edit = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
+
+        if (GUILayout.Button(iconCancel,style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Delete);
+        }
+        if (GUILayout.Button(reload, style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Reload);
+        }
+
+        if (GUILayout.Button(edit, style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Edit);
+        }
+
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
         
     }
 
-
+ 
 
     public override void ShowGUIEdit(EditorWindow window)
     {
@@ -81,7 +102,7 @@ public class PrefabContainer : Container
                     Bounds b = render.bounds;
                     float y = render.bounds.center.y;
                     pivot = render.transform.InverseTransformPoint(b.center);
-                    pivot.y -= y;
+                    pivot.y -= b.extents.y;
 
                 }
             }

@@ -118,6 +118,7 @@ public class GridTerrain : MonoBehaviour
         List<Vector3> vertex = new List<Vector3>();
         mesh.GetVertices(vertex);
         triangleToCells = new Dictionary<int, Cell>();
+        Vector2 scale = new Vector2(xScale, xScale);
         for (int ti = 0, vi = 0, y = 0; y < ySize; y++, vi++)
         {
             for (int x = 0; x < xSize; x++, ti += 6, vi++)
@@ -144,7 +145,7 @@ public class GridTerrain : MonoBehaviour
                 }
                 else
                 {
-                    c = new Cell(MiddlePoint);
+                    c = new Cell(MiddlePoint,scale);
                 }
                 cells[getIndex(x, y)] = c;
                 triangleToCells.Add(ti, c);
@@ -184,17 +185,17 @@ public class GridTerrain : MonoBehaviour
         return GetCellPosition(triangle);
     }
 
-    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex)
+    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex,Vector3 offset)
     {
-        SetIntoCell(selectObject, triangleIndex);
+        Cell c = GetCell(triangleIndex);
+        if (selectObject != null)
+            c.AddObject(selectObject, transform,offset);
     }
 
 
     public void SetIntoCell(SceneObjectContainer obj, int triangleIndex)
     {
-        Cell c = GetCell(triangleIndex);
-        if(obj != null)
-           c.AddObject(obj,transform);
+        
        
     }
 
@@ -242,4 +243,16 @@ public class GridTerrain : MonoBehaviour
     }
 
     public void Remove(int triangleIndex) => GetCell(triangleIndex).RemoveLast();
+
+    public Vector3 GetWallClampPosition(RaycastHit hit, int wallPos)
+    {
+        Cell c = GetCell(hit.triangleIndex);
+        return transform.TransformPoint(c.GetWallPosition(wallPos));
+    }
+
+    public void SetWallIntoCell(SceneObjectContainer selectObject, int triangleIndex, int wallPos, Vector3 off)
+    {
+        Cell c = GetCell(triangleIndex);
+        c.AddWall(selectObject, transform, wallPos);
+    }
 }
