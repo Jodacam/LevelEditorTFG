@@ -18,7 +18,7 @@ namespace Editor
             PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
             window.getPrefab = window.GetPrefab;
 
-            window.title = Style.TITLE_PREFAB_COLLECTION_WINDOW;
+            window.titleContent = Style.TITLE_PREFAB_COLLECTION_WINDOW;
             window.minSize = new Vector2(350, 250);
             window.maxSize = new Vector2(350, 1000);
             window.selectObject = new SceneObjectContainer();
@@ -90,6 +90,7 @@ namespace Editor
         static int wallPos = 0;
         #endregion
 
+        #region Unity events
         void OnFocus()
         {
             // Remove delegate listener if it has previously
@@ -110,7 +111,7 @@ namespace Editor
             // so that it will no longer do any drawing.
             SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
         }
-
+        #endregion
         void OnSceneGUI(SceneView sceneView)
         {
             // Do your drawing here using Handles.
@@ -142,7 +143,7 @@ namespace Editor
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
                 {
                     var terrain = hit.transform.GetComponent<GridTerrain>();
                     var selectedCell = terrain.GetCell(hit.triangleIndex);
@@ -238,6 +239,7 @@ namespace Editor
         {
 
             dataBase = data;
+            dataBase.Reload(this);
             Repaint();
         }
         void OnAdd()
@@ -249,7 +251,7 @@ namespace Editor
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
             if (selectObject.HasObject)
             {
-                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
                 {
 
                     if (!usingWalls)
@@ -269,6 +271,7 @@ namespace Editor
         {
             var t = hit.transform.GetComponent<GridTerrain>();
             Vector3 position = t.GetWallClampPosition(hit, wallPos);
+
             selectObject.preview.transform.position = position - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
@@ -276,8 +279,10 @@ namespace Editor
             }
             if (e.control && e.type == EventType.KeyDown)
             {
-                selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0, 1, 0), 90);
+                selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
                 wallPos = (wallPos + 1) % 4;
+                selectObject.RecalculatePivot(wallPos);
+                
             }
         }
 
@@ -296,6 +301,7 @@ namespace Editor
             if (e.control && e.type == EventType.KeyDown)
             {
                 selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0, 1, 0), 90);
+                selectObject.RecalculatePivot(0);
             }
         }
 
@@ -383,6 +389,7 @@ namespace Editor
         private void SelectPrefab(PrefabContainer container)
         {
             selectObject.SetObjectInfo(container);
+            usingWalls = false;
         }
 
         private void DeletePrefab(PrefabContainer container)
@@ -417,6 +424,8 @@ namespace Editor
         private void SelectPrefab(WallContainer container)
         {
             selectObject.SetObjectInfo(container);
+            usingWalls = true;
+            wallPos = 0;
         }
 
         private void DeletePrefab(WallContainer container)

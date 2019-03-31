@@ -33,23 +33,18 @@ public class WallContainer : Container
         EditorGUILayout.BeginHorizontal(maxW, maxHButton);
         GUIStyle style = new GUIStyle(GUI.skin.button);
 
-        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+        
 
-        Texture2D reload = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
-
-
-        Texture2D edit = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
-
-        if (GUILayout.Button(iconCancel, style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_CLOSE, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Delete);
         }
-        if (GUILayout.Button(reload, style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_RELOAD, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Reload);
         }
 
-        if (GUILayout.Button(edit, style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_EDIT, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Edit);
         }
@@ -66,10 +61,11 @@ public class WallContainer : Container
         prefab = (GameObject)EditorGUILayout.ObjectField(Style.PREFAB_FIELD, prefab, typeof(GameObject), false);
         if (prefab != null)
         {
+            Renderer render = prefab.GetComponentInChildren<Renderer>();
             autosize = EditorGUILayout.Toggle(Style.LABLE_AUTOSIZE,autosize);
             if (autosize)
             {
-                Renderer render = prefab.GetComponentInChildren<Renderer>();
+                
                 if (render != null)
                 {
                     Bounds b = render.bounds;
@@ -81,7 +77,9 @@ public class WallContainer : Container
             {
                 height = EditorGUILayout.FloatField("Height",height);
             }
+            AutoPivotGUI(render);
         }
+       
         transitable = EditorGUILayout.Toggle("Transitable", transitable);
         
     }

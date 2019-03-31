@@ -29,17 +29,7 @@ public class PrefabDataBase : ScriptableObject
             return window;
         }
 
-        private static ContainerWindowCreator DoStyle(EditorWindow owner, PrefabDataBase data, Container tipe, ContainerWindowCreator window)
-        {
-            window.maxSize = new Vector2(300, 300);
-            window.minSize = window.maxSize;
-            window.container = tipe;
-            window.dataBase = data;
-            window.createObject = window.CreateObject;
-            window.Owner = owner;
-            window.ShowUtility();
-            return window;
-        }
+      
 
         public static ContainerWindowCreator CreateEditWindow(EditorWindow owner, PrefabDataBase data, Container tipe)
         {
@@ -51,6 +41,17 @@ public class PrefabDataBase : ScriptableObject
             return window;
         }
 
+          private static ContainerWindowCreator DoStyle(EditorWindow owner, PrefabDataBase data, Container tipe, ContainerWindowCreator window)
+        {
+            window.maxSize = new Vector2(300, 300);
+            window.minSize = window.maxSize;
+            window.container = tipe;
+            window.dataBase = data;
+            window.createObject = window.CreateObject;
+            window.Owner = owner;
+            window.ShowUtility();
+            return window;
+        }
 
         private void OnGUI()
         {
@@ -120,9 +121,9 @@ public class PrefabDataBase : ScriptableObject
                 }
             }
         }
-        catch (Exception e)
+        catch 
         {
-
+            
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -207,6 +208,13 @@ public class PrefabDataBase : ScriptableObject
     {
 
         ContainerWindowCreator.CreateEditWindow(editor, this, container);
+    }
+
+    public void Reload(EditorWindow window)
+    {
+        foreach(var obj in prefabList){
+            obj.Reload(window);
+        }
     }
 
 

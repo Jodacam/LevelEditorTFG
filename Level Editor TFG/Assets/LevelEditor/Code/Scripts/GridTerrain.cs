@@ -15,19 +15,19 @@ public class GridTerrain : MonoBehaviour
     }
 
 
-
+#region  Variables
     private Level owner;
     public int xSize, ySize;
     public float xScale, yScale;
     private MeshFilter mesh;
     public MeshRenderer meshRenderer;
-    private MeshCollider collider;
+    private new MeshCollider collider;
     
     [SerializeField]
     public Cell[] cells;
     Dictionary<int, Cell> triangleToCells;
 
-
+#endregion
     //En un principio Grid terrain tenia toda la lógica del grid. Dado que es un Monobehaviour, no se puede serializar y por lo tanto tiene que estar en Level.
     public Mesh Init(float xS, float yS, Vector2Int size, Level o)
     {
@@ -185,6 +185,7 @@ public class GridTerrain : MonoBehaviour
         return GetCellPosition(triangle);
     }
 
+    #region Cells
     public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex,Vector3 offset)
     {
         Cell c = GetCell(triangleIndex);
@@ -193,11 +194,6 @@ public class GridTerrain : MonoBehaviour
     }
 
 
-    public void SetIntoCell(SceneObjectContainer obj, int triangleIndex)
-    {
-        
-       
-    }
 
 
     public Vector3 GetCellPosition(int x, int y)
@@ -255,4 +251,5 @@ public class GridTerrain : MonoBehaviour
         Cell c = GetCell(triangleIndex);
         c.AddWall(selectObject, transform, wallPos);
     }
+    #endregion
 }

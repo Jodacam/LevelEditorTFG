@@ -43,7 +43,7 @@ MonoBehaviour:
     pivot: {x: 0.3572377, y: 0, z: 0.185}
     autoPivot: 1
     cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 0.3672377, y: 0.1922038, z: 0.195}
+    sizeBounds: {x: 0.7344754, y: 0.3844076, z: 0.39}
   - prefab: {fileID: 100138, guid: bd70da049901b95429bc9351d63118c4, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0.0000012516975, y: 0, z: 0.0043469043}
@@ -96,18 +96,31 @@ MonoBehaviour:
       type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: -0.5, z: 0}
-    autoPivot: 0
+    autoPivot: 1
     cellSize: {x: 1, y: 1}
     sizeBounds: {x: 1, y: 1, z: 1}
   - prefab: {fileID: 100002, guid: 8f3e368aa9d75da499b8f08455f8180d, type: 3}
     preview: {fileID: 0}
-    pivot: {x: 0, y: -0.385, z: 0}
-    autoPivot: 0
+    pivot: {x: 0, y: 0, z: 0}
+    autoPivot: 1
     cellSize: {x: 1, y: 1}
     sizeBounds: {x: 0.2728, y: 0.77, z: 0.2728}
+  - prefab: {fileID: 100002, guid: 623da7e65a110b749a0d775e4e0e3acb, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.06, y: 0, z: 0.060000002}
+    autoPivot: 0
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 0.15203941, y: 0.31425, z: 0.17556}
   Walls:
   - prefab: {fileID: 100002, guid: 6a3e21eeec3687442a040ff6217d65d7, type: 3}
     preview: {fileID: 0}
-    pivot: {x: 0, y: 0, z: 0}
-    autoPivot: 0
-    height: 0.644766
+    pivot: {x: 0.5, y: 0, z: 0.025}
+    autoPivot: 1
+    height: 1.289532
+    transitable: 0
+  - prefab: {fileID: 100002, guid: d3c77e58172b8204a944a73652745547, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.5, y: 0, z: 0.025}
+    autoPivot: 1
+    height: 1.289532
+    transitable: 1

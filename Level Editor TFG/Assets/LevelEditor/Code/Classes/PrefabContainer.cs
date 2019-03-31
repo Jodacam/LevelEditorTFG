@@ -42,23 +42,18 @@ public class PrefabContainer : Container
         EditorGUILayout.BeginHorizontal(maxW,maxHButton);
         GUIStyle style = new GUIStyle(GUI.skin.button);
         
-        Texture2D iconCancel = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+        
 
-        Texture2D reload = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
-
-
-        Texture2D edit = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
-
-        if (GUILayout.Button(iconCancel,style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_CLOSE,style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Delete);
         }
-        if (GUILayout.Button(reload, style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_RELOAD, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Reload);
         }
 
-        if (GUILayout.Button(edit, style, maxWButton, maxHButton))
+        if (GUILayout.Button(Style.ICON_EDIT, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Edit);
         }
@@ -93,23 +88,8 @@ public class PrefabContainer : Container
                 sizeBounds = EditorGUILayout.Vector3Field("Bounds Size",sizeBounds);
             }
 
-            autoPivot = EditorGUILayout.Toggle(Style.LABLE_AUTOPIVOT,autoPivot);
-            if (autoPivot)
-            {
-
-                if (render != null)
-                {
-                    Bounds b = render.bounds;
-                    float y = render.bounds.center.y;
-                    pivot = render.transform.InverseTransformPoint(b.center);
-                    pivot.y -= b.extents.y;
-
-                }
-            }
-            else
-            {
-                pivot = EditorGUILayout.Vector3Field("Pivot", pivot);
-            }
+            
+            AutoPivotGUI(render);
         }
         
         cellSize = EditorGUILayout.Vector2IntField("Cell Size", cellSize);

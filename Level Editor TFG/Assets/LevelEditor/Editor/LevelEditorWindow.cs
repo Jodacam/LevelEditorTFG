@@ -15,7 +15,7 @@ namespace Editor
         public static void OpenWindow()
         {
             LevelEditorWindow window = (LevelEditorWindow)EditorWindow.GetWindow(typeof(LevelEditorWindow));
-            window.title = Style.TITLE_LEVEL_EDITOR_WINDOW;
+            window.titleContent = Style.TITLE_LEVEL_EDITOR_WINDOW;
             window.Show();
         }
         #endregion

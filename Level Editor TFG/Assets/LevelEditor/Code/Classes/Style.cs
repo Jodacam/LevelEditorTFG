@@ -4,11 +4,14 @@ using UnityEngine;
 public static class Style
 {
 
-    //En esta clase guardo todos los objetos de GUI que hacen falta para crear la ventana.
+    //En esta clase guardo todos los objetos de GUI que hacen falta para crear ventanas y estilos.
     //Además guardo tambien todos los títulos
     #region Labels
-    public const string TITLE_LEVEL_EDITOR_WINDOW = "Level Editor Window";
-    public const string TITLE_PREFAB_COLLECTION_WINDOW = "Prefab Collection Window";
+    
+
+    public static readonly GUIContent TITLE_LEVEL_EDITOR_WINDOW = EditorGUIUtility.TrTextContentWithIcon("Level Editor Window",MessageType.Info);
+    public static readonly GUIContent TITLE_PREFAB_COLLECTION_WINDOW = EditorGUIUtility.TrTextContentWithIcon("Prefab Collection Window",MessageType.Info);
+    
     public const string BUTTON_TEXT_SAVE = "Save Level";
 
     public const string BUTTON_TEXT_LOAD = "Load Level";
@@ -32,5 +35,18 @@ public static class Style
     public static readonly GUIContent LABLE_AUTOPIVOT = EditorGUIUtility.TrTextContent("Automatic Pivot", "If this is marked, the object will get the pivot in to the center of the mesh");
     public const string BUTTON_TEXT_EDIT_PREFAB = "Save Prefab";
     public const  string PREFAB_FIELD = "Prefab";
+
+
+    public static GUILayoutOption maxW = GUILayout.MaxWidth(100);
+    public static GUILayoutOption maxH = GUILayout.MaxHeight(50);
+    public static GUILayoutOption maxWButton = GUILayout.MaxWidth(100/3);
+    public static GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
+
+    public static readonly Texture2D ICON_CLOSE = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
+
+    public static readonly Texture2D ICON_RELOAD = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
+
+
+    public static readonly Texture2D ICON_EDIT = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
     #endregion
 }
