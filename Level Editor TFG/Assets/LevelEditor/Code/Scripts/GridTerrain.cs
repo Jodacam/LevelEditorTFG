@@ -186,11 +186,11 @@ public class GridTerrain : MonoBehaviour
     }
 
     #region Cells
-    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex,Vector3 offset)
+    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex,Vector3 offset,bool instancing = false)
     {
         Cell c = GetCell(triangleIndex);
         if (selectObject != null)
-            c.AddObject(selectObject, transform,offset);
+            c.AddObject(selectObject, transform,offset,instancing);
     }
 
 
@@ -246,10 +246,10 @@ public class GridTerrain : MonoBehaviour
         return transform.TransformPoint(c.GetWallPosition(wallPos));
     }
 
-    public void SetWallIntoCell(SceneObjectContainer selectObject, int triangleIndex, int wallPos, Vector3 off)
+    public void SetWallIntoCell(SceneObjectContainer selectObject, int triangleIndex, int wallPos, Vector3 off,bool instancing = false)
     {
         Cell c = GetCell(triangleIndex);
-        c.AddWall(selectObject, transform, wallPos);
+        c.AddWall(selectObject, transform, wallPos,instancing);
     }
     #endregion
 }

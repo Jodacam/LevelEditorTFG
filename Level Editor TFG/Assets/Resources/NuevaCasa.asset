@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NuevaCasa
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
-  terrainGameObjec: {fileID: 1464051526487095434, guid: 9d46340bf13cd1646848e6b4836ad9cf,
+  terrainGameObjec: {fileID: 2888761855404267994, guid: 9d46340bf13cd1646848e6b4836ad9cf,
     type: 3}
   terrainMesh: {fileID: 4300000, guid: 741aae4964f296b49bbef46c5cd00832, type: 2}
   name: NuevaCasa

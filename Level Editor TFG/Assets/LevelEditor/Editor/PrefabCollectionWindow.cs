@@ -32,7 +32,7 @@ namespace Editor
         {
             None,
             Add,
-
+            AddInstancing,
             Remove,
             Edit
         }
@@ -125,6 +125,9 @@ namespace Editor
                 case Mode.Add:
                     OnAdd();
                     break;
+                case Mode.AddInstancing:
+                    OnAdd(true);
+                    break;
                 case Mode.Edit:
                     OnSelect();
                     break;
@@ -133,9 +136,10 @@ namespace Editor
                     break;
             }
             // Do your drawing here using GUI.
+            DoCommands();
             Handles.EndGUI();
         }
-
+        #region GUIFunctions
         private void OnSelect()
         {
             Event e = Event.current;
@@ -162,11 +166,39 @@ namespace Editor
             DoPrefabSelector();
             GUILayout.EndScrollView();
             DoPicker();
+            DoCommands();
         }
 
+        private void DoCommands()
+        {
+            Event e = Event.current;
+            if (e.type == EventType.KeyDown)
+            {
+                var key = e.keyCode;
+                switch (key)
+                {
+                    case KeyCode.LeftAlt:
+                        actualMode = Mode.Add;
+                        break;
+                    case KeyCode.RightAlt:
+                        actualMode = Mode.AddInstancing;
+                        break;
+                    case KeyCode.E:
+                        actualMode = Mode.Edit;
+                        break;
+                    case KeyCode.R:
+                        actualMode = Mode.Remove;
+                        break;
+                    case KeyCode.N:
+                        actualMode = Mode.None;
+                        break;
+                }
+                Repaint();
+                
+            }
 
-
-
+            
+        }
 
         private void DoPicker()
         {
@@ -215,6 +247,7 @@ namespace Editor
             }
 
         }
+#endregion
 
         private void CreateNew()
         {
@@ -242,7 +275,7 @@ namespace Editor
             dataBase.Reload(this);
             Repaint();
         }
-        void OnAdd()
+        void OnAdd(bool instancing = false)
         {
             Event e = Event.current;
 
@@ -256,18 +289,20 @@ namespace Editor
 
                     if (!usingWalls)
                     {
-                        AddingObject(e, off);
+                        AddingObject(e, off,instancing);
                     }
                     else
                     {
-                        AddingWall(e, off);
+                        AddingWall(e, off,instancing);
                     }
                 }
             }
 
         }
 
-        private void AddingWall(Event e, Vector3 off)
+
+
+        private void AddingWall(Event e, Vector3 off,bool instancing)
         {
             var t = hit.transform.GetComponent<GridTerrain>();
             Vector3 position = t.GetWallClampPosition(hit, wallPos);
@@ -275,7 +310,7 @@ namespace Editor
             selectObject.preview.transform.position = position - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos,off);
+                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos,off,instancing);
             }
             if (e.control && e.type == EventType.KeyDown)
             {
@@ -286,7 +321,7 @@ namespace Editor
             }
         }
 
-        private void AddingObject(Event e,Vector3 off)
+        private void AddingObject(Event e,Vector3 off, bool instancing)
         {
             var t = hit.transform.GetComponent<GridTerrain>();
             Vector3 c = t.GetClampPosition(hit);
@@ -294,14 +329,16 @@ namespace Editor
             selectObject.preview.transform.position = c - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off);
+                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off,instancing);
             }
 
 
             if (e.control && e.type == EventType.KeyDown)
             {
-                selectObject.preview.transform.RotateAround(selectObject.Pivot, new Vector3(0, 1, 0), 90);
-                selectObject.RecalculatePivot(0);
+                selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
+                wallPos = (wallPos + 1) % 4;
+                selectObject.RecalculatePivot(wallPos);
+                
             }
         }
 
@@ -317,7 +354,7 @@ namespace Editor
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
 
-                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
                 {
                     GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
                     //ter.SetIntoCell(null,hit.triangleIndex);
@@ -325,6 +362,7 @@ namespace Editor
                 }
 
             }
+            
         }
         public void AddPrefabToDataBase(PrefabContainer container)
         {
@@ -390,6 +428,7 @@ namespace Editor
         {
             selectObject.SetObjectInfo(container);
             usingWalls = false;
+            wallPos = 0;
         }
 
         private void DeletePrefab(PrefabContainer container)

@@ -26,10 +26,20 @@ public class Cell
             {
                 Selection.activeGameObject = gameObject;
             }
+            EditorGUILayout.BeginHorizontal(Style.maxWCompleteWall, Style.maxHButton);
             if (GUILayout.Button(Style.ICON_CLOSE, Style.maxHButton, Style.maxWButton))
             {
                 owner.Remove(this);
             }
+            if (GUILayout.Button(Style.ICON_RELOAD, Style.maxHButton, Style.maxWButton))
+            {
+                owner.Remove(this);
+            }
+            if (GUILayout.Button(Style.ICON_EDIT, Style.maxHButton, Style.maxWButton))
+            {
+                owner.Remove(this);
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
         }
 #endif
@@ -48,14 +58,21 @@ public class Cell
             transitable = true;
 
         }
-        public WallInfo(SceneObjectContainer c, Transform t, Vector3 position)
+        public WallInfo(SceneObjectContainer c, Transform t, Vector3 position,bool instancing)
         {
             var wallInfo = c.GetAsWall();
             height = wallInfo.height;
             transitable = wallInfo.transitable;
             this.position = position;
             //TODO
-            prefabObject = GameObject.Instantiate(wallInfo.prefab, c.preview.transform.position, c.preview.transform.rotation, t);
+            if (instancing)
+            {
+                prefabObject = PrefabUtility.InstantiatePrefab(wallInfo.prefab) as GameObject;
+                prefabObject.transform.parent = t;
+                prefabObject.transform.SetPositionAndRotation(c.Position, c.Rotation);
+            }
+            else
+                prefabObject = GameObject.Instantiate(wallInfo.prefab, c.preview.transform.position, c.preview.transform.rotation, t);
         }
         public GameObject prefabObject;
         public Vector3 position;
@@ -65,20 +82,30 @@ public class Cell
 #if UNITY_EDITOR
         public void ShowGUI(EditorWindow window, Cell owner, int wallIndex)
         {
-            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical(Style.maxWCompleteWall, Style.maxHWalls);
             if (prefabObject != null)
             {
                 var preview = AssetPreview.GetAssetPreview(prefabObject);
-                if (GUILayout.Button(preview, Style.maxH, Style.maxW))
+                if (GUILayout.Button(preview, Style.maxH, Style.maxWCompleteWall))
                 {
                     Selection.activeGameObject = prefabObject;
                 }
-                if (GUILayout.Button(Style.ICON_CLOSE, Style.maxHButton, Style.maxWButton))
+                EditorGUILayout.BeginHorizontal(Style.maxWCompleteWall, Style.maxHButton);
+                if (GUILayout.Button(Style.ICON_CLOSE, Style.maxHButton, Style.maxWWalls))
                 {
                     owner.RemoveWall(wallIndex);
                 }
+                if (GUILayout.Button(Style.ICON_RELOAD, Style.maxHButton, Style.maxWWalls))
+                {
+                    owner.RemoveWall(wallIndex);
+                }
+                if (GUILayout.Button(Style.ICON_EDIT, Style.maxHButton, Style.maxWWalls))
+                {
+                    owner.RemoveWall(wallIndex);
+                }
+                EditorGUILayout.EndHorizontal();
             }
-            transitable = EditorGUILayout.Toggle("Is Transitable",transitable);
+            transitable = EditorGUILayout.Toggle("Is Transitable",transitable,Style.maxWCompleteWall);
             EditorGUILayout.EndVertical();
         }
 #endif
@@ -132,7 +159,7 @@ public class Cell
 
 
     //Añade un objeto a la lista de la celda.
-    internal void AddObject(SceneObjectContainer obj, Transform t, Vector3 offset)
+    internal void AddObject(SceneObjectContainer obj, Transform t, Vector3 offset,bool instancing = false)
     {
         Transform parent = t;
         ObjectInfo newInfo = new ObjectInfo();
@@ -150,7 +177,14 @@ public class Cell
         }
         newInfo.yOffset = obj.Size.y;
         newInfo.pivot = obj.Pivot;
-        newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.preview.transform.rotation, parent);
+        if (instancing)
+        {
+            newInfo.gameObject = PrefabUtility.InstantiatePrefab(obj.GetAsPrefab().prefab) as GameObject;
+            newInfo.gameObject.transform.parent = parent;
+            newInfo.gameObject.transform.SetPositionAndRotation(newInfo.realPosition, obj.Rotation);
+        }
+        else
+            newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.Rotation, parent);
         objectList.Add(newInfo);
     }
 
@@ -171,10 +205,12 @@ public class Cell
         if (index != -1)
         {
             objectList.Remove(objectInfo);
+            
             for (int i = index; i < objectList.Count; i++)
             {
 
             }
+            GUIAuxiliar.Destroy(objectInfo.gameObject);
         }
     }
 
@@ -201,14 +237,14 @@ public class Cell
     }
 
 
-    internal void AddWall(SceneObjectContainer obj, Transform t, int wallIndex)
+    internal void AddWall(SceneObjectContainer obj, Transform t, int wallIndex,bool instancing)
     {
         WallInfo preWall = walls[wallIndex];
         if (preWall.prefabObject != null)
         {
             GUIAuxiliar.Destroy(preWall.prefabObject);
         }
-        WallInfo wall = new WallInfo(obj, t, preWall.position);
+        WallInfo wall = new WallInfo(obj, t, preWall.position,instancing);
         walls[wallIndex] = wall;
 
 
@@ -227,6 +263,7 @@ public class Cell
         public static CellEditWindow CreateWindow(Cell owner)
         {
             var window = CellEditWindow.CreateInstance<CellEditWindow>();
+            window.title = "Cell Editor";
             window.owner = owner;
             window.maxSize = new Vector2(500, 250);
             window.minSize = window.maxSize;

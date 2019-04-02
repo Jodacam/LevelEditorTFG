@@ -36,12 +36,17 @@ public static class Style
     public const string BUTTON_TEXT_EDIT_PREFAB = "Save Prefab";
     public const  string PREFAB_FIELD = "Prefab";
 
-
-    public static GUILayoutOption maxW = GUILayout.MaxWidth(100);
-    public static GUILayoutOption maxH = GUILayout.MaxHeight(50);
-    public static GUILayoutOption maxWButton = GUILayout.MaxWidth(100/3);
-    public static GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
-
+    #endregion
+    #region Styles
+    public static readonly GUILayoutOption maxW = GUILayout.MaxWidth(100);
+    public static readonly GUILayoutOption maxH = GUILayout.MaxHeight(50);
+    public static readonly GUILayoutOption maxWButton = GUILayout.MaxWidth(100/3);
+    public static readonly GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
+    public static readonly GUILayoutOption maxWWalls = GUILayout.MaxWidth(100 / 3);
+    public static readonly GUILayoutOption maxWCompleteWall = GUILayout.MaxWidth(100);
+    public static readonly GUILayoutOption maxHWalls = GUILayout.MaxHeight(25);
+    #endregion
+    #region Icons
     public static readonly Texture2D ICON_CLOSE = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
 
     public static readonly Texture2D ICON_RELOAD = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");

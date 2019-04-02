@@ -17,6 +17,7 @@ public class SceneObjectContainer
     public Vector3 WorldPivot{get{return preview.transform.TransformPoint(internalPivot);}}
     public float Heigth {get{return GetAsWall().height;}}
     public Vector3 Position { get { return preview.transform.position; } }
+    public Quaternion Rotation { get { return preview.transform.rotation; } }
     public void SetObjectInfo(Container prefab)
     {
         
