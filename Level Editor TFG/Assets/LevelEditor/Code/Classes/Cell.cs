@@ -52,7 +52,7 @@ public class Cell
         {
             var wallInfo = c.GetAsWall();
             height = wallInfo.height;
-            transitable = true;
+            transitable = wallInfo.transitable;
             this.position = position;
             //TODO
             prefabObject = GameObject.Instantiate(wallInfo.prefab, c.preview.transform.position, c.preview.transform.rotation, t);
@@ -171,7 +171,7 @@ public class Cell
         if (index != -1)
         {
             objectList.Remove(objectInfo);
-            for (int i = index; index < objectList.Count; i++)
+            for (int i = index; i < objectList.Count; i++)
             {
 
             }
