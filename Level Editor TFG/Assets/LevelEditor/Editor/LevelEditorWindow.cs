@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace Editor
             EditorGUILayout.PropertyField(levelSerialized.FindProperty(Level.LevelProperties.NAME));
 
             DoGrid();
-
+            DoVariables();
             levelSerialized.ApplyModifiedProperties();
             GUILayout.EndScrollView();
 
@@ -50,6 +51,27 @@ namespace Editor
             DoPicker();
 
         }
+
+        private void DoVariables()
+        {
+
+            Editlevel.EditVariable(this);
+
+            if (GUILayout.Button(Style.ICON_ADD))
+            {
+                AddNewVariable();
+            }
+
+        }
+
+        private void AddNewVariable()
+        {
+            var e = VariableString.CreateInstance<VariableString>();
+            e.Init("newName");
+           
+            Editlevel.AddVariable(e);
+        }
+
         private void Awake()
         {
 
@@ -68,11 +90,11 @@ namespace Editor
             Vector2 mapScale = Editlevel.mapScale;
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
-            if(mapSize.x <=0)
+            if (mapSize.x <= 0)
             {
                 mapSize.x = 1;
             }
-            if(mapSize.y <=0)
+            if (mapSize.y <= 0)
             {
                 mapSize.y = 1;
             }
@@ -126,22 +148,22 @@ namespace Editor
             {
                 AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
             }
-            
-            if(!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name))
-                 AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps",Editlevel.name);
-            
-            
+
+            if (!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name))
+                AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps", Editlevel.name);
+
+
             exist = AssetDatabase.GetAssetPath(Editlevel.terrainMesh);
             if (string.IsNullOrEmpty(exist))
             {
-                 AssetDatabase.CreateAsset(Editlevel.terrainMesh,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.terrainMesh.name+".mesh");
-                 AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.material,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/Material.mat");
+                AssetDatabase.CreateAsset(Editlevel.terrainMesh, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/" + Editlevel.terrainMesh.name + ".mesh");
+                AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.material, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/Material.mat");
             }
-           
-            
-            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject,"Assets/LevelEditor/Prefabs/Maps/"+Editlevel.name+"/"+Editlevel.name+".prefab");
+
+
+            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/" + Editlevel.name + ".prefab");
             EditorUtility.SetDirty(Editlevel);
-            AssetDatabase.SaveAssets();        
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = Editlevel;
@@ -149,7 +171,7 @@ namespace Editor
 
         private void NewMap()
         {
-            if(Editlevel != null)
+            if (Editlevel != null)
                 DestroyImmediate(Editlevel.terrainGrid.gameObject);
             Editlevel = (Level)CreateInstance(typeof(Level));
             levelSerialized = new SerializedObject(Editlevel);
@@ -157,6 +179,7 @@ namespace Editor
             Editlevel.mapSize = new Vector2Int(10, 10);
             Editlevel.xcellSize = 1;
             Editlevel.ycellSize = 1;
+            Editlevel.stringList = new List<IData>();
             CreateGrid();
         }
         private void OnPick()
@@ -183,7 +206,7 @@ namespace Editor
             EditorGUIUtility.ShowObjectPicker<Level>(null, false, "", controlID);
         }
 
-        private void LoadGrid() 
+        private void LoadGrid()
         {
 
             Editlevel.LoadGrid();
@@ -199,7 +222,7 @@ namespace Editor
             else
             {
                 Editlevel.CreateGrid();
-           
+
             }
 
         }

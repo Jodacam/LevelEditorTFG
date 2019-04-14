@@ -42,22 +42,23 @@ public class PrefabContainer : Container
         EditorGUILayout.BeginHorizontal(maxW,maxHButton);
         GUIStyle style = new GUIStyle(GUI.skin.button);
         
-        
-
-        if (GUILayout.Button(Style.ICON_CLOSE,style, maxWButton, maxHButton))
+         if (GUILayout.Button(Style.ICON_EDIT, style, maxWButton, maxHButton))
         {
-            prefabAction.Invoke(this, PrefabAction.Delete);
+            prefabAction.Invoke(this, PrefabAction.Edit);
         }
+
+      
         if (GUILayout.Button(Style.ICON_RELOAD, style, maxWButton, maxHButton))
         {
             prefabAction.Invoke(this, PrefabAction.Reload);
         }
 
-        if (GUILayout.Button(Style.ICON_EDIT, style, maxWButton, maxHButton))
-        {
-            prefabAction.Invoke(this, PrefabAction.Edit);
-        }
+       
 
+        if (GUILayout.Button(Style.ICON_CLOSE,style, maxWButton, maxHButton))
+        {
+            prefabAction.Invoke(this, PrefabAction.Delete);
+        }
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
         

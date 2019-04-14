@@ -18,6 +18,8 @@ public class SceneObjectContainer
     public float Heigth {get{return GetAsWall().height;}}
     public Vector3 Position { get { return preview.transform.position; } }
     public Quaternion Rotation { get { return preview.transform.rotation; } }
+
+    public Vector2Int CellSize{get{return GetAsPrefab().cellSize;}}
     public void SetObjectInfo(Container prefab)
     {
         

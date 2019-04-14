@@ -55,7 +55,7 @@ public static class GUIAuxiliar
     {
         if (GUILayout.Button(content))
         {
-            onClick.DynamicInvoke(options);
+            return (T)onClick.DynamicInvoke(options);
         }
         return default(T);
     }

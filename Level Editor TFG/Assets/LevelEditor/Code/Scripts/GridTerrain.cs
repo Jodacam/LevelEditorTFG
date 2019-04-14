@@ -15,19 +15,19 @@ public class GridTerrain : MonoBehaviour
     }
 
 
-#region  Variables
+    #region  Variables
     private Level owner;
     public int xSize, ySize;
     public float xScale, yScale;
     private MeshFilter mesh;
     public MeshRenderer meshRenderer;
     private new MeshCollider collider;
-    
+
     [SerializeField]
     public Cell[] cells;
     Dictionary<int, Cell> triangleToCells;
 
-#endregion
+    #endregion
     //En un principio Grid terrain tenia toda la lógica del grid. Dado que es un Monobehaviour, no se puede serializar y por lo tanto tiene que estar en Level.
     public Mesh Init(float xS, float yS, Vector2Int size, Level o)
     {
@@ -61,11 +61,11 @@ public class GridTerrain : MonoBehaviour
         yScale = yS;
         Mesh m = new Mesh();
         m.name = "Procedular";
-        m.SetVertices(CreateVertex().ToList());   
-        m.SetTriangles(CreateTris(m),0,true);
+        m.SetVertices(CreateVertex().ToList());
+        m.SetTriangles(CreateTris(m), 0, true);
         m.RecalculateNormals();
         mesh.sharedMesh = m;
-        collider.sharedMesh =m;
+        collider.sharedMesh = m;
         SetMaterial();
 
         return mesh.sharedMesh;
@@ -74,18 +74,18 @@ public class GridTerrain : MonoBehaviour
     private void ReCalculateBound(Vector2Int size)
     {
         //Si es mas grande o igual al anterior no hay que recalcular nada, solo recoger lo antiguo. 
-        Cell[] newArray = new Cell[size.x*size.y];
-        for(int y = 0; y <size.y && y<ySize; y++)
+        Cell[] newArray = new Cell[size.x * size.y];
+        for (int y = 0; y < size.y && y < ySize; y++)
         {
-            for(int x = 0; x <size.x && x<xSize; x++)
+            for (int x = 0; x < size.x && x < xSize; x++)
             {
-                int i = getIndex(x,y);
-                int e = (x+y*size.x);
+                int i = getIndex(x, y);
+                int e = (x + y * size.x);
                 try
                 {
-                newArray[e] = cells[i];
+                    newArray[e] = cells[i];
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
                     Debug.Log(exc.Message);
                 }
@@ -112,7 +112,7 @@ public class GridTerrain : MonoBehaviour
     {
 
         int[] triangles = new int[xSize * ySize * 6];
-        if(cells == null)
+        if (cells == null)
             cells = new Cell[xSize * ySize];
 
         List<Vector3> vertex = new List<Vector3>();
@@ -124,11 +124,11 @@ public class GridTerrain : MonoBehaviour
             for (int x = 0; x < xSize; x++, ti += 6, vi++)
             {
 
-                
+
                 triangles[ti] = vi;
                 triangles[ti + 3] = triangles[ti + 2] = vi + 1;
                 triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
-                triangles[ti + 5] = vi + xSize + 2;              
+                triangles[ti + 5] = vi + xSize + 2;
 
 
                 //Esto es cada celda, tengo que ver una forma de identificar esto.
@@ -136,16 +136,16 @@ public class GridTerrain : MonoBehaviour
                 // El centro de la celda en espacio local. Dado que es asi con Transform.TransformPoint(Vector3) puedo convetirlo a posiciones reales, por lo que el plano puede estar en cualquier parte.
                 // El centro es la media de todo los puntos, por lo que es el centro encontrado en el plano que forman los 4 vertices.
                 Vector3 MiddlePoint = (QuadPoints[0] + QuadPoints[1] + QuadPoints[2] + QuadPoints[3]) / 4;
-               
-                Cell c =  cells[getIndex(x, y)];
-                if(c != null)
+
+                Cell c = cells[getIndex(x, y)];
+                if (c != null)
                 {
                     c.position = MiddlePoint;
                     c.UpdatePosition(transform);
                 }
                 else
                 {
-                    c = new Cell(MiddlePoint,scale);
+                    c = new Cell(MiddlePoint, scale);
                 }
                 cells[getIndex(x, y)] = c;
                 triangleToCells.Add(ti, c);
@@ -170,7 +170,7 @@ public class GridTerrain : MonoBehaviour
     }
     private void SetMaterial()
     {
-        if(meshRenderer.sharedMaterial == null)
+        if (meshRenderer.sharedMaterial == null)
             meshRenderer.material = new Material(Shader.Find(GridTerrainProperties.MATERIAL_GRID_SHADER));
         meshRenderer.sharedMaterial.SetFloat(GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEX, xScale);
         meshRenderer.sharedMaterial.SetFloat(GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY, yScale);
@@ -186,11 +186,21 @@ public class GridTerrain : MonoBehaviour
     }
 
     #region Cells
-    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex,Vector3 offset,bool instancing = false)
+    public void SetObjetIntoCell(SceneObjectContainer selectObject, int triangleIndex, Vector3 offset, bool instancing = false)
     {
-        Cell c = GetCell(triangleIndex);
         if (selectObject != null)
-            c.AddObject(selectObject, transform,offset,instancing);
+        {
+            //Si el el modulo es igual a 1, significa que mide 1 sola casilla.
+            if (selectObject.CellSize.sqrMagnitude == 1)
+            {
+                Cell c = GetCell(triangleIndex);
+                c.AddObject(selectObject, transform, offset, instancing);
+            }
+            else
+            {
+                
+            }
+        }
     }
 
 
@@ -211,9 +221,9 @@ public class GridTerrain : MonoBehaviour
         return cells[getIndex(x, y)].cellInfo;
     }
 
-    public GameObject GetCellObject(int x, int y,int layer)
+    public GameObject GetCellObject(int x, int y, int layer)
     {
-        return GetCell(x,y).GetObject(layer);
+        return GetCell(x, y).GetObject(layer);
     }
 
     public Cell GetCell(int triangle)
@@ -223,7 +233,7 @@ public class GridTerrain : MonoBehaviour
 
     Cell GetCell(int x, int y)
     {
-        return cells[getIndex(x,y)];
+        return cells[getIndex(x, y)];
     }
 
     int getIndex(int x, int y)
@@ -246,10 +256,10 @@ public class GridTerrain : MonoBehaviour
         return transform.TransformPoint(c.GetWallPosition(wallPos));
     }
 
-    public void SetWallIntoCell(SceneObjectContainer selectObject, int triangleIndex, int wallPos, Vector3 off,bool instancing = false)
+    public void SetWallIntoCell(SceneObjectContainer selectObject, int triangleIndex, int wallPos, Vector3 off, bool instancing = false)
     {
         Cell c = GetCell(triangleIndex);
-        c.AddWall(selectObject, transform, wallPos,instancing);
+        c.AddWall(selectObject, transform, wallPos, instancing);
     }
     #endregion
 }

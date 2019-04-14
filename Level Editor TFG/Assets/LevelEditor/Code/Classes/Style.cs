@@ -53,5 +53,9 @@ public static class Style
 
 
     public static readonly Texture2D ICON_EDIT = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
+
+    //TODO
+    public static readonly string ICON_ADD = "Añadir";
+    
     #endregion
 }
