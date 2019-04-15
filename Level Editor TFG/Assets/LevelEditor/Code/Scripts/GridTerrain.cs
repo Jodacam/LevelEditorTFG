@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class GridTerrain : MonoBehaviour
@@ -190,27 +191,72 @@ public class GridTerrain : MonoBehaviour
     {
         if (selectObject != null)
         {
+            Cell c = GetCell(triangleIndex);
             //Si el el modulo es igual a 1, significa que mide 1 sola casilla.
-            if (selectObject.CellSize.sqrMagnitude == 1)
+            if (selectObject.CellCountSize == 1)
             {
-                Cell c = GetCell(triangleIndex);
+                
                 c.AddObject(selectObject, transform, offset, instancing);
             }
             else
             {
-                
+                //obtenemos el indice del objeto.
+                int index = cells.ToList().IndexOf(c);
+                Vector2Int indexPosition = Get2DIndex(index);
+                ObtainAndSetCenterPosition(selectObject.CellSize, indexPosition,c,selectObject);
             }
         }
     }
 
+    private void ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition,Cell mainCell, SceneObjectContainer sceneObject,bool instancing = false)
+    {
+        var cellToObtain = new Cell[size.x,size.y];
+        //Calculamos las celdad adyacentes.
+        Vector3 position = Vector3.zero;
+        for(int i = 0; i< size.x; i++)
+        {
+            for(int j = 0; j < size.y; j++)
+            {
+                cellToObtain[i, j] = GetCell(getIndex(indexPosition.x + i, indexPosition.y + j));
+                
+                position += transform.TransformPoint(cellToObtain[i, j].position);
+            }
+        }
+        position /= sceneObject.CellCountSize;
+        position -= sceneObject.Pivot;
+        GameObject realObject;
+        if (instancing)
+        {
+            realObject = PrefabUtility.InstantiatePrefab(sceneObject.GetAsPrefab().prefab) as GameObject;
+            realObject.transform.parent = transform;
+            realObject.transform.SetPositionAndRotation(position, sceneObject.Rotation);
+        }
+        else
+        {
+            realObject = Instantiate(sceneObject.preview,position, sceneObject.Rotation, transform);
+        }
+        
 
+    }
 
+    //Devuelve el indice en matriz dado un indice lineal.
+    private Vector2Int Get2DIndex(int index)
+    {
+        //Dado que se como esta formado el array lineal puede saber cuando es la posicion.
+        //El Array lineal se form con x + (y*xsize), por lo que por ejemplosi xsize = 5, la posición 6 del array seria x = 1 +  y = 1 * 5 => 1 + (1*5) = 6. Sabiendo eso, es que, 6/5 = 1. 6%5 = 1.
+        // Otro ejemplo con 12, seria 12/5 = 2. y = 2; 12%5 = 2; x = 2. 2 + (2*5) = 12.
+        int y = index / xSize;
+        int x = index % xSize;
+        return new Vector2Int(x, y);
+    }
 
+    //Obtiene la posicion de una celda por sus indices
     public Vector3 GetCellPosition(int x, int y)
     {
         return transform.TransformPoint(cells[getIndex(x, y)].position);
     }
 
+    //Obtiene la posicion de una celda por el triangulo golpeado.
     public Vector3 GetCellPosition(int x)
     {
         return transform.TransformPoint(GetCell(x).lastObjectPos);

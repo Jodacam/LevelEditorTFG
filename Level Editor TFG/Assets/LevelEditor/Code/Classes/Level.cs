@@ -83,6 +83,12 @@ public class Level : ScriptableObject {
         GUILayout.Label("Variables");
         foreach(var v in stringList)
         {
+            GUIStyle s = new GUIStyle( GUI.skin.label);
+            s.alignment = TextAnchor.MiddleCenter;
+            s.fontStyle = FontStyle.Bold;
+
+            EditorGUILayout.LabelField(v.varName,s);
+            v.varName = EditorGUILayout.TextField("Name", v.varName);
             var e = (VariableTypes) EditorGUILayout.EnumPopup("Type",v.type);
             if(e != v.type)
             {
@@ -91,12 +97,12 @@ public class Level : ScriptableObject {
                 
             }
             else
-            {  
-               SerializedObject serialize = new SerializedObject(v);
-               var value = serialize.FindProperty("value");
-               v.varName = EditorGUILayout.TextField("Name",v.varName);
-               EditorGUILayout.PropertyField(value);
-               serialize.ApplyModifiedProperties();
+            {
+
+
+                v.ShowGUI();
+              
+               
             }
         }
     }
@@ -111,22 +117,22 @@ public class Level : ScriptableObject {
 
         {
             case VariableTypes.String: 
-            var newString = CreateInstance<VariableString>(); 
+            var newString = new VariableString(); 
             newString.Init(v.varName);
             stringList.Insert(index,newString);
             break;
             case VariableTypes.Boolean:
-            var newBool = CreateInstance<VariableBool>();
+            var newBool = new VariableBool();
             newBool.Init(v.varName);  
             stringList.Insert(index,newBool);
             break;
             case VariableTypes.Int:
-             var newInt = CreateInstance<VariableInt>();
+             var newInt = new VariableInt();
             newInt.Init( v.varName);   
             stringList.Insert(index,newInt);
             break;
             case VariableTypes.Float:
-            var newFloat = CreateInstance<VariableFloat>();
+            var newFloat =new VariableFloat();
             newFloat.Init( v.varName);   
             stringList.Insert(index,newFloat);
             break;

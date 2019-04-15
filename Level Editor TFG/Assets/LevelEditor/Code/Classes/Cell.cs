@@ -16,6 +16,7 @@ public class Cell
         public float yOffset;
         public Vector3 pivot;
         public Vector3 realPosition;
+        public Vector2Int size = Vector2Int.one;
 
 #if UNITY_EDITOR
         public void ShowGUI(EditorWindow window, Cell owner)
@@ -236,6 +237,15 @@ public class Cell
         return objectList[layer].gameObject;
     }
 
+    internal void SetObjectAsInfoOnly(SceneObjectContainer sceneObj,GameObject realObject)
+    {
+        var newInfo = new ObjectInfo();
+        newInfo.gameObject = realObject;
+        newInfo.yOffset = sceneObj.Size.y;
+        newInfo.pivot = sceneObj.Pivot;
+        newInfo.realPosition = realObject.transform.position;
+        objectList.Add(newInfo);
+    }
 
     internal void AddWall(SceneObjectContainer obj, Transform t, int wallIndex,bool instancing)
     {

@@ -66,7 +66,7 @@ namespace Editor
 
         private void AddNewVariable()
         {
-            var e = VariableString.CreateInstance<VariableString>();
+            var e = new VariableString();
             e.Init("newName");
            
             Editlevel.AddVariable(e);

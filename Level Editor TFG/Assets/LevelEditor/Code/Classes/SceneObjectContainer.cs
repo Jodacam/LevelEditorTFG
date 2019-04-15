@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//Clase que contiene al objeto que se esta colocando en pantalla.
+//Dado que este objeto puede ser usado tanto para paredes como prefabs normales se tiene que poner hacer un cast de este.
 public class SceneObjectContainer
 {
     private Container objectInfo;
@@ -12,14 +15,26 @@ public class SceneObjectContainer
     public bool HasObject { get { return objectInfo != null; } }
 
     private Vector3 internalPivot;
+    //Tamaño del objeto.
     public Vector3 Size {get{return((PrefabContainer)objectInfo).sizeBounds;}}
+    // Pivot del objeto
     public Vector3 Pivot { get { return internalPivot; } }
-    public Vector3 WorldPivot{get{return preview.transform.TransformPoint(internalPivot);}}
-    public float Heigth {get{return GetAsWall().height;}}
-    public Vector3 Position { get { return preview.transform.position; } }
-    public Quaternion Rotation { get { return preview.transform.rotation; } }
 
+    //Pivot en coordenadas globales
+    public Vector3 WorldPivot{get{return preview.transform.TransformPoint(internalPivot);}}
+    //Altura de la pared.
+    public float Heigth {get{return GetAsWall().height;}}
+
+    //Posicion en coordenadas globales del objeto.
+    public Vector3 Position { get { return preview.transform.position; } }
+    //rotacion actual
+    public Quaternion Rotation { get { return preview.transform.rotation; } }
+    //Tamaño en casilla (Vector2)
     public Vector2Int CellSize{get{return GetAsPrefab().cellSize;}}
+    //Número de celdas que tiene que ocupar en total.
+    public int CellCountSize { get => CellSize.x * CellSize.y; }
+
+    //
     public void SetObjectInfo(Container prefab)
     {
         
@@ -31,13 +46,15 @@ public class SceneObjectContainer
         internalPivot = prefab.pivot;
     }
 
+
+    //Destruye el objeto que tenemos
     public void SetToNull()
     {
         GameObject.DestroyImmediate(preview);
         objectInfo = null;
     }
 
-
+    //Recalcula el pivot para las 4 rotaciones.
     public void RecalculatePivot(int wall)
     {
         //Hay que mejorar mucho esto.
@@ -61,11 +78,15 @@ public class SceneObjectContainer
 
         
     }
+
+    //Obtiene el objeto como una pared. Si el objeto es una pared, excepcion.
     internal WallContainer GetAsWall()
     {
         return (WallContainer) objectInfo;
     }
 
+
+    //Obtiene el objeto como un prefab normal. Si el objeto es una pared esto da una excepcion.
     internal PrefabContainer GetAsPrefab()
     {
         return (PrefabContainer) objectInfo;

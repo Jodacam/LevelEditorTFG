@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [Serializable]
-public abstract class IData : ScriptableObject
+public abstract class IData
 {
     [SerializeField]
     public string varName;
@@ -15,6 +15,9 @@ public abstract class IData : ScriptableObject
     {
         varName = name;
     }
+#if UNITY_EDITOR
+    public abstract void ShowGUI();
+#endif
 }
 
 
@@ -31,7 +34,7 @@ public class VariableString : IData
     }
 
 #if UNITY_EDITOR
-    public void ShowGUI()
+    public override void ShowGUI()
     {
         value = EditorGUILayout.TextField("Value",value);
     }
@@ -51,7 +54,7 @@ public class VariableInt : IData
     }
 
 #if UNITY_EDITOR
-    public void ShowGUI()
+    public override void ShowGUI()
     {
         value = EditorGUILayout.IntField("Value",value);
     }
@@ -70,7 +73,7 @@ public class VariableBool : IData
     }
 
 #if UNITY_EDITOR
-    public void ShowGUI()
+    public override void ShowGUI()
     {
         value = EditorGUILayout.Toggle("Value",value);
     }
@@ -89,7 +92,7 @@ public class VariableFloat : IData
     }
 
 #if UNITY_EDITOR
-    public void ShowGUI()
+    public override void ShowGUI()
     {
         value = EditorGUILayout.FloatField("Value",value);
     }

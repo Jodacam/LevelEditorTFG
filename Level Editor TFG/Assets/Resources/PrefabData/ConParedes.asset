@@ -32,3 +32,4 @@ MonoBehaviour:
     pivot: {x: 0, y: 0, z: 0}
     autoPivot: 0
     height: 0.10000011
+    transitable: 0
