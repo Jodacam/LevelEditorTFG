@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using FullSerializer;
 
 
 //Para facilitarme algunas funciones, como crear botones, o abrir popUps.
 public static class GUIAuxiliar
 {
-
+    private static readonly fsSerializer _serializer = new fsSerializer();
     public const string PATH_LEVEL_EDITOR = "Assets/LevelEditor/";
     public const string PATH_LEVEL_EDITOR_ICON = PATH_LEVEL_EDITOR + "UI/Icons/";
     //Todas las funciones de boton que creo que voy a usar, con etiquetas,imagenes o GUIcontents
@@ -140,7 +141,7 @@ public static class GUIAuxiliar
            GameObject.DestroyImmediate(o);
         }
     }
-    #endregion
+    
     public static Vector3 CalculatePivot(this Transform transform){
         Vector3 newPivot = Vector3.zero;
         Renderer render = transform.GetComponentInChildren<Renderer>();
@@ -155,7 +156,25 @@ public static class GUIAuxiliar
         Debug.Log(newPivot);
         return newPivot;
     }
+    #endregion
+    public static string Serialize<T>(T value)
+    {
+        fsData data;
+        _serializer.TrySerialize(value, out data).AssertSuccessWithoutWarnings();
 
+        // emit the data via JSON
+        return fsJsonPrinter.CompressedJson(data);
+    }
+    public static T Deserialize<T>(string json)
+    {
+        fsData data = fsJsonParser.Parse(json);
+       
+        // step 2: deserialize the data
+        T deserialized = default(T);
+        _serializer.TryDeserialize(data,  ref deserialized).AssertSuccessWithoutWarnings();
+
+        return deserialized;
+    }
 }
 
 #endif

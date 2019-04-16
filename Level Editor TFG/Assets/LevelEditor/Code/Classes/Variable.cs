@@ -1,6 +1,15 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+
+
+[Serializable]
+public class VariableContainer
+{
+    
+    public List<IData> value;
+}
 
 [Serializable]
 public abstract class IData

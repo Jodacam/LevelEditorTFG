@@ -19,3 +19,4 @@ MonoBehaviour:
   name: Nivel
   mapSize: {x: 4, y: 4}
   mapScale: {x: 4, y: 4}
+  jsonData: '{}'

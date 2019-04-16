@@ -38,15 +38,22 @@ namespace Editor
         {
 
             EditorGUI.BeginChangeCheck();
+            try
+            {
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
             levelSerialized.UpdateIfRequiredOrScript();
             EditorGUILayout.PropertyField(levelSerialized.FindProperty(Level.LevelProperties.NAME));
-
-            DoGrid();
-            DoVariables();
-            levelSerialized.ApplyModifiedProperties();
+            
+                DoGrid();
+                DoVariables();
+                levelSerialized.ApplyModifiedProperties();
+               
+            }
+            catch(Exception e)
+            {
+                EditorGUILayout.LabelField("Please Load a Valid Level");
+            }
             GUILayout.EndScrollView();
-
             DoSaveAndLoad();
             DoPicker();
 
@@ -142,7 +149,7 @@ namespace Editor
 
         void Save()
         {
-
+            Editlevel.SaveVars();
             string exist = AssetDatabase.GetAssetPath(Editlevel);
             if (string.IsNullOrEmpty(exist))
             {

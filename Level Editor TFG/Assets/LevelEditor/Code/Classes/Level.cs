@@ -29,6 +29,8 @@ public class Level : ScriptableObject {
     public string name;
     public Vector2Int mapSize;
     public Vector2 mapScale;
+    [SerializeField]
+    private string jsonData;
 
     //Tengo que crear un diccionario para poder guardar los diferentes valores personalizados, Booleans, Strings, Floats e Ints.
     [SerializeField]
@@ -44,6 +46,11 @@ public class Level : ScriptableObject {
     {
         terrainGrid = Instantiate(terrainGameObjec,Vector3.zero,Quaternion.identity).GetComponent<GridTerrain>();
         terrainGrid.ReDoDictionary();
+        if (!string.IsNullOrEmpty(jsonData))
+        {
+            var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
+            stringList = container.value;
+        }
     }
 
     public void ReCreateGrid()
@@ -73,6 +80,12 @@ public class Level : ScriptableObject {
     {
         terrainGrid = Instantiate(terrainGameObjec,position,Quaternion.identity,levelParent).GetComponent<GridTerrain>();
         terrainGrid.ReDoDictionary();
+        if (!string.IsNullOrEmpty(jsonData))
+        {
+            var container =(VariableContainer) GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
+            stringList = container.value;
+        }
+
     }
 
 
@@ -137,5 +150,10 @@ public class Level : ScriptableObject {
             stringList.Insert(index,newFloat);
             break;
         }
+    }
+
+    public void SaveVars()
+    {
+        jsonData = GUIAuxiliar.Serialize(new VariableContainer() { value = stringList });
     }
 }
