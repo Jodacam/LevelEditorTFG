@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b8754878a790f4bbfbf582792cd0f0, type: 3}
+  m_Name: Objeto
+  m_EditorClassIdentifier: 
+  dataBaseName: Objeto
+  prefabList:
+  - prefab: {fileID: 6268169969953576879, guid: c548028ad844adb43b7c58b3a6922176,
+      type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0, y: -0.5, z: 0}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 1, y: 1, z: 1}
+  - prefab: {fileID: 6268169969953576879, guid: c548028ad844adb43b7c58b3a6922176,
+      type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0, y: -0.5, z: 0}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 3, y: 3, z: 3}
+    cellSize: {x: 3, y: 3}
+    sizeBounds: {x: 1, y: 1, z: 1}
+  - prefab: {fileID: 6268169969953576879, guid: c548028ad844adb43b7c58b3a6922176,
+      type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0, y: -0.5, z: 0}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 3, y: 3, z: 3}
+    cellSize: {x: 3, y: 3}
+    sizeBounds: {x: 1, y: 1, z: 1}
+  - prefab: {fileID: 100002, guid: c0a8c3e6dbc797d4ead08dd6f69e8712, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.1, y: 0, z: 0.1}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 5, y: 5, z: 5}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 0.2, y: 0.46, z: 0.2}
+  - prefab: {fileID: 100002, guid: c0a8c3e6dbc797d4ead08dd6f69e8712, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.1, y: 0, z: 0.1}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 10, y: 10, z: 10}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 0.2, y: 0.46, z: 0.2}
+  - prefab: {fileID: 100002, guid: e9372d3b767a8924d806d5ac118827bd, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.47799996, y: 0, z: 0.5625}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1.7777778, y: 1.7777778, z: 1.7777778}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 0.94999987, y: 0.375, z: 1.125}
+  - prefab: {fileID: 100002, guid: a7033c3fda25b04408610d4489033996, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.6704999, y: 0, z: 0.5625}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.8888889, y: 0.8888889, z: 0.8888889}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 0.5649999, y: 0.375, z: 1.125}
+  - prefab: {fileID: 1037655780390000, guid: 794931ad8054d8f4485bc161f83a2a14, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.000000059604645, y: 0, z: 0.0000004172325}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.25, y: 0.25, z: 0.25}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 3.9999995, y: 0.25, z: 4}
+  - prefab: {fileID: 100002, guid: 907454fceb5926644ad58437bd9010fb, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.5, y: 0, z: 0.5}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 1, y: 0.05, z: 1}
+  Walls:
+  - prefab: {fileID: 100002, guid: 6a3e21eeec3687442a040ff6217d65d7, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.5, y: 0, z: 0.025}
+    autoPivot: 1
+    autoScale: 0
+    scale: {x: 1, y: 1, z: 1}
+    height: 1.289532
+    transitable: 0

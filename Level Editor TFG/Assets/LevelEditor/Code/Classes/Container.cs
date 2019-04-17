@@ -21,6 +21,9 @@ public abstract class Container
     //En la funcion AutoPivotGUI se puede ver como se puede calcular el pivot del objeto. El pivot, se coloca no en el centro geometrico si no en en el plano XZ.
     public Vector3 pivot;
     public bool autoPivot;
+    public bool autoScale = false;
+    protected Vector3 realScale;
+    public Vector3 scale = Vector3.one;
 
     private bool autosize = true;
 #if UNITY_EDITOR
@@ -60,6 +63,28 @@ public abstract class Container
             {
                 pivot = EditorGUILayout.Vector3Field("Pivot", pivot);
             }
+    }
+
+    protected void AutoScaleGUI(Renderer render, Vector2 DesirableSize)
+    {
+        bool change = EditorGUILayout.Toggle(Style.LABLE_AUTO_SCALE, autoScale);
+        autoScale = change;
+        if (autoScale)
+        {
+            if (render != null)
+            {
+                Bounds b = render.bounds;
+                Vector3 ActualSize = b.size;
+                float xMult = DesirableSize.x / ActualSize.x;
+                float zMult = DesirableSize.y / ActualSize.z;
+                float finalSize = xMult >= zMult ? zMult : xMult;
+                scale = new Vector3(finalSize,finalSize,finalSize);
+            }
+        }
+        else
+        {
+            scale = EditorGUILayout.Vector3Field("Scale Multiplier", scale);
+        }
     }
 #endif
 

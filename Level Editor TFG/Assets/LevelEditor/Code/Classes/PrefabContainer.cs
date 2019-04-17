@@ -72,14 +72,16 @@ public class PrefabContainer : Container
         if (prefab != null)
         {
             Renderer render = prefab.GetComponentInChildren<Renderer>();
+            AutoScaleGUI(render, cellSize);
             autosize = EditorGUILayout.Toggle(Style.LABLE_AUTOSIZE,autosize);
+
             if (autosize)
             {
                 
                 if (render != null)
                 {
                     Bounds b = render.bounds;
-                    sizeBounds = b.size;
+                    sizeBounds = Vector3.Scale(b.size,scale);
                     
 
                 }

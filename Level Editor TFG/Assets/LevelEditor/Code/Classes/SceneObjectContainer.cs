@@ -18,7 +18,7 @@ public class SceneObjectContainer
     //Tamaño del objeto.
     public Vector3 Size {get{return((PrefabContainer)objectInfo).sizeBounds;}}
     // Pivot del objeto
-    public Vector3 Pivot { get { return internalPivot; } }
+    public Vector3 Pivot { get { return Vector3.Scale( internalPivot , objectInfo.scale); } }
 
     //Pivot en coordenadas globales
     public Vector3 WorldPivot{get{return preview.transform.TransformPoint(internalPivot);}}
@@ -33,6 +33,7 @@ public class SceneObjectContainer
     public Vector2Int CellSize{get{return GetAsPrefab().cellSize;}}
     //Número de celdas que tiene que ocupar en total.
     public int CellCountSize { get => CellSize.x * CellSize.y; }
+    public Vector3 Scale { get => objectInfo.scale; }
 
     //
     public void SetObjectInfo(Container prefab)
@@ -43,6 +44,7 @@ public class SceneObjectContainer
 
         objectInfo = prefab;
         preview = GameObject.Instantiate(objectInfo.prefab);
+        preview.transform.localScale = Vector3.Scale(realObject.transform.localScale, objectInfo.scale);
         internalPivot = prefab.pivot;
     }
 

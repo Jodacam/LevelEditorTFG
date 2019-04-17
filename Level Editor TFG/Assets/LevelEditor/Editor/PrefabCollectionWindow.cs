@@ -324,7 +324,7 @@ namespace Editor
         private void AddingObject(Event e,Vector3 off, bool instancing)
         {
             var t = hit.transform.GetComponent<GridTerrain>();
-            Vector3 c = t.GetClampPosition(hit);
+            Vector3 c = t.GetClampPosition(hit,selectObject.CellSize);
 
             selectObject.preview.transform.position = c - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)

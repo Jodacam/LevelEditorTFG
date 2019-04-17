@@ -31,8 +31,9 @@ public static class Style
 
     public static readonly GUIContent LABLE_ENUM_EDIT_MODE = EditorGUIUtility.TrTextContent("Editing Mode", "Mode of editing");
 
-    public static readonly GUIContent LABLE_AUTOSIZE = EditorGUIUtility.TrTextContent("Autosize","If this is marked, the object will have its first render as size of the objet");
+    public static readonly GUIContent LABLE_AUTOSIZE = EditorGUIUtility.TrTextContent("AutoBounds","If this is marked, the object will have its first render as size of the objet");
     public static readonly GUIContent LABLE_AUTOPIVOT = EditorGUIUtility.TrTextContent("Automatic Pivot", "If this is marked, the object will get the pivot in to the center of the mesh");
+    public static readonly GUIContent LABLE_AUTO_SCALE = EditorGUIUtility.TrTextContent("Automatic Scale", "If this is marked, the object will Scale to fit its cellSize");
     public const string BUTTON_TEXT_EDIT_PREFAB = "Save Prefab";
     public const  string PREFAB_FIELD = "Prefab";
 

@@ -178,12 +178,12 @@ public class GridTerrain : MonoBehaviour
     }
 
 
-    public Vector3 GetClampPosition(RaycastHit hit)
+    public Vector3 GetClampPosition(RaycastHit hit,Vector2Int cellSize)
     {
         //TODO
         int triangle = hit.triangleIndex;
 
-        return GetCellPosition(triangle);
+        return cellSize.x*cellSize.y == 1 ? GetCellPosition(triangle):GetCellPosition(triangle,cellSize);
     }
 
     #region Cells
@@ -210,34 +210,38 @@ public class GridTerrain : MonoBehaviour
 
     private void ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition,Cell mainCell, SceneObjectContainer sceneObject,bool instancing = false)
     {
-        var cellToObtain = new Cell[size.x,size.y];
-        //Calculamos las celdad adyacentes.
+        var cellToObtain = new Cell[size.x*size.y];
+        //Calculamos las celdas adyacentes.
         Vector3 position = Vector3.zero;
         for(int i = 0; i< size.x; i++)
         {
             for(int j = 0; j < size.y; j++)
             {
-                cellToObtain[i, j] = GetCell(getIndex(indexPosition.x + i, indexPosition.y + j));
+                cellToObtain[j + i*size.x] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
                 
-                position += transform.TransformPoint(cellToObtain[i, j].position);
+                position += transform.TransformPoint(cellToObtain[j + i * size.x].lastObjectPos);
             }
         }
         position /= sceneObject.CellCountSize;
         position -= sceneObject.Pivot;
+        
         GameObject realObject;
         if (instancing)
         {
             realObject = PrefabUtility.InstantiatePrefab(sceneObject.GetAsPrefab().prefab) as GameObject;
             realObject.transform.parent = transform;
             realObject.transform.SetPositionAndRotation(position, sceneObject.Rotation);
+            realObject.transform.localScale = Vector3.Scale(realObject.transform.localScale, sceneObject.Scale);
         }
         else
         {
             realObject = Instantiate(sceneObject.preview,position, sceneObject.Rotation, transform);
         }
-        
 
+        Array.ForEach(cellToObtain, element =>  element.SetObjectAsInfoOnly(sceneObject, realObject));
     }
+
+    
 
     //Devuelve el indice en matriz dado un indice lineal.
     private Vector2Int Get2DIndex(int index)
@@ -250,6 +254,11 @@ public class GridTerrain : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
+    private Vector2Int Get2DIndexByTriangle(int triangle)
+    {
+        return Get2DIndex(cells.ToList().IndexOf(GetCell(triangle)));
+    }
+
     //Obtiene la posicion de una celda por sus indices
     public Vector3 GetCellPosition(int x, int y)
     {
@@ -260,6 +269,26 @@ public class GridTerrain : MonoBehaviour
     public Vector3 GetCellPosition(int x)
     {
         return transform.TransformPoint(GetCell(x).lastObjectPos);
+    }
+
+    public Vector3 GetCellPosition(int x,Vector2Int size)
+    {
+        
+        Vector2Int indexPosition = Get2DIndexByTriangle(x);
+        var cellToObtain = new Cell[size.x * size.y];
+        //Calculamos las celdas adyacentes.
+        Vector3 position = Vector3.zero;
+        for (int i = 0; i < size.x; i++)
+        {
+            for (int j = 0; j < size.y; j++)
+            {
+                cellToObtain[j + i * size.x] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
+
+                position += transform.TransformPoint(cellToObtain[j + i * size.x].lastObjectPos);
+            }
+        }
+        position /= cellToObtain.Length;
+        return position;
     }
 
     public int GetCellInfo(int x, int y)

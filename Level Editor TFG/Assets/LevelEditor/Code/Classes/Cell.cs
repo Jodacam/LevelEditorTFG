@@ -126,7 +126,7 @@ public class Cell
     {
         get
         {
-            return objectList.Count > 0 ? objectList.Last().realPosition + objectList.Last().pivot : position;
+            return objectList.Count > 0 ? position+ objectList.Last().pivot + new Vector3(0,objectList.Last().yOffset,0) : position;
         }
     }
 
@@ -168,7 +168,7 @@ public class Cell
         {
 
             var last = objectList.Last();
-            newInfo.realPosition = (new Vector3(last.realPosition.x, last.realPosition.y + last.yOffset, last.realPosition.z)) + last.pivot + offset - obj.Pivot;
+            newInfo.realPosition = lastObjectPos + offset - obj.Pivot;
             parent = last.gameObject.transform;
 
         }
@@ -183,6 +183,7 @@ public class Cell
             newInfo.gameObject = PrefabUtility.InstantiatePrefab(obj.GetAsPrefab().prefab) as GameObject;
             newInfo.gameObject.transform.parent = parent;
             newInfo.gameObject.transform.SetPositionAndRotation(newInfo.realPosition, obj.Rotation);
+            newInfo.gameObject.transform.localScale = Vector3.Scale(newInfo.gameObject.transform.localScale, obj.Scale);
         }
         else
             newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.Rotation, parent);
