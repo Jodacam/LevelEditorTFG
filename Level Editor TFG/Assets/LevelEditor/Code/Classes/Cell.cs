@@ -126,7 +126,7 @@ public class Cell
     {
         get
         {
-            return objectList.Count > 0 ? position+ objectList.Last().pivot + new Vector3(0,objectList.Last().yOffset,0) : position;
+            return objectList.Count > 0 ? position + new Vector3(0,objectList.Last().yOffset + objectList.Last().realPosition.y,0) : position;
         }
     }
 

@@ -217,9 +217,10 @@ public class GridTerrain : MonoBehaviour
         {
             for(int j = 0; j < size.y; j++)
             {
-                cellToObtain[j + i*size.x] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
-                
-                position += transform.TransformPoint(cellToObtain[j + i * size.x].lastObjectPos);
+                int index = i + j * size.x;
+                cellToObtain[index] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
+
+                position += transform.TransformPoint(cellToObtain[index].lastObjectPos);
             }
         }
         position /= sceneObject.CellCountSize;
@@ -282,9 +283,10 @@ public class GridTerrain : MonoBehaviour
         {
             for (int j = 0; j < size.y; j++)
             {
-                cellToObtain[j + i * size.x] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
+                int index = i + j * size.x;
+                cellToObtain[index] = cells[getIndex(indexPosition.x + i, indexPosition.y + j)];
 
-                position += transform.TransformPoint(cellToObtain[j + i * size.x].lastObjectPos);
+                position += transform.TransformPoint(cellToObtain[index].lastObjectPos);
             }
         }
         position /= cellToObtain.Length;
