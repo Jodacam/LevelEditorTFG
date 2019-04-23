@@ -84,7 +84,15 @@ namespace Editor
 
             if (Editlevel == null)
             {
+                var actualTerrain = FindObjectOfType<GridTerrain>();
+                if(actualTerrain != null)
+                {
+                    Editlevel = actualTerrain.owner;
+                }else
+                
+                {
                 NewMap();
+                }
             }
             levelSerialized = new SerializedObject(Editlevel);
         }

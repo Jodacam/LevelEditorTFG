@@ -17,7 +17,7 @@ public class GridTerrain : MonoBehaviour
 
 
     #region  Variables
-    private Level owner;
+    public Level owner;
     public int xSize, ySize;
     public float xScale, yScale;
     private MeshFilter mesh;
