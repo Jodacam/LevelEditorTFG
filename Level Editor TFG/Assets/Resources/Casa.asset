@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Casa
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
-  terrainGameObjec: {fileID: 1608465490, guid: 610a92eb9e4003f4b9446211104ad241, type: 3}
+  terrainGameObjec: {fileID: 4809768655226880495, guid: 610a92eb9e4003f4b9446211104ad241,
+    type: 3}
   terrainMesh: {fileID: 4300000, guid: 17a18aefefd34f245b3761927af5c013, type: 2}
   name: Casa
   mapSize: {x: 5, y: 5}
   mapScale: {x: 1, y: 1}
+  jsonData: '{"value":[]}'

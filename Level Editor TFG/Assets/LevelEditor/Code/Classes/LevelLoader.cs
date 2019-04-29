@@ -9,6 +9,7 @@
         {
 
           Level l = (Level) Resources.Load(name,typeof(Level));
+          l.LoadVariable();
           return l;
 
         }

@@ -25,7 +25,7 @@ public abstract class IData
         varName = name;
     }
 #if UNITY_EDITOR
-    public abstract void ShowGUI();
+    public abstract void ShowGUI(Rect r);
 #endif
 }
 
@@ -43,9 +43,9 @@ public class VariableString : IData
     }
 
 #if UNITY_EDITOR
-    public override void ShowGUI()
+    public override void ShowGUI(Rect r)
     {
-        value = EditorGUILayout.TextField("Value",value);
+        value = EditorGUI.TextField(r,"Value",value);
     }
     #endif
 }
@@ -63,9 +63,9 @@ public class VariableInt : IData
     }
 
 #if UNITY_EDITOR
-    public override void ShowGUI()
+    public override void ShowGUI(Rect r)
     {
-        value = EditorGUILayout.IntField("Value",value);
+        value = EditorGUI.IntField(r,"Value",value);
     }
     #endif
 }
@@ -82,9 +82,9 @@ public class VariableBool : IData
     }
 
 #if UNITY_EDITOR
-    public override void ShowGUI()
+    public override void ShowGUI(Rect r)
     {
-        value = EditorGUILayout.Toggle("Value",value);
+        value = EditorGUI.Toggle(r,"Value",value);
     }
     #endif
 }
@@ -101,9 +101,11 @@ public class VariableFloat : IData
     }
 
 #if UNITY_EDITOR
-    public override void ShowGUI()
+    public override void ShowGUI(Rect r)
     {
-        value = EditorGUILayout.FloatField("Value",value);
+        value = EditorGUI.FloatField(r,value);
+        
+        
     }
     #endif
 }

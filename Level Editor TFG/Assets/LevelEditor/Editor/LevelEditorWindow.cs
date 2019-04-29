@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEditorInternal;
+using static Level;
 
 namespace Editor
 {
@@ -27,7 +29,7 @@ namespace Editor
         static bool isPicking;
 
         SerializedObject levelSerialized;
-
+        public ReorderableList list;
 
         #endregion
 
@@ -62,7 +64,9 @@ namespace Editor
         private void DoVariables()
         {
 
-            Editlevel.EditVariable(this);
+            
+            list.DoLayoutList();
+            //Editlevel.EditVariable(this);
 
             if (GUILayout.Button(Style.ICON_ADD))
             {
@@ -88,6 +92,10 @@ namespace Editor
                 if(actualTerrain != null)
                 {
                     Editlevel = actualTerrain.owner;
+                    if(Editlevel.stringList == null)
+                    {
+                        Editlevel.stringList = new List<IData>();
+                    }
                 }else
                 
                 {
@@ -95,6 +103,39 @@ namespace Editor
                 }
             }
             levelSerialized = new SerializedObject(Editlevel);
+            list = new ReorderableList(Editlevel.stringList,typeof(IData));
+            list.drawElementCallback = (Rect rect,int index,bool isActive,bool isFocused)=>{
+               var propRect = new Rect(rect.x,
+                                        rect.y + EditorGUIUtility.standardVerticalSpacing +15,
+                                        rect.width- 2* Style.defaultIndentWidth,
+                                        EditorGUIUtility.singleLineHeight);
+                var headerRect = new Rect(rect.x + Style.defaultIndentWidth,
+                                            rect.y + EditorGUIUtility.standardVerticalSpacing ,
+                                            rect.width - Style.defaultIndentWidth,
+                                            EditorGUIUtility.singleLineHeight);
+
+               var l = Editlevel.stringList[index];
+               l.varName = EditorGUI.TextField(headerRect,l.varName);
+        
+               EditorGUI.indentLevel--;
+               
+                var e = (VariableTypes)EditorGUI.EnumPopup(propRect,"Type", l.type);
+                if (e != l.type)
+                {
+
+                Editlevel.ChangeVariableType(l, e);
+
+                }
+                propRect.y += 15;
+                l.ShowGUI(propRect);
+               
+               EditorGUI.indentLevel++;
+            };
+
+            list.elementHeightCallback= (index) =>{
+                return 60;
+            };
+
         }
 
         #endregion
@@ -206,6 +247,7 @@ namespace Editor
                 {
                     DestroyImmediate(Editlevel.terrainGrid.gameObject);
                     Editlevel = pickedObject;
+                    
                     levelSerialized = new SerializedObject(Editlevel);
                     LoadGrid();
                     isPicking = false;

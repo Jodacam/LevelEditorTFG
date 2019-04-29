@@ -18,6 +18,8 @@ public class GridTerrain : MonoBehaviour
 
     #region  Variables
     public Level owner;
+
+    
     public int xSize, ySize;
     public float xScale, yScale;
     private MeshFilter mesh;
@@ -211,6 +213,13 @@ public class GridTerrain : MonoBehaviour
     private void ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition,Cell mainCell, SceneObjectContainer sceneObject,bool instancing = false)
     {
         var cellToObtain = new Cell[size.x*size.y];
+        if(indexPosition.x + size.x >= xSize){
+            indexPosition.x = xSize-size.x;
+        }
+
+        if(indexPosition.y + size.y >= ySize){
+            indexPosition.y = xSize-size.y;
+        }
         //Calculamos las celdas adyacentes.
         Vector3 position = Vector3.zero;
         for(int i = 0; i< size.x; i++)
@@ -276,6 +285,13 @@ public class GridTerrain : MonoBehaviour
     {
         
         Vector2Int indexPosition = Get2DIndexByTriangle(x);
+        if(indexPosition.x + size.x >= xSize){
+            indexPosition.x = xSize-size.x;
+        }
+
+        if(indexPosition.y + size.y >= ySize){
+            indexPosition.y = xSize-size.y;
+        }
         var cellToObtain = new Cell[size.x * size.y];
         //Calculamos las celdas adyacentes.
         Vector3 position = Vector3.zero;

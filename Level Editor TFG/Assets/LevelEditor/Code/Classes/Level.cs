@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 [CreateAssetMenu(fileName = "Level", menuName = "Level Editor/Level", order = 0)]
-public class Level : ScriptableObject {
+public class Level : ScriptableObject
+{
     //Clase para guardar todos los string necesarios para la serialización del nivel. Suele ser mucho más sencillo si tengo que cambiar una variable.
-    public static class LevelProperties{
+    public static class LevelProperties
+    {
         public const string NAME = "name";
-        
+
     }
-    
+
     public enum VariableTypes
     {
         String,
@@ -35,40 +38,37 @@ public class Level : ScriptableObject {
     //Tengo que crear un diccionario para poder guardar los diferentes valores personalizados, Booleans, Strings, Floats e Ints.
     [SerializeField]
     public List<IData> stringList;
+    
 
     public float xcellSize { get { return mapScale.x; } set { mapScale.x = value; } }
     public float ycellSize { get { return mapScale.y; } set { mapScale.y = value; } }
 
-    public int xSize {get { return mapSize.x; } set { mapSize.x = value; } }
-    public int ySize {get { return mapSize.y; } set { mapSize.y = value; }}
+    public int xSize { get { return mapSize.x; } set { mapSize.x = value; } }
+    public int ySize { get { return mapSize.y; } set { mapSize.y = value; } }
 
     public void LoadGrid()
     {
-        terrainGrid = Instantiate(terrainGameObjec,Vector3.zero,Quaternion.identity).GetComponent<GridTerrain>();
+        terrainGrid = Instantiate(terrainGameObjec, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
         terrainGrid.ReDoDictionary();
-        if (!string.IsNullOrEmpty(jsonData))
-        {
-            var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
-            stringList = container.value;
-        }
+        LoadVariable();
     }
 
     public void ReCreateGrid()
     {
-       terrainMesh = terrainGrid.ChangeSize(xcellSize,ycellSize,mapSize);
+        terrainMesh = terrainGrid.ChangeSize(xcellSize, ycellSize, mapSize);
     }
 
     public void CreateGrid()
     {
-            GameObject plane = new GameObject("BaseTerrain", typeof(GridTerrain));
-            plane.AddComponent<MeshFilter>();
-            MeshRenderer e = plane.AddComponent<MeshRenderer>();
-            plane.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);      
-            //plane.GetComponent<GridTerrain>().CreateGrid(xcellSize, ycellSize, mapSize);
-            terrainGrid = plane.GetComponent<GridTerrain>();
-            terrainMesh = terrainGrid.Init(xcellSize,ycellSize,mapSize,this);
-            
-            
+        GameObject plane = new GameObject("BaseTerrain", typeof(GridTerrain));
+        plane.AddComponent<MeshFilter>();
+        MeshRenderer e = plane.AddComponent<MeshRenderer>();
+        plane.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        //plane.GetComponent<GridTerrain>().CreateGrid(xcellSize, ycellSize, mapSize);
+        terrainGrid = plane.GetComponent<GridTerrain>();
+        terrainMesh = terrainGrid.Init(xcellSize, ycellSize, mapSize, this);
+
+
     }
 
     public void AddVariable(IData e)
@@ -78,13 +78,9 @@ public class Level : ScriptableObject {
 
     public void InitLevel(Vector3 position, Transform levelParent)
     {
-        terrainGrid = Instantiate(terrainGameObjec,position,Quaternion.identity,levelParent).GetComponent<GridTerrain>();
+        terrainGrid = Instantiate(terrainGameObjec, position, Quaternion.identity, levelParent).GetComponent<GridTerrain>();
         terrainGrid.ReDoDictionary();
-        if (!string.IsNullOrEmpty(jsonData))
-        {
-            var container =(VariableContainer) GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
-            stringList = container.value;
-        }
+
 
     }
 
@@ -94,66 +90,110 @@ public class Level : ScriptableObject {
     {
 
         GUILayout.Label("Variables");
-        foreach(var v in stringList)
+       
+        foreach (var v in stringList)
         {
-            GUIStyle s = new GUIStyle( GUI.skin.label);
+            GUIStyle s = new GUIStyle(GUI.skin.label);
             s.alignment = TextAnchor.MiddleCenter;
             s.fontStyle = FontStyle.Bold;
 
-            EditorGUILayout.LabelField(v.varName,s);
+            EditorGUILayout.LabelField(v.varName, s);
             v.varName = EditorGUILayout.TextField("Name", v.varName);
-            var e = (VariableTypes) EditorGUILayout.EnumPopup("Type",v.type);
-            if(e != v.type)
+            var e = (VariableTypes)EditorGUILayout.EnumPopup("Type", v.type);
+            if (e != v.type)
             {
-                
-                ChangeVariableType(v,e);
-                
+
+                ChangeVariableType(v, e);
+
             }
             else
             {
 
 
-                v.ShowGUI();
-              
-               
+                v.ShowGUI(EditorGUILayout.GetControlRect(true));
+
+
             }
         }
     }
 
 
 
-    private void ChangeVariableType(IData v, VariableTypes e)
-    {   
+    public void ChangeVariableType(IData v, VariableTypes e)
+    {
         int index = stringList.IndexOf(v);
         stringList.RemoveAt(index);
-        switch(e)
+        switch (e)
 
         {
-            case VariableTypes.String: 
-            var newString = new VariableString(); 
-            newString.Init(v.varName);
-            stringList.Insert(index,newString);
-            break;
+            case VariableTypes.String:
+                var newString = new VariableString();
+                newString.Init(v.varName);
+                stringList.Insert(index, newString);
+                break;
             case VariableTypes.Boolean:
-            var newBool = new VariableBool();
-            newBool.Init(v.varName);  
-            stringList.Insert(index,newBool);
-            break;
+                var newBool = new VariableBool();
+                newBool.Init(v.varName);
+                stringList.Insert(index, newBool);
+                break;
             case VariableTypes.Int:
-             var newInt = new VariableInt();
-            newInt.Init( v.varName);   
-            stringList.Insert(index,newInt);
-            break;
+                var newInt = new VariableInt();
+                newInt.Init(v.varName);
+                stringList.Insert(index, newInt);
+                break;
             case VariableTypes.Float:
-            var newFloat =new VariableFloat();
-            newFloat.Init( v.varName);   
-            stringList.Insert(index,newFloat);
-            break;
+                var newFloat = new VariableFloat();
+                newFloat.Init(v.varName);
+                stringList.Insert(index, newFloat);
+                break;
         }
     }
 
     public void SaveVars()
     {
         jsonData = GUIAuxiliar.Serialize(new VariableContainer() { value = stringList });
+    }
+
+    internal void LoadVariable()
+    {
+        if (!string.IsNullOrEmpty(jsonData))
+        {
+            var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
+            stringList = container.value;
+        }
+        else
+        {
+            stringList = new List<IData>();
+        }
+    }
+
+    //Funciones que devuelven el valor guardado en el nivel.
+    // Si el valor no existe se avisará mediante consola y devolvera un valor predeterminado. 
+    //Tambien puedo hacer que saquen una excepcion si el valor no existe, como en unity.
+    public string GetString(string name)
+    {
+        VariableString e = (VariableString)getData(name, VariableTypes.String);
+        return e != null ? e.value : null;
+    }
+
+    public bool GetBool(string name)
+    {
+        VariableBool e = (VariableBool)getData(name, VariableTypes.String);
+        return e != null ? e.value : false;
+    }
+    public int GetInt(string name)
+    {
+        VariableInt e = (VariableInt)getData(name, VariableTypes.String);
+        return e != null ? e.value : int.MinValue;
+    }
+    public float GetFloat(string name)
+    {
+        VariableFloat e = (VariableFloat)getData(name, VariableTypes.String);
+        return e != null ? e.value : float.MinValue;
+    }
+
+    private IData getData(string name, VariableTypes type)
+    {
+        return stringList.Find((value) => value.varName == name && value.type == type);
     }
 }

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
-  m_Name: New Level
+  m_Name: Nivel3
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
-  terrainGameObjec: {fileID: 5452186152300497141, guid: 3b24c0c369af1e54cbdbd15d39033fa2,
+  terrainGameObjec: {fileID: 2112849375623632662, guid: 648d1446c1df5ad4e9b0e439c6032601,
     type: 3}
-  terrainMesh: {fileID: 4300000, guid: f77ba38d455acaf49a346ca110390a1b, type: 2}
-  name: New Level
+  terrainMesh: {fileID: 4300000, guid: 10848e3c5cba10f46a33c11f5b6b3c80, type: 2}
+  name: Nivel3
   mapSize: {x: 10, y: 10}
   mapScale: {x: 1, y: 1}
-  jsonData: '{"value":[{"value":null,"type":"String","varName":"newName","$type":"VariableString"}]}'
+  jsonData: '{"value":[{"value":98748754,"type":"Int","varName":"Tiempo","$type":"VariableInt"},{"value":true,"type":"Boolean","varName":"IsOnfire","$type":"VariableBool"},{"value":null,"type":"String","varName":"newName","$type":"VariableString"}]}'
