@@ -36,7 +36,7 @@ namespace Editor
             Remove,
             Edit
         }
-
+        bool active;
 
         private class PrefabCollectionCreatorWindow : EditorWindow
         {
@@ -96,9 +96,16 @@ namespace Editor
             // Remove delegate listener if it has previously
             // been assigned.
             SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+            
+
+            
 
             // Add (or re-add) the delegate.
             SceneView.onSceneGUIDelegate += this.OnSceneGUI;
+            
+
+
+
 
         }
 
@@ -110,7 +117,13 @@ namespace Editor
             // When the window is destroyed, remove the delegate
             // so that it will no longer do any drawing.
             SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+            
+
+
         }
+
+
+
         #endregion
         void OnSceneGUI(SceneView sceneView)
         {
@@ -139,6 +152,8 @@ namespace Editor
             DoCommands();
             Handles.EndGUI();
         }
+      
+
         #region GUIFunctions
         private void OnSelect()
         {
@@ -161,7 +176,16 @@ namespace Editor
         {
             EditorGUI.BeginChangeCheck();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
-            actualMode = (Mode)EditorGUILayout.EnumPopup(Style.LABLE_ENUM_EDIT_MODE, actualMode);
+
+
+            EditorGUILayout.LabelField(Style.LABLE_ENUM_EDIT_MODE,Style.boldCenterText);
+            EditorGUILayout.BeginHorizontal();
+            DoModeButton(Mode.Add, Style.GUI_ICON_ADD_MODE);
+            DoModeButton(Mode.AddInstancing, Style.GUI_ICON_ADD_INSTANCING_MODE);
+            DoModeButton(Mode.Edit, Style.GUI_ICON_EDIT_MODE);
+            DoModeButton(Mode.Remove, Style.GUI_ICON_REMOVE_MODE);
+            DoModeButton(Mode.None, Style.GUI_ICON_NONE_MODE);
+            EditorGUILayout.EndHorizontal();
             DoOptions();
             DoPrefabSelector();
             GUILayout.EndScrollView();
@@ -169,6 +193,17 @@ namespace Editor
             DoCommands();
         }
 
+        //Make a toggle button to change the mode of the editor.
+        public void DoModeButton(Mode toMode, Texture icon)
+        {   
+            actualMode = GUI.Toggle(EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton), toMode == actualMode, icon, EditorStyles.miniButton) ? toMode:actualMode;
+        }
+
+
+        public void DoModeButton(Mode toMode, GUIContent icon)
+        {
+            actualMode = GUI.Toggle(EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton), toMode == actualMode, icon, EditorStyles.miniButton) ? toMode : actualMode;
+        }
         private void DoCommands()
         {
             Event e = Event.current;
@@ -329,6 +364,8 @@ namespace Editor
             selectObject.preview.transform.position = c - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
+                Undo.RegisterFullObjectHierarchyUndo(t,"AddObject");
+                
                 t.SetObjetIntoCell(selectObject, hit.triangleIndex, off,instancing);
             }
 

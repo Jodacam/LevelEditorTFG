@@ -67,12 +67,6 @@ namespace Editor
             
             list.DoLayoutList();
             //Editlevel.EditVariable(this);
-
-            if (GUILayout.Button(Style.ICON_ADD))
-            {
-                AddNewVariable();
-            }
-
         }
 
         private void AddNewVariable()
@@ -96,6 +90,7 @@ namespace Editor
                     {
                         Editlevel.stringList = new List<IData>();
                     }
+                    CreateReorderableList();
                 }else
                 
                 {
@@ -103,41 +98,55 @@ namespace Editor
                 }
             }
             levelSerialized = new SerializedObject(Editlevel);
-            list = new ReorderableList(Editlevel.stringList,typeof(IData));
-            list.drawElementCallback = (Rect rect,int index,bool isActive,bool isFocused)=>{
-               var propRect = new Rect(rect.x,
-                                        rect.y + EditorGUIUtility.standardVerticalSpacing +15,
-                                        rect.width- 2* Style.defaultIndentWidth,
-                                        EditorGUIUtility.singleLineHeight);
-                var headerRect = new Rect(rect.x + Style.defaultIndentWidth,
-                                            rect.y + EditorGUIUtility.standardVerticalSpacing ,
-                                            rect.width - Style.defaultIndentWidth,
-                                            EditorGUIUtility.singleLineHeight);
-
-               var l = Editlevel.stringList[index];
-               l.varName = EditorGUI.TextField(headerRect,l.varName);
-        
-               EditorGUI.indentLevel--;
-               
-                var e = (VariableTypes)EditorGUI.EnumPopup(propRect,"Type", l.type);
-                if (e != l.type)
-                {
-
-                Editlevel.ChangeVariableType(l, e);
-
-                }
-                propRect.y += 15;
-                l.ShowGUI(propRect);
-               
-               EditorGUI.indentLevel++;
-            };
-
-            list.elementHeightCallback= (index) =>{
-                return 60;
-            };
+            
 
         }
 
+
+        private void CreateReorderableList()
+        {
+            list = new ReorderableList(Editlevel.stringList, typeof(IData));
+
+
+            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+                var propRect = new Rect(rect.x,
+                                         rect.y + EditorGUIUtility.standardVerticalSpacing + 15,
+                                         rect.width - 2 * Style.defaultIndentWidth,
+                                         EditorGUIUtility.singleLineHeight);
+                var headerRect = new Rect(rect.x + Style.defaultIndentWidth,
+                                            rect.y + EditorGUIUtility.standardVerticalSpacing,
+                                            rect.width - Style.defaultIndentWidth,
+                                            EditorGUIUtility.singleLineHeight);
+
+                var variable = Editlevel.stringList[index];
+                variable.varName = EditorGUI.TextField(headerRect, variable.varName);
+
+                EditorGUI.indentLevel--;
+
+                var e = (VariableTypes)EditorGUI.EnumPopup(propRect, "Type", variable.type);
+                if (e != variable.type)
+                {
+
+                    Editlevel.ChangeVariableType(variable, e);
+
+                }
+                propRect.y += 15;
+                variable.ShowGUI(propRect);
+
+                EditorGUI.indentLevel++;
+            };
+
+            list.elementHeightCallback = (index) => {
+                return 60;
+            };
+
+            list.onAddCallback += (list) =>
+            {
+                AddNewVariable();
+            };
+
+            list.drawHeaderCallback = (Rect) => GUI.Label(Rect, "Variables");
+        }
         #endregion
 
         private void DoGrid()
@@ -236,6 +245,7 @@ namespace Editor
             Editlevel.xcellSize = 1;
             Editlevel.ycellSize = 1;
             Editlevel.stringList = new List<IData>();
+            CreateReorderableList();
             CreateGrid();
         }
         private void OnPick()
@@ -245,11 +255,15 @@ namespace Editor
                 Level pickedObject = (Level)EditorGUIUtility.GetObjectPickerObject();
                 if (pickedObject != null)
                 {
-                    DestroyImmediate(Editlevel.terrainGrid.gameObject);
+                    if (Editlevel.terrainGrid != null)
+                    {
+                        DestroyImmediate(Editlevel.terrainGrid.gameObject);
+                    }
                     Editlevel = pickedObject;
                     
                     levelSerialized = new SerializedObject(Editlevel);
                     LoadGrid();
+                    CreateReorderableList();
                     isPicking = false;
                     Repaint();
                 }

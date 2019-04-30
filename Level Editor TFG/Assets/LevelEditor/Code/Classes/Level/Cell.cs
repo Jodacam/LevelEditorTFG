@@ -178,15 +178,8 @@ public class Cell
         }
         newInfo.yOffset = obj.Size.y;
         newInfo.pivot = obj.Pivot;
-        if (instancing)
-        {
-            newInfo.gameObject = PrefabUtility.InstantiatePrefab(obj.GetAsPrefab().prefab) as GameObject;
-            newInfo.gameObject.transform.parent = parent;
-            newInfo.gameObject.transform.SetPositionAndRotation(newInfo.realPosition, obj.Rotation);
-            newInfo.gameObject.transform.localScale = Vector3.Scale(newInfo.gameObject.transform.localScale, obj.Scale);
-        }
-        else
-            newInfo.gameObject = GameObject.Instantiate(obj.preview, newInfo.realPosition, obj.Rotation, parent);
+
+        newInfo.gameObject = GUIAuxiliar.Instanciate(obj.GetAsPrefab().prefab, parent, newInfo.realPosition, obj.Rotation, obj.Scale, instancing);
         objectList.Add(newInfo);
     }
 

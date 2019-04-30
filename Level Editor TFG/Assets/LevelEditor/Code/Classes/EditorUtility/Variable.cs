@@ -103,7 +103,7 @@ public class VariableFloat : IData
 #if UNITY_EDITOR
     public override void ShowGUI(Rect r)
     {
-        value = EditorGUI.FloatField(r,value);
+        value = EditorGUI.FloatField(r,"Value",value);
         
         
     }

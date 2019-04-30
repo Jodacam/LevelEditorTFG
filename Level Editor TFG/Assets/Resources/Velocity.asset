@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
+  m_Name: Velocity
+  m_EditorClassIdentifier: 
+  terrainGrid: {fileID: 0}
+  terrainGameObjec: {fileID: 2636538051152853843, guid: f1649ba165924ce47a6dd173959974f7,
+    type: 3}
+  terrainMesh: {fileID: 4300000, guid: 20145d50eb7d20d47b867bd51fa521c1, type: 2}
+  name: Velocity
+  mapSize: {x: 10, y: 10}
+  mapScale: {x: 1, y: 1}
+  jsonData: '{"value":[{"value":3.5,"type":"Float","varName":"Velocity","$type":"VariableFloat"},{"value":3,"type":"Int","varName":"Enemies","$type":"VariableInt"}]}'

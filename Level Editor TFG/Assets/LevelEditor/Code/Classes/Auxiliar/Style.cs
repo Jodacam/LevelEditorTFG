@@ -4,8 +4,7 @@ using UnityEngine;
 public static class Style
 {
 
-    //En esta clase guardo todos los objetos de GUI que hacen falta para crear ventanas y estilos.
-    //Además guardo tambien todos los títulos
+    //This class serves to store all the style constants, icons, and labels.
     #region Labels
     
 
@@ -47,6 +46,8 @@ public static class Style
     public static readonly GUILayoutOption maxWCompleteWall = GUILayout.MaxWidth(100);
     public static readonly GUILayoutOption maxHWalls = GUILayout.MaxHeight(25);
 
+    public static readonly GUIStyle boldCenterText = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter };
+
       public static float defaultLineSpace = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             public static float defaultIndentWidth = 12;
     #endregion
@@ -55,11 +56,25 @@ public static class Style
 
     public static readonly Texture2D ICON_RELOAD = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "return.png");
 
-
     public static readonly Texture2D ICON_EDIT = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "gear.png");
+
+    public static readonly Texture2D ICON_ADD_MODE = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "plus.png");
+
+    public static readonly Texture2D ICON_EDIT_MODE             = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "wrench.png");
+    public static readonly Texture2D ICON_REMOVE_MODE           = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "minus.png");
+    public static readonly Texture2D ICON_ADD_INSTANCING_MODE    = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "plus.png");
+    public static readonly Texture2D ICON_NONE_MODE              = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "locked.png");
+
+    public static readonly GUIContent GUI_ICON_ADD_MODE = EditorGUIUtility.TrIconContent(ICON_ADD_MODE, "Add Objects into the scene");
+    public static readonly GUIContent GUI_ICON_EDIT_MODE           = EditorGUIUtility.TrIconContent(ICON_EDIT_MODE , "Edit the Cell of the scene");
+    public static readonly GUIContent GUI_ICON_REMOVE_MODE         = EditorGUIUtility.TrIconContent(ICON_REMOVE_MODE, "Remove the object into the scene");
+    public static readonly GUIContent GUI_ICON_ADD_INSTANCING_MODE = EditorGUIUtility.TrIconContent(ICON_ADD_INSTANCING_MODE, "Add Object into the scene, the object are instances of the prefab");
+    public static readonly GUIContent GUI_ICON_NONE_MODE =           EditorGUIUtility.TrIconContent(ICON_NONE_MODE, "Lock the scene, so it can't be edited");
 
     //TODO
     public static readonly string ICON_ADD = "Añadir";
+
+    
     
     #endregion
 }

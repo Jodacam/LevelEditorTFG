@@ -10,6 +10,7 @@ using FullSerializer;
 //Para facilitarme algunas funciones, como crear botones, o abrir popUps.
 public static class GUIAuxiliar
 {
+    
     private static readonly fsSerializer _serializer = new fsSerializer();
     public const string PATH_LEVEL_EDITOR = "Assets/LevelEditor/";
     public const string PATH_LEVEL_EDITOR_ICON = PATH_LEVEL_EDITOR + "UI/Icons/";
@@ -138,8 +139,34 @@ public static class GUIAuxiliar
             GameObject.Destroy(o);
         }else
         {
-           GameObject.DestroyImmediate(o);
+            Undo.DestroyObjectImmediate(o);
+           
         }
+    }
+
+    //Auxiliar function to create a object.
+    public static GameObject Instanciate(GameObject prefab,Transform transform,Vector3 position,Quaternion rotation,Vector3 scale,bool instancing = false)
+    {
+        
+        GameObject realObject;
+        if (instancing)
+        {
+            realObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            realObject.transform.parent = transform;
+            realObject.transform.SetPositionAndRotation(position, rotation);
+            
+        }
+        else
+        {
+            realObject = GameObject.Instantiate(prefab, position, rotation, transform);
+         
+        }
+        Vector3 realScale = Vector3.Scale(scale, new Vector3(1/transform.lossyScale.x, 1 / transform.lossyScale.y, 1 / transform.lossyScale.z) );
+        realObject.transform.localScale = Vector3.Scale(realObject.transform.localScale, realScale);
+
+
+        Undo.RegisterCreatedObjectUndo(realObject, "CellCreated");
+        return realObject;
     }
     
     public static Vector3 CalculatePivot(this Transform transform){
