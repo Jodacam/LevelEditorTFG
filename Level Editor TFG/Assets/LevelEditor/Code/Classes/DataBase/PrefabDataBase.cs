@@ -9,7 +9,7 @@ using static Container;
 public class PrefabDataBase : ScriptableObject
 {
 #if UNITY_EDITOR
-    //Pop Up para crear el objeto
+    //Pop Up to create the DataBase.
     private class ContainerWindowCreator : EditorWindow 
     {
         Container container;
@@ -71,6 +71,7 @@ public class PrefabDataBase : ScriptableObject
 
 #endif
 
+    //The ScriptableObjects in unity can not use a constructor so a Init Function is needed.
     public void Init()
     {
         prefabList = new List<PrefabContainer>();
@@ -85,17 +86,17 @@ public class PrefabDataBase : ScriptableObject
     //Dado que los Scripts de editor no se pueden referenciar en los scripts que no estan dentro de Editor, al menos no se como, pasaremos como parametro la funcion de recogida del prefab por
     //ShowGUI, asi podremos obtener el prefab cuando se pulse, sin perder la estructura que tenemos,
 #if UNITY_EDITOR
-    public void ShowGUI(EditorWindow window, Action<Container, PrefabAction> getPrefab)
+    public void ShowGUI(Editor.PrefabCollectionWindow window)
     {
         GUILayout.Label(string.Format(Style.LABLE_DATABASE_TITLE, dataBaseName));
 
 
-        DoPrefabs(window, getPrefab);
-        DoWalls(window,getPrefab);
+        DoPrefabs(window);
+        DoWalls(window);
         DoAddButtons(window);
     }
 
-    private void DoWalls(EditorWindow window, Action<Container, PrefabAction> getPrefab)
+    private void DoWalls(Editor.PrefabCollectionWindow window)
     {
         GUILayout.Label("Walls Prefabs");
         EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(window.minSize.x), GUILayout.MinWidth(50));
@@ -105,7 +106,7 @@ public class PrefabDataBase : ScriptableObject
             foreach (var prefab in Walls)
             {
                 number++;
-                prefab.ShowGUI(window, getPrefab);
+                prefab.ShowGUI(window);
                 if (number > 3)
                 {
                     EditorGUILayout.EndHorizontal();
@@ -128,7 +129,7 @@ public class PrefabDataBase : ScriptableObject
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DoPrefabs(EditorWindow window, Action<Container, PrefabAction> getPrefab)
+    private void DoPrefabs(Editor.PrefabCollectionWindow window)
     {
 
 
@@ -139,7 +140,7 @@ public class PrefabDataBase : ScriptableObject
             foreach (var prefab in prefabList)
             {
                 number++;
-                prefab.ShowGUI(window, getPrefab);
+                prefab.ShowGUI(window);
                 if (number > 2)
                 {
                     EditorGUILayout.EndHorizontal();

@@ -35,6 +35,7 @@ public class SceneObjectContainer
     public int CellCountSize { get => CellSize.x * CellSize.y; }
     public Vector3 Scale { get => objectInfo.scale; }
 
+    public GameObject Prefab {get => objectInfo.prefab;}
     //
     public void SetObjectInfo(Container prefab)
     {

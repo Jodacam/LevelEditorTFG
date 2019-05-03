@@ -7,110 +7,8 @@ using System.Linq;
 using UnityEditor;
 
 [Serializable]
-public class Cell
+public partial class Cell
 {
-    [Serializable]
-    public class ObjectInfo
-    {
-        public GameObject gameObject;
-        public float yOffset;
-        public Vector3 pivot;
-        public Vector3 realPosition;
-        public Vector2Int size = Vector2Int.one;
-
-#if UNITY_EDITOR
-        public void ShowGUI(EditorWindow window, Cell owner)
-        {
-             EditorGUILayout.BeginVertical();
-            var preview = AssetPreview.GetAssetPreview(gameObject);
-            if (GUILayout.Button(preview, Style.maxH, Style.maxW))
-            {
-                Selection.activeGameObject = gameObject;
-            }
-            EditorGUILayout.BeginHorizontal(Style.maxWCompleteWall, Style.maxHButton);
-            if (GUILayout.Button(Style.ICON_CLOSE, Style.maxHButton, Style.maxWButton))
-            {
-                owner.Remove(this);
-            }
-            if (GUILayout.Button(Style.ICON_RELOAD, Style.maxHButton, Style.maxWButton))
-            {
-                owner.Remove(this);
-            }
-            if (GUILayout.Button(Style.ICON_EDIT, Style.maxHButton, Style.maxWButton))
-            {
-                owner.Remove(this);
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-        }
-#endif
-    }
-
-
-    //Posición en cordenadas de la malla, dado que el nivel se puede instanciar en un lugar que no sea el 0,0 se tendra que acceder mediante el nivel.
-
-    [Serializable]
-    public class WallInfo
-    {
-        public WallInfo()
-        {
-            height = 0;
-            prefabObject = null;
-            transitable = true;
-
-        }
-        public WallInfo(SceneObjectContainer c, Transform t, Vector3 position,bool instancing)
-        {
-            var wallInfo = c.GetAsWall();
-            height = wallInfo.height;
-            transitable = wallInfo.transitable;
-            this.position = position;
-            //TODO
-            if (instancing)
-            {
-                prefabObject = PrefabUtility.InstantiatePrefab(wallInfo.prefab) as GameObject;
-                prefabObject.transform.parent = t;
-                prefabObject.transform.SetPositionAndRotation(c.Position, c.Rotation);
-            }
-            else
-                prefabObject = GameObject.Instantiate(wallInfo.prefab, c.preview.transform.position, c.preview.transform.rotation, t);
-        }
-        public GameObject prefabObject;
-        public Vector3 position;
-        public float height;
-        public bool transitable;
-
-#if UNITY_EDITOR
-        public void ShowGUI(EditorWindow window, Cell owner, int wallIndex)
-        {
-            EditorGUILayout.BeginVertical(Style.maxWCompleteWall, Style.maxHWalls);
-            if (prefabObject != null)
-            {
-                var preview = AssetPreview.GetAssetPreview(prefabObject);
-                if (GUILayout.Button(preview, Style.maxH, Style.maxWCompleteWall))
-                {
-                    Selection.activeGameObject = prefabObject;
-                }
-                EditorGUILayout.BeginHorizontal(Style.maxWCompleteWall, Style.maxHButton);
-                if (GUILayout.Button(Style.ICON_CLOSE, Style.maxHButton, Style.maxWWalls))
-                {
-                    owner.RemoveWall(wallIndex);
-                }
-                if (GUILayout.Button(Style.ICON_RELOAD, Style.maxHButton, Style.maxWWalls))
-                {
-                    owner.RemoveWall(wallIndex);
-                }
-                if (GUILayout.Button(Style.ICON_EDIT, Style.maxHButton, Style.maxWWalls))
-                {
-                    owner.RemoveWall(wallIndex);
-                }
-                EditorGUILayout.EndHorizontal();
-            }
-            transitable = EditorGUILayout.Toggle("Is Transitable",transitable,Style.maxWCompleteWall);
-            EditorGUILayout.EndVertical();
-        }
-#endif
-    }
 
 
 
@@ -169,7 +67,7 @@ public class Cell
 
             var last = objectList.Last();
             newInfo.realPosition = lastObjectPos + offset - obj.Pivot;
-            parent = last.gameObject.transform;
+            
 
         }
         else
@@ -179,7 +77,7 @@ public class Cell
         newInfo.yOffset = obj.Size.y;
         newInfo.pivot = obj.Pivot;
 
-        newInfo.gameObject = GUIAuxiliar.Instanciate(obj.GetAsPrefab().prefab, parent, newInfo.realPosition, obj.Rotation, obj.Scale, instancing);
+        newInfo.gameObject = GUIAuxiliar.Instanciate(obj.Prefab, parent, newInfo.realPosition, obj.Rotation, obj.Scale, instancing);
         objectList.Add(newInfo);
     }
 
@@ -221,7 +119,7 @@ public class Cell
 
     }
 
-    private void RemoveWall(int index)
+    public void RemoveWall(int index)
     {
         WallInfo preWall = walls[index];
         Remove(preWall);
@@ -239,6 +137,11 @@ public class Cell
         newInfo.pivot = sceneObj.Pivot;
         newInfo.realPosition = realObject.transform.position;
         objectList.Add(newInfo);
+    }
+
+    internal void SetObjectAsInfo(ObjectInfo info)
+    {
+         objectList.Add(info);
     }
 
     internal void AddWall(SceneObjectContainer obj, Transform t, int wallIndex,bool instancing)
@@ -269,7 +172,7 @@ public class Cell
             var window = CellEditWindow.CreateInstance<CellEditWindow>();
             window.title = "Cell Editor";
             window.owner = owner;
-            window.maxSize = new Vector2(500, 250);
+            window.maxSize = new Vector2(400, 250);
             window.minSize = window.maxSize;
             window.ShowUtility();
             return window;
@@ -323,14 +226,14 @@ public class Cell
         private void DoWalls()
         {
             GUILayout.Label("Walls");
-            EditorGUILayout.BeginHorizontal();   
+            
             WallInfo[] infos = owner.walls;
             for (int i = 0; i < 4; i++)
             {
                 var w = infos[i];
                 w.ShowGUI(this, owner, i);
             }
-            EditorGUILayout.EndHorizontal();
+            
         }
 
     }

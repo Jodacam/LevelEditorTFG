@@ -27,7 +27,7 @@ public abstract class Container
 
     private bool autosize = true;
 #if UNITY_EDITOR
-    public abstract void ShowGUI(EditorWindow window, Action<Container, PrefabAction> prefabAction);
+    public abstract void ShowGUI(Editor.PrefabCollectionWindow window);
     public abstract void ShowGUIEdit(EditorWindow window);
     public virtual void Reload(EditorWindow window)
     {

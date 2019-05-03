@@ -48,10 +48,14 @@ public class Level : ScriptableObject
 
     public void LoadGrid()
     {
-        terrainGrid = Instantiate(terrainGameObjec, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
+        if(terrainGrid == null){
+            terrainGrid = Instantiate(terrainGameObjec, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
+        }
         terrainGrid.ReDoDictionary();
         LoadVariable();
     }
+
+    
 
     public void ReCreateGrid()
     {
@@ -156,7 +160,7 @@ public class Level : ScriptableObject
 
     internal void LoadVariable()
     {
-        if (!string.IsNullOrEmpty(jsonData))
+        if (!string.IsNullOrEmpty(jsonData) && stringList == null)
         {
             var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
             stringList = container.value;

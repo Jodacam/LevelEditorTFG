@@ -210,7 +210,7 @@ public class GridTerrain : MonoBehaviour
         }
     }
 
-    private void ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition, Cell mainCell, SceneObjectContainer sceneObject, bool instancing = false)
+    private void  ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition, Cell mainCell, SceneObjectContainer sceneObject, bool instancing = false)
     {
         var cellToObtain = new Cell[size.x * size.y];
         if (indexPosition.x + size.x >= xSize)
@@ -242,7 +242,13 @@ public class GridTerrain : MonoBehaviour
 
 
         GameObject realObject;
-        realObject = GUIAuxiliar.Instanciate(sceneObject.GetAsPrefab().prefab, transform, position, sceneObject.Rotation, sceneObject.Scale, instancing);
+        realObject = GUIAuxiliar.Instanciate(sceneObject.Prefab, transform, position, sceneObject.Rotation, sceneObject.Scale, instancing);
+        var newInfo = new ObjectInfo();
+        newInfo.gameObject = realObject;
+        newInfo.yOffset = sceneObject.Size.y;
+        newInfo.pivot = sceneObject.Pivot;
+        newInfo.realPosition = realObject.transform.position;
+
         Array.ForEach(cellToObtain, element => element.SetObjectAsInfoOnly(sceneObject, realObject));
     }
 

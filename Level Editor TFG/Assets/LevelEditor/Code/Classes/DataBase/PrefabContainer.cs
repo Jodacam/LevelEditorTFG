@@ -31,12 +31,12 @@ public class PrefabContainer : Container
     private GUILayoutOption maxH = GUILayout.MaxHeight(50);
     private GUILayoutOption maxWButton = GUILayout.MaxWidth(100/3);
     private GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
-    public override void ShowGUI(EditorWindow window, Action<Container, PrefabAction> prefabAction)
+    public override void ShowGUI(Editor.PrefabCollectionWindow window)
     {
         EditorGUILayout.BeginVertical();
         if (GUILayout.Button(preview, maxW, maxH))
         {
-            prefabAction.Invoke(this, PrefabAction.Select);
+           window.SelectPrefab(this);
         }
 
         EditorGUILayout.BeginHorizontal(maxW,maxHButton);
@@ -44,20 +44,20 @@ public class PrefabContainer : Container
         
          if (GUILayout.Button(Style.ICON_EDIT, style, maxWButton, maxHButton))
         {
-            prefabAction.Invoke(this, PrefabAction.Edit);
+           window.Edit(this);
         }
 
       
         if (GUILayout.Button(Style.ICON_RELOAD, style, maxWButton, maxHButton))
         {
-            prefabAction.Invoke(this, PrefabAction.Reload);
+            window.Reload(this);
         }
 
        
 
         if (GUILayout.Button(Style.ICON_CLOSE,style, maxWButton, maxHButton))
         {
-            prefabAction.Invoke(this, PrefabAction.Delete);
+            window.DeletePrefab(this);
         }
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();

@@ -16,12 +16,12 @@ MonoBehaviour:
   prefabList:
   - prefab: {fileID: 1037655780390000, guid: 794931ad8054d8f4485bc161f83a2a14, type: 3}
     preview: {fileID: 0}
-    pivot: {x: 0, y: 0, z: 0}
-    autoPivot: 0
-    autoScale: 0
-    scale: {x: 1, y: 1, z: 1}
+    pivot: {x: 0.000000059604645, y: 0, z: 0.0000004172325}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.25, y: 0.25, z: 0.25}
     cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 1.9999998, y: 0.125, z: 2}
+    sizeBounds: {x: 0.9999999, y: 0.0625, z: 1}
   - prefab: {fileID: 1056816346895226, guid: fce1307539b865c4d942dfa642eab7ec, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: 0, z: 0}
@@ -57,10 +57,10 @@ MonoBehaviour:
   - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: 0, z: 0}
-    autoPivot: 0
-    autoScale: 0
-    scale: {x: 1, y: 1, z: 1}
-    cellSize: {x: 1, y: 1}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.5, y: 0.5, z: 0.5}
+    cellSize: {x: 2, y: 2}
     sizeBounds: {x: 2, y: 1.772338, z: 2}
   - prefab: {fileID: 1958872332763838, guid: 47168710cae13564398951978cf51b02, type: 3}
     preview: {fileID: 0}
