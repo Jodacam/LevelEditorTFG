@@ -139,7 +139,7 @@ public partial class Cell
         objectList.Add(newInfo);
     }
 
-    internal void SetObjectAsInfo(ObjectInfo info)
+    internal void SetObjectAsInfoOnly(ObjectInfo info)
     {
          objectList.Add(info);
     }

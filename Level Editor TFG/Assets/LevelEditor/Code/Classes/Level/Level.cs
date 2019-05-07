@@ -59,7 +59,9 @@ public class Level : ScriptableObject
 
     public void ReCreateGrid()
     {
+        
         terrainMesh = terrainGrid.ChangeSize(xcellSize, ycellSize, mapSize);
+        
     }
 
     public void CreateGrid()
@@ -160,7 +162,7 @@ public class Level : ScriptableObject
 
     internal void LoadVariable()
     {
-        if (!string.IsNullOrEmpty(jsonData) && stringList == null)
+        if (!string.IsNullOrEmpty(jsonData))
         {
             var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
             stringList = container.value;

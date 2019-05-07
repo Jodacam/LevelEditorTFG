@@ -46,6 +46,10 @@ public static class Style
     public static readonly GUILayoutOption maxWCompleteWall = GUILayout.MaxWidth(100);
     public static readonly GUILayoutOption maxHWalls = GUILayout.MaxHeight(25);
 
+    public static readonly GUILayoutOption minWButton = GUILayout.MinWidth(100/3);
+
+    public static readonly GUILayoutOption minHButton = GUILayout.MinWidth(25);
+
     public static readonly GUIStyle boldCenterText = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter };
 
       public static float defaultLineSpace = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;

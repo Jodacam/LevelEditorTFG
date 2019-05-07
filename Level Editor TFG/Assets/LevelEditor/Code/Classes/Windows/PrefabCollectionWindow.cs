@@ -182,13 +182,18 @@ namespace Editor
 
 
             EditorGUILayout.LabelField(Style.LABLE_ENUM_EDIT_MODE,Style.boldCenterText);
+            
+            
             EditorGUILayout.BeginHorizontal();
+            
             DoModeButton(Mode.Add, Style.GUI_ICON_ADD_MODE);
             DoModeButton(Mode.AddInstancing, Style.GUI_ICON_ADD_INSTANCING_MODE);
             DoModeButton(Mode.Edit, Style.GUI_ICON_EDIT_MODE);
             DoModeButton(Mode.Remove, Style.GUI_ICON_REMOVE_MODE);
             DoModeButton(Mode.None, Style.GUI_ICON_NONE_MODE);
+            
             EditorGUILayout.EndHorizontal();
+            
             DoOptions();
             DoPrefabSelector();
             GUILayout.EndScrollView();
@@ -199,13 +204,16 @@ namespace Editor
         //Make a toggle button to change the mode of the editor.
         public void DoModeButton(Mode toMode, Texture icon)
         {   
-            actualMode = GUI.Toggle(EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton), toMode == actualMode, icon, EditorStyles.miniButton) ? toMode:actualMode;
+            var rect = EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton);
+            actualMode = GUI.Toggle(rect, toMode == actualMode, icon, EditorStyles.miniButton) ? toMode:actualMode;
         }
 
 
         public void DoModeButton(Mode toMode, GUIContent icon)
         {
-            actualMode = GUI.Toggle(EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton), toMode == actualMode, icon, EditorStyles.miniButton) ? toMode : actualMode;
+            var rect = EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton,Style.minHButton);
+            rect.x += (position.width -(5*100/3))/2.4f;
+            actualMode = GUI.Toggle(rect, toMode == actualMode, icon, EditorStyles.miniButton) ? toMode : actualMode;
         }
         private void DoCommands()
         {
@@ -425,6 +433,8 @@ namespace Editor
 
         public void SelectPrefab(PrefabContainer container)
         {
+            if(selectObject == null)
+                selectObject = new SceneObjectContainer();
             selectObject.SetObjectInfo(container);
             usingWalls = false;
             wallPos = 0;

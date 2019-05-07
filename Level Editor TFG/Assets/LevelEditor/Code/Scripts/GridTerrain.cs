@@ -41,8 +41,8 @@ public class GridTerrain : MonoBehaviour
         yScale = yS;
         Mesh m = new Mesh();
         m.name = "Procedular";
-        m.vertices = CreateVertex();
-        m.triangles = CreateTris(m);
+        m.SetVertices(CreateVertex().ToList());
+        m.SetTriangles(CreateTris(m), 0, true);
         m.RecalculateNormals();
         gameObject.layer = LayerMask.NameToLayer("Grid");
         mesh = GetComponent<MeshFilter>();
@@ -62,6 +62,11 @@ public class GridTerrain : MonoBehaviour
         ySize = size.y;
         xScale = xS;
         yScale = yS;
+        if (mesh == null)
+        {
+            mesh = GetComponent<MeshFilter>();
+            collider = GetComponent<MeshCollider>();
+        }
         Mesh m = new Mesh();
         m.name = "Procedular";
         m.SetVertices(CreateVertex().ToList());
@@ -96,6 +101,7 @@ public class GridTerrain : MonoBehaviour
         }
 
         cells = newArray;
+
     }
 
     private Vector3[] CreateVertex()
@@ -205,12 +211,16 @@ public class GridTerrain : MonoBehaviour
                 //obtenemos el indice del objeto.
                 int index = cells.ToList().IndexOf(c);
                 Vector2Int indexPosition = Get2DIndex(index);
-                ObtainAndSetCenterPosition(selectObject.CellSize, indexPosition, c, selectObject);
+                AddObjectToCell(selectObject.CellSize, indexPosition, c, selectObject);
             }
         }
     }
 
-    private void  ObtainAndSetCenterPosition(Vector2Int size, Vector2Int indexPosition, Cell mainCell, SceneObjectContainer sceneObject, bool instancing = false)
+    /**
+    Add a Prefab Object into the cells. Takes the size of the object in cells an puts into the middle.
+    
+     */
+    private void AddObjectToCell(Vector2Int size, Vector2Int indexPosition, Cell mainCell, SceneObjectContainer sceneObject, bool instancing = false)
     {
         var cellToObtain = new Cell[size.x * size.y];
         if (indexPosition.x + size.x >= xSize)
@@ -236,20 +246,11 @@ public class GridTerrain : MonoBehaviour
         }
         position /= sceneObject.CellCountSize;
         position -= sceneObject.Pivot;
-
-
-
-
-
         GameObject realObject;
-        realObject = GUIAuxiliar.Instanciate(sceneObject.Prefab, transform, position, sceneObject.Rotation, sceneObject.Scale, instancing);
-        var newInfo = new ObjectInfo();
-        newInfo.gameObject = realObject;
-        newInfo.yOffset = sceneObject.Size.y;
-        newInfo.pivot = sceneObject.Pivot;
-        newInfo.realPosition = realObject.transform.position;
 
-        Array.ForEach(cellToObtain, element => element.SetObjectAsInfoOnly(sceneObject, realObject));
+        realObject = GUIAuxiliar.Instanciate(sceneObject.Prefab, transform, position, sceneObject.Rotation, sceneObject.Scale, instancing);
+        var newInfo = new ObjectInfo(cellToObtain, realObject, realObject.transform.position, sceneObject.Pivot, sceneObject.Size.y, size);
+        Array.ForEach(cellToObtain, element => element.SetObjectAsInfoOnly(newInfo));
     }
 
 

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: New Level
   m_EditorClassIdentifier: 
   terrainGrid: {fileID: 0}
-  terrainGameObjec: {fileID: 5452186152300497141, guid: 3b24c0c369af1e54cbdbd15d39033fa2,
+  terrainGameObjec: {fileID: 6994887979095801470, guid: 3b24c0c369af1e54cbdbd15d39033fa2,
     type: 3}
   terrainMesh: {fileID: 4300000, guid: f77ba38d455acaf49a346ca110390a1b, type: 2}
   name: New Level
-  mapSize: {x: 10, y: 10}
+  mapSize: {x: 11, y: 21}
   mapScale: {x: 1, y: 1}
-  jsonData: '{"value":[{"value":null,"type":"String","varName":"newName","$type":"VariableString"}]}'
+  jsonData: '{"value":[]}'

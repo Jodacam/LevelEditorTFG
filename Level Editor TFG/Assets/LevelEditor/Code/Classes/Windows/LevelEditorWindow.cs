@@ -31,8 +31,8 @@ namespace Editor
         static Level Editlevel;
         static bool isPicking;
 
-        SerializedObject levelSerialized;
-        public ReorderableList list;
+        static SerializedObject levelSerialized;
+        public static ReorderableList list;
 
         #endregion
 
@@ -54,9 +54,10 @@ namespace Editor
                 levelSerialized.ApplyModifiedProperties();
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 EditorGUILayout.LabelField("Please Load a Valid Level");
+                Debug.Log(e.ToString());
             }
             GUILayout.EndScrollView();
             DoSaveAndLoad();
@@ -72,7 +73,7 @@ namespace Editor
         private void AddNewVariable()
         {
             var e = new VariableString();
-            e.Init("newName");
+            e.Init("new var");
 
             Editlevel.AddVariable(e);
         }
@@ -86,6 +87,7 @@ namespace Editor
                 if (actualTerrain != null)
                 {
                     Editlevel = actualTerrain.owner;
+                    Editlevel.LoadGrid();
                     if (Editlevel.stringList == null)
                     {
                         Editlevel.stringList = new List<IData>();
