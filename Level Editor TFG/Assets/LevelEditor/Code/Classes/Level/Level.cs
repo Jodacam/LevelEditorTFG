@@ -27,7 +27,7 @@ public class Level : ScriptableObject
 
 
     public GridTerrain terrainGrid;
-    public GameObject terrainGameObjec;
+    public GameObject terrainGameObject;
     public Mesh terrainMesh;
     public string name;
     public Vector2Int mapSize;
@@ -49,7 +49,7 @@ public class Level : ScriptableObject
     public void LoadGrid()
     {
         if(terrainGrid == null){
-            terrainGrid = Instantiate(terrainGameObjec, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
+            terrainGrid = Instantiate(terrainGameObject, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
         }
         terrainGrid.ReDoDictionary();
         LoadVariable();
@@ -84,47 +84,18 @@ public class Level : ScriptableObject
 
     public void InitLevel(Vector3 position, Transform levelParent)
     {
-        terrainGrid = Instantiate(terrainGameObjec, position, Quaternion.identity, levelParent).GetComponent<GridTerrain>();
+        terrainGrid = Instantiate(terrainGameObject, position, Quaternion.identity, levelParent).GetComponent<GridTerrain>();
         terrainGrid.ReDoDictionary();
 
 
     }
 
-
-
-    public void EditVariable(EditorWindow levelEditorWindow)
-    {
-
-        GUILayout.Label("Variables");
-       
-        foreach (var v in stringList)
-        {
-            GUIStyle s = new GUIStyle(GUI.skin.label);
-            s.alignment = TextAnchor.MiddleCenter;
-            s.fontStyle = FontStyle.Bold;
-
-            EditorGUILayout.LabelField(v.varName, s);
-            v.varName = EditorGUILayout.TextField("Name", v.varName);
-            var e = (VariableTypes)EditorGUILayout.EnumPopup("Type", v.type);
-            if (e != v.type)
-            {
-
-                ChangeVariableType(v, e);
-
-            }
-            else
-            {
-
-
-                v.ShowGUI(EditorGUILayout.GetControlRect(true));
-
-
-            }
-        }
+    private void OnDestroy() {
+        Debug.Log(name + "Destroy");
     }
 
 
-
+    #region Variables
     public void ChangeVariableType(IData v, VariableTypes e)
     {
         int index = stringList.IndexOf(v);
@@ -202,4 +173,5 @@ public class Level : ScriptableObject
     {
         return stringList.Find((value) => value.varName == name && value.type == type);
     }
+    #endregion
 }

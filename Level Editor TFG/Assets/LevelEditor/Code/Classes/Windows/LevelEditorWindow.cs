@@ -25,7 +25,9 @@ namespace Editor
             window.Show();
         }
         #endregion
-
+        #region Constants
+        const string ON_PICK_COMMAND = "ObjectSelectorClosed";
+        #endregion
         #region Variables
         Vector2 scrollPosition = Vector2.zero;
         static Level Editlevel;
@@ -37,7 +39,9 @@ namespace Editor
         #endregion
 
 
-
+        /* This functions draw the UI of the window. Unity uses an inmediate GUI system so some buttons
+            have theirs functionality here.
+        */
         #region GUIFunctions
         private void OnGUI()
         {
@@ -46,6 +50,10 @@ namespace Editor
             try
             {
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
+                if (levelSerialized == null || Editlevel == null)
+                {
+                    FindLevel();
+                }
                 levelSerialized.UpdateIfRequiredOrScript();
                 EditorGUILayout.PropertyField(levelSerialized.FindProperty(Level.LevelProperties.NAME));
 
@@ -65,6 +73,9 @@ namespace Editor
 
         }
 
+        /**
+        Draw the Variable list
+        */
         private void DoVariables()
         {
             list.DoLayoutList();
@@ -81,6 +92,13 @@ namespace Editor
         private void Awake()
         {
 
+            FindLevel();
+
+
+        }
+
+        private void FindLevel()
+        {
             if (Editlevel == null)
             {
                 var actualTerrain = FindObjectOfType<GridTerrain>();
@@ -101,6 +119,7 @@ namespace Editor
                 }
             }
             levelSerialized = new SerializedObject(Editlevel);
+
 
 
         }
@@ -165,8 +184,8 @@ namespace Editor
             Vector2 mapScale = Editlevel.mapScale;
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
-            mapSize.x = Mathf.Clamp(mapSize.x,1,100);
-            mapSize.y = Mathf.Clamp(mapSize.y,1,100);
+            mapSize.x = Mathf.Clamp(mapSize.x, 1, 100);
+            mapSize.y = Mathf.Clamp(mapSize.y, 1, 100);
 
             if (!mapSize.Equals(Editlevel.mapSize) || !mapScale.Equals(Editlevel.mapScale))
             {
@@ -201,37 +220,50 @@ namespace Editor
         private void DoPicker()
         {
             string commandName = Event.current.commandName;
-            if (commandName == "ObjectSelectorClosed")
+            if (commandName == ON_PICK_COMMAND)
             {
                 OnPick();
             }
 
         }
 
+        //Button functionality and some Auxiliar functions.
         #region EditorFuntions
+        /**
+        Function to Save the level. If the folders have not been created yet, they will be created.
 
+         */
         void Save()
         {
+            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR))
+            {
+
+                AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES, Paths.NAME_LEVEL_EDITOR);
+                AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_LEVELS);
+            }
+
+
+
             Editlevel.SaveVars();
             string exist = AssetDatabase.GetAssetPath(Editlevel);
             if (string.IsNullOrEmpty(exist))
             {
-                AssetDatabase.CreateAsset(Editlevel, "Assets/Resources/" + Editlevel.name + ".asset");
+                AssetDatabase.CreateAsset(Editlevel, Paths.PATH_LEVELS + Editlevel.name + ".asset");
             }
 
-            if (!AssetDatabase.IsValidFolder("Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name))
-                AssetDatabase.CreateFolder("Assets/LevelEditor/Prefabs/Maps", Editlevel.name);
+            if (!AssetDatabase.IsValidFolder(Paths.PATH_MAPS + Editlevel.name))
+                AssetDatabase.CreateFolder(Paths.FOLDER_MAPS, Editlevel.name);
 
 
             exist = AssetDatabase.GetAssetPath(Editlevel.terrainMesh);
             if (string.IsNullOrEmpty(exist))
             {
-                AssetDatabase.CreateAsset(Editlevel.terrainMesh, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/" + Editlevel.terrainMesh.name + ".mesh");
-                AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.sharedMaterial, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/Material.mat");
+                AssetDatabase.CreateAsset(Editlevel.terrainMesh, Paths.PATH_MAPS + Editlevel.name + "/" + Editlevel.terrainMesh.name + ".mesh");
+                AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.sharedMaterial, Paths.PATH_MAPS + Editlevel.name + "/Material.mat");
             }
 
 
-            Editlevel.terrainGameObjec = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject, "Assets/LevelEditor/Prefabs/Maps/" + Editlevel.name + "/" + Editlevel.name + ".prefab");
+            Editlevel.terrainGameObject = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject, Paths.PATH_MAPS + Editlevel.name + "/" + Editlevel.name + ".prefab");
             EditorUtility.SetDirty(Editlevel);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

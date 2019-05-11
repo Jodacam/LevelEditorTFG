@@ -65,7 +65,10 @@ namespace Editor
                 dataBase.dataBaseName = EditorGUILayout.TextField("Name", dataBase.dataBaseName);
                 if (GUILayout.Button("Create"))
                 {
-                    AssetDatabase.CreateAsset(dataBase, "Assets/Resources/PrefabData/" + dataBase.dataBaseName + ".asset");
+                    if(!AssetDatabase.IsValidFolder(Paths.PATH_DATA_BASE)){
+                        AssetDatabase.CreateFolder(Paths.PATH_RESOURCES_LEVEL_EDITOR,Paths.NAME_DATA_BASE);
+                    }
+                    AssetDatabase.CreateAsset(dataBase, Paths.PATH_DATA_BASE + dataBase.dataBaseName + ".asset");
                     owner.OnCreateDataBase(dataBase);
                     this.Close();
                 }
@@ -238,6 +241,14 @@ namespace Editor
                     case KeyCode.N:
                         actualMode = Mode.None;
                         break;
+                    case KeyCode.LeftControl:
+                        if(actualMode == Mode.Add || actualMode == Mode.AddInstancing)
+                        {
+                            selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
+                            wallPos = (wallPos + 1) % 4;
+                            selectObject.RecalculatePivot(wallPos);
+                        }
+                        break;
                 }
                 Repaint();
                 
@@ -360,13 +371,14 @@ namespace Editor
                  Undo.RegisterFullObjectHierarchyUndo(t,"Add Wall");
                 t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos,off,instancing);
             }
-            if (e.control && e.type == EventType.KeyDown)
+            /* if (e.control && e.type == EventType.KeyDown)
             {
                 selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
                 wallPos = (wallPos + 1) % 4;
                 selectObject.RecalculatePivot(wallPos);
                 
             }
+            */
         }
 
         private void AddingObject(Event e,Vector3 off, bool instancing)
@@ -383,13 +395,13 @@ namespace Editor
             }
 
 
-            if (e.control && e.type == EventType.KeyDown)
+           /*  if (e.control && e.type == EventType.KeyDown)
             {
                 selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
                 wallPos = (wallPos + 1) % 4;
                 selectObject.RecalculatePivot(wallPos);
                 
-            }
+            }*/
         }
 
         private void OnRemove()

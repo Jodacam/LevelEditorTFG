@@ -52,8 +52,11 @@ public static class Style
 
     public static readonly GUIStyle boldCenterText = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter };
 
-      public static float defaultLineSpace = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            public static float defaultIndentWidth = 12;
+    public static readonly GUIStyle centerText = new GUIStyle(EditorStyles.label) { alignment = TextAnchor.MiddleCenter };
+
+
+    public static float defaultLineSpace = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+    public static float defaultIndentWidth = 12;
     #endregion
     #region Icons
     public static readonly Texture2D ICON_CLOSE = AssetDatabase.LoadAssetAtPath<Texture2D>(GUIAuxiliar.PATH_LEVEL_EDITOR_ICON + "cross.png");
