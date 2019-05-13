@@ -81,7 +81,9 @@ public static class Style
     //TODO
     public static readonly string ICON_ADD = "Añadir";
 
-    
-    
+    public static readonly GUIContent BUTTON_TEXT_SAVE_AND_EXIT = EditorGUIUtility.TrTextContent("Save and Exit");
+
+
+
     #endregion
 }

@@ -5,10 +5,10 @@
     
     public static class LevelLoader
     {
-        public static Level GetLevel(string name)
+        public static LevelRegion GetLevel(string name)
         {
 
-          Level l = (Level) Resources.Load(name,typeof(Level));
+          LevelRegion l = (LevelRegion) Resources.Load(name,typeof(LevelRegion));
           l.LoadVariable();
           return l;
 

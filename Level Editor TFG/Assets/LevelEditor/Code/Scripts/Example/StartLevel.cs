@@ -7,7 +7,7 @@ public class StartLevel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Level l = LevelLoader.GetLevel("Nivel 1");
+        LevelRegion l = LevelLoader.GetLevel("Nivel 1");
         l.InitLevel(Vector3.zero,null);
     }
 

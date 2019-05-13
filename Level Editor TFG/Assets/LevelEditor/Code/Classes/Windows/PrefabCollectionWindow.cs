@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using static PrefabContainer;
 using static Container;
 
-namespace Editor
+namespace LevelEditor.Editor
 {
     //Ventana para la colleción de prfab y poder añadir objetos o selccionarlos.
     public class PrefabCollectionWindow : EditorWindow
@@ -17,7 +17,7 @@ namespace Editor
         public static void OpenWindow()
         {
             PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
-            
+
 
             window.titleContent = Style.TITLE_PREFAB_COLLECTION_WINDOW;
             window.minSize = new Vector2(350, 250);
@@ -46,6 +46,10 @@ namespace Editor
             {
                 var window = PrefabCollectionCreatorWindow.CreateInstance<PrefabCollectionCreatorWindow>();
                 window.title = "Collection Creator";
+                if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
+                {
+                    AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
+                }
                 window.ShowUtility();
                 window.dataBase = CreateInstance<PrefabDataBase>();
                 window.dataBase.Init();
@@ -65,8 +69,9 @@ namespace Editor
                 dataBase.dataBaseName = EditorGUILayout.TextField("Name", dataBase.dataBaseName);
                 if (GUILayout.Button("Create"))
                 {
-                    if(!AssetDatabase.IsValidFolder(Paths.PATH_DATA_BASE)){
-                        AssetDatabase.CreateFolder(Paths.PATH_RESOURCES_LEVEL_EDITOR,Paths.NAME_DATA_BASE);
+                    if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
+                    {
+                        AssetDatabase.CreateFolder(Paths.PATH_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
                     }
                     AssetDatabase.CreateAsset(dataBase, Paths.PATH_DATA_BASE + dataBase.dataBaseName + ".asset");
                     owner.OnCreateDataBase(dataBase);
@@ -85,12 +90,16 @@ namespace Editor
         bool isPicking = false;
         static PrefabDataBase dataBase;
         Vector2 scrollPosition = Vector2.zero;
-        
+
         RaycastHit hit;
         static Vector3 offset;
         static float rotation;
         static bool allowOffset = false;
         static bool usingWalls = false;
+
+        public bool showPrefabs = true;
+
+        public bool showWalls = true;
         static int wallPos = 0;
         #endregion
 
@@ -100,20 +109,21 @@ namespace Editor
             // Remove delegate listener if it has previously
             // been assigned.
             SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-            
 
-            
+
+
 
             // Add (or re-add) the delegate.
             SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-            
+
 
 
 
 
         }
 
-        private void Awake() {
+        private void Awake()
+        {
             selectObject = new SceneObjectContainer();
         }
 
@@ -123,11 +133,11 @@ namespace Editor
             // When the window is destroyed, remove the delegate
             // so that it will no longer do any drawing.
             SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-            
+
 
 
         }
-        
+
 
 
         #endregion
@@ -158,7 +168,7 @@ namespace Editor
             DoCommands();
             Handles.EndGUI();
         }
-      
+
 
         #region GUIFunctions
         private void OnSelect()
@@ -168,9 +178,9 @@ namespace Editor
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
                 {
-                    var terrain = hit.transform.GetComponent<GridTerrain>();
+                    var terrain = hit.transform.GetComponent<RegionTerrain>();
                     var selectedCell = terrain.GetCell(hit.triangleIndex);
                     selectedCell.Edit(this);
 
@@ -184,19 +194,19 @@ namespace Editor
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
 
 
-            EditorGUILayout.LabelField(Style.LABLE_ENUM_EDIT_MODE,Style.boldCenterText);
-            
-            
+            EditorGUILayout.LabelField(Style.LABLE_ENUM_EDIT_MODE, Style.boldCenterText);
+
+
             EditorGUILayout.BeginHorizontal();
-            
+
             DoModeButton(Mode.Add, Style.GUI_ICON_ADD_MODE);
             DoModeButton(Mode.AddInstancing, Style.GUI_ICON_ADD_INSTANCING_MODE);
             DoModeButton(Mode.Edit, Style.GUI_ICON_EDIT_MODE);
             DoModeButton(Mode.Remove, Style.GUI_ICON_REMOVE_MODE);
             DoModeButton(Mode.None, Style.GUI_ICON_NONE_MODE);
-            
+
             EditorGUILayout.EndHorizontal();
-            
+
             DoOptions();
             DoPrefabSelector();
             GUILayout.EndScrollView();
@@ -206,16 +216,16 @@ namespace Editor
 
         //Make a toggle button to change the mode of the editor.
         public void DoModeButton(Mode toMode, Texture icon)
-        {   
+        {
             var rect = EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton);
-            actualMode = GUI.Toggle(rect, toMode == actualMode, icon, EditorStyles.miniButton) ? toMode:actualMode;
+            actualMode = GUI.Toggle(rect, toMode == actualMode, icon, EditorStyles.miniButton) ? toMode : actualMode;
         }
 
 
         public void DoModeButton(Mode toMode, GUIContent icon)
         {
-            var rect = EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton,Style.minHButton);
-            rect.x += (position.width -(5*100/3))/2.4f;
+            var rect = EditorGUILayout.GetControlRect(Style.maxHButton, Style.maxWButton, Style.minHButton);
+            rect.x += (position.width - (5 * 100 / 3)) / 2.4f;
             actualMode = GUI.Toggle(rect, toMode == actualMode, icon, EditorStyles.miniButton) ? toMode : actualMode;
         }
         private void DoCommands()
@@ -242,7 +252,7 @@ namespace Editor
                         actualMode = Mode.None;
                         break;
                     case KeyCode.LeftControl:
-                        if(actualMode == Mode.Add || actualMode == Mode.AddInstancing)
+                        if (actualMode == Mode.Add || actualMode == Mode.AddInstancing)
                         {
                             selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
                             wallPos = (wallPos + 1) % 4;
@@ -251,10 +261,15 @@ namespace Editor
                         break;
                 }
                 Repaint();
-                
+
             }
 
-            
+
+        }
+
+        internal void ChangeToNone()
+        {
+            actualMode = Mode.None;
         }
 
         private void DoPicker()
@@ -296,6 +311,7 @@ namespace Editor
             EditorGUILayout.EndHorizontal();
             if (dataBase != null)
             {
+
                 dataBase.ShowGUI(this);
             }
             else
@@ -304,7 +320,7 @@ namespace Editor
             }
 
         }
-#endregion
+        #endregion
 
         private void CreateNew()
         {
@@ -339,18 +355,35 @@ namespace Editor
             Vector3 off = allowOffset ? offset : Vector3.zero;
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
+            if(selectObject == null){
+                selectObject = new SceneObjectContainer();
+            }
             if (selectObject.HasObject)
             {
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid","LevelTerrain")))
                 {
-
-                    if (!usingWalls)
+                    if (hit.transform.GetComponent<RegionTerrain>())
                     {
-                        AddingObject(e, off,instancing);
+                        if (!usingWalls)
+                        {
+                            AddingObject(e, off, instancing);
+                        }
+                        else
+                        {
+                            AddingWall(e, off, instancing);
+                        }
                     }
                     else
-                    {
-                        AddingWall(e, off,instancing);
+                    {    
+                        var terrain = hit.transform.GetComponent<LevelScript>();
+                        if(terrain)
+                        {
+                            Vector3 position = terrain.GetClampPositon(hit.point,selectObject.CellSize);
+                            selectObject.preview.transform.position = position -selectObject.Pivot+off;
+
+
+                        }
+
                     }
                 }
             }
@@ -359,17 +392,17 @@ namespace Editor
 
 
 
-        private void AddingWall(Event e, Vector3 off,bool instancing)
+        private void AddingWall(Event e, Vector3 off, bool instancing)
         {
-            var t = hit.transform.GetComponent<GridTerrain>();
-           
+            var t = hit.transform.GetComponent<RegionTerrain>();
+
             Vector3 position = t.GetWallClampPosition(hit, wallPos);
 
             selectObject.preview.transform.position = position - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                 Undo.RegisterFullObjectHierarchyUndo(t,"Add Wall");
-                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos,off,instancing);
+                Undo.RegisterFullObjectHierarchyUndo(t, "Add Wall");
+                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos, off, instancing);
             }
             /* if (e.control && e.type == EventType.KeyDown)
             {
@@ -381,27 +414,27 @@ namespace Editor
             */
         }
 
-        private void AddingObject(Event e,Vector3 off, bool instancing)
+        private void AddingObject(Event e, Vector3 off, bool instancing)
         {
-            var t = hit.transform.GetComponent<GridTerrain>();
-            Vector3 c = t.GetClampPosition(hit,selectObject.CellSize);
+            var t = hit.transform.GetComponent<RegionTerrain>();
+            Vector3 c = t.GetClampPosition(hit, selectObject.CellSize);
 
             selectObject.preview.transform.position = c - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
-                Undo.RegisterFullObjectHierarchyUndo(t,"AddObject");
-                
-                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off,instancing);
+                Undo.RegisterFullObjectHierarchyUndo(t, "AddObject");
+
+                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off, instancing);
             }
 
 
-           /*  if (e.control && e.type == EventType.KeyDown)
-            {
-                selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                wallPos = (wallPos + 1) % 4;
-                selectObject.RecalculatePivot(wallPos);
-                
-            }*/
+            /*  if (e.control && e.type == EventType.KeyDown)
+             {
+                 selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
+                 wallPos = (wallPos + 1) % 4;
+                 selectObject.RecalculatePivot(wallPos);
+
+             }*/
         }
 
         private void OnRemove()
@@ -416,15 +449,15 @@ namespace Editor
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
 
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity,LayerMask.GetMask("Grid")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
                 {
-                    GridTerrain ter = hit.transform.GetComponent<GridTerrain>();
+                    RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
                     //ter.SetIntoCell(null,hit.triangleIndex);
                     ter.Remove(hit.triangleIndex);
                 }
 
             }
-            
+
         }
         public void AddPrefabToDataBase(PrefabContainer container)
         {
@@ -433,10 +466,10 @@ namespace Editor
 
         #region Prefabs Functions
 
-      
-       
 
-        
+
+
+
         // Calls to the edit window of the prefab Container.
         public void Edit(PrefabContainer container)
         {
@@ -445,7 +478,7 @@ namespace Editor
 
         public void SelectPrefab(PrefabContainer container)
         {
-            if(selectObject == null)
+            if (selectObject == null)
                 selectObject = new SceneObjectContainer();
             selectObject.SetObjectInfo(container);
             usingWalls = false;
@@ -511,4 +544,4 @@ namespace Editor
         #endregion
     }
 }
-#endif 
+#endif

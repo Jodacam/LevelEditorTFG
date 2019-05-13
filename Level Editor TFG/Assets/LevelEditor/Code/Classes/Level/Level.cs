@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
-using UnityEditorInternal;
-[CreateAssetMenu(fileName = "Level", menuName = "Level Editor/Level", order = 0)]
-public class Level : ScriptableObject
-{
-    //Clase para guardar todos los string necesarios para la serialización del nivel. Suele ser mucho más sencillo si tengo que cambiar una variable.
-    public static class LevelProperties
-    {
-        public const string NAME = "name";
+using UnityEngine;
+using UnityEditor.SceneManagement;
+using System.Collections.Generic;
+using System;
 
-    }
+[CreateAssetMenu(fileName = "Level", menuName = "Level Editor TFG/Level", order = 0)]
+public class Level : ScriptableObject {
+    
 
     public enum VariableTypes
     {
@@ -26,121 +21,98 @@ public class Level : ScriptableObject
     }
 
 
-    public GridTerrain terrainGrid;
-    public GameObject terrainGameObject;
-    public Mesh terrainMesh;
-    public string name;
-    public Vector2Int mapSize;
-    public Vector2 mapScale;
+    public static class Properties {
+        public const string NAME = "levelName";
+        public const string SIZE = "cellSize";
+
+        public const string EXTENSION = "cellCount";  
+    }
     [SerializeField]
-    private string jsonData;
+    public List<IData> varList;
 
-    //Tengo que crear un diccionario para poder guardar los diferentes valores personalizados, Booleans, Strings, Floats e Ints.
     [SerializeField]
-    public List<IData> stringList;
-    
+    string jsonData;
 
-    public float xcellSize { get { return mapScale.x; } set { mapScale.x = value; } }
-    public float ycellSize { get { return mapScale.y; } set { mapScale.y = value; } }
+    [SerializeField]
+    public string levelName;
 
-    public int xSize { get { return mapSize.x; } set { mapSize.x = value; } }
-    public int ySize { get { return mapSize.y; } set { mapSize.y = value; } }
+    [HideInInspector]
+    public GameObject runTimeTerrain;
 
-    public void LoadGrid()
+    [SerializeField]
+    public Vector2Int cellCount;
+
+    [SerializeField]
+    public Vector2 cellSize;
+
+    [SerializeField]
+    public GameObject terrainPrefab;
+
+    public void Init(string name)
     {
-        if(terrainGrid == null){
-            terrainGrid = Instantiate(terrainGameObject, Vector3.zero, Quaternion.identity).GetComponent<GridTerrain>();
-        }
-        terrainGrid.ReDoDictionary();
-        LoadVariable();
-    }
-
-    
-
-    public void ReCreateGrid()
-    {
-        
-        terrainMesh = terrainGrid.ChangeSize(xcellSize, ycellSize, mapSize);
-        
-    }
-
-    public void CreateGrid()
-    {
-        GameObject plane = new GameObject("BaseTerrain", typeof(GridTerrain));
-        plane.AddComponent<MeshFilter>();
-        MeshRenderer e = plane.AddComponent<MeshRenderer>();
-        plane.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-        //plane.GetComponent<GridTerrain>().CreateGrid(xcellSize, ycellSize, mapSize);
-        terrainGrid = plane.GetComponent<GridTerrain>();
-        terrainMesh = terrainGrid.Init(xcellSize, ycellSize, mapSize, this);
-
-
-    }
-
-    public void AddVariable(IData e)
-    {
-        stringList.Add(e);
-    }
-
-    public void InitLevel(Vector3 position, Transform levelParent)
-    {
-        terrainGrid = Instantiate(terrainGameObject, position, Quaternion.identity, levelParent).GetComponent<GridTerrain>();
-        terrainGrid.ReDoDictionary();
-
-
-    }
-
-    private void OnDestroy() {
-        Debug.Log(name + "Destroy");
+        levelName = name;
+        LoadVars();
+        runTimeTerrain = new GameObject("Base Level Terrain",typeof(LevelScript),typeof(MeshFilter),typeof(MeshRenderer),typeof(MeshCollider));
+        cellCount = new Vector2Int(10,10);
+        cellSize = Vector2.one;
+        runTimeTerrain.GetComponent<LevelScript>().InitTerrain(cellSize,cellCount); 
+        runTimeTerrain.layer = LayerMask.NameToLayer("LevelTerrain");
     }
 
 
     #region Variables
+
+    public void AddVariable(IData e)
+    {
+        varList.Add(e);
+    }
     public void ChangeVariableType(IData v, VariableTypes e)
     {
-        int index = stringList.IndexOf(v);
-        stringList.RemoveAt(index);
+        int index = varList.IndexOf(v);
+        varList.RemoveAt(index);
         switch (e)
 
         {
             case VariableTypes.String:
                 var newString = new VariableString();
                 newString.Init(v.varName);
-                stringList.Insert(index, newString);
+                varList.Insert(index, newString);
                 break;
             case VariableTypes.Boolean:
                 var newBool = new VariableBool();
                 newBool.Init(v.varName);
-                stringList.Insert(index, newBool);
+                varList.Insert(index, newBool);
                 break;
             case VariableTypes.Int:
                 var newInt = new VariableInt();
                 newInt.Init(v.varName);
-                stringList.Insert(index, newInt);
+                varList.Insert(index, newInt);
                 break;
             case VariableTypes.Float:
                 var newFloat = new VariableFloat();
                 newFloat.Init(v.varName);
-                stringList.Insert(index, newFloat);
+                varList.Insert(index, newFloat);
                 break;
         }
     }
 
+   
+
     public void SaveVars()
     {
-        jsonData = GUIAuxiliar.Serialize(new VariableContainer() { value = stringList });
+        jsonData = GUIAuxiliar.Serialize(new VariableContainer() { value = varList });
     }
 
-    internal void LoadVariable()
+    void LoadVars()
     {
         if (!string.IsNullOrEmpty(jsonData))
         {
             var container = (VariableContainer)GUIAuxiliar.Deserialize<VariableContainer>(jsonData);
-            stringList = container.value;
+            varList = container.value;
         }
         else
         {
-            stringList = new List<IData>();
+            varList = new List<IData>();
         }
     }
 
@@ -171,7 +143,10 @@ public class Level : ScriptableObject
 
     private IData getData(string name, VariableTypes type)
     {
-        return stringList.Find((value) => value.varName == name && value.type == type);
+        return varList.Find((value) => value.varName == name && value.type == type);
     }
     #endregion
+    
+
+
 }

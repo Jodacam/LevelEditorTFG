@@ -86,17 +86,18 @@ public class PrefabDataBase : ScriptableObject
     //Dado que los Scripts de editor no se pueden referenciar en los scripts que no estan dentro de Editor, al menos no se como, pasaremos como parametro la funcion de recogida del prefab por
     //ShowGUI, asi podremos obtener el prefab cuando se pulse, sin perder la estructura que tenemos,
 #if UNITY_EDITOR
-    public void ShowGUI(Editor.PrefabCollectionWindow window)
+    public void ShowGUI(LevelEditor.Editor.PrefabCollectionWindow window)
     {
         GUILayout.Label(string.Format(Style.LABLE_DATABASE_TITLE, dataBaseName));
 
-
+        EditorGUILayout.BeginToggleGroup(Style.LAYOUT_PREFABS,true);
         DoPrefabs(window);
+        EditorGUILayout.EndFadeGroup();
         DoWalls(window);
         DoAddButtons(window);
     }
 
-    private void DoWalls(Editor.PrefabCollectionWindow window)
+    private void DoWalls(LevelEditor.Editor.PrefabCollectionWindow window)
     {
         GUILayout.Label("Walls Prefabs");
         EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(window.minSize.x), GUILayout.MinWidth(50));
@@ -129,7 +130,7 @@ public class PrefabDataBase : ScriptableObject
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DoPrefabs(Editor.PrefabCollectionWindow window)
+    private void DoPrefabs(LevelEditor.Editor.PrefabCollectionWindow window)
     {
 
 

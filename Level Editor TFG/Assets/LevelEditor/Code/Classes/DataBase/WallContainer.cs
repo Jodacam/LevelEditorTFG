@@ -22,7 +22,7 @@ public class WallContainer : Container
     private GUILayoutOption maxH = GUILayout.MaxHeight(50);
     private GUILayoutOption maxWButton = GUILayout.MaxWidth(100 / 3);
     private GUILayoutOption maxHButton = GUILayout.MaxHeight(25);
-    public override void ShowGUI(Editor.PrefabCollectionWindow window)
+    public override void ShowGUI(LevelEditor.Editor.PrefabCollectionWindow window)
     {
         EditorGUILayout.BeginVertical();
         if (GUILayout.Button(preview, maxW, maxH))
