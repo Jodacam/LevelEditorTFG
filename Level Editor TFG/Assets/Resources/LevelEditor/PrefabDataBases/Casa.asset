@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b8754878a790f4bbfbf582792cd0f0, type: 3}
+  m_Name: Casa
+  m_EditorClassIdentifier: 
+  dataBaseName: Casa
+  prefabList:
+  - prefab: {fileID: 100002, guid: 907454fceb5926644ad58437bd9010fb, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.5, y: 0, z: 0.5}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 1, y: 0.05, z: 1}
+  - prefab: {fileID: 100002, guid: e9372d3b767a8924d806d5ac118827bd, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.47799996, y: 0, z: 0.5625}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1.7777778, y: 1.7777778, z: 1.7777778}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 1.6888887, y: 0.6666667, z: 2}
+  - prefab: {fileID: 100002, guid: c0a8c3e6dbc797d4ead08dd6f69e8712, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.1, y: 0, z: 0.1}
+    autoPivot: 1
+    autoScale: 0
+    scale: {x: 2, y: 2, z: 2}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 0.4, y: 0.92, z: 0.4}
+  - prefab: {fileID: 100002, guid: e5fd9166417d2194c821c647f4af7390, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.06, y: 0, z: 0.060000002}
+    autoPivot: 1
+    autoScale: 0
+    scale: {x: 2, y: 2, z: 2}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 0.30407882, y: 1.72, z: 0.35112}
+  - prefab: {fileID: 1993720230539021505, guid: 437ecc5101c85074cb9af40fb89af44f,
+      type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 2.5, y: 0, z: 2.5}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 5, y: 5}
+    sizeBounds: {x: 5, y: 0, z: 5}
+  Walls: []

@@ -90,16 +90,21 @@ public class PrefabDataBase : ScriptableObject
     {
         GUILayout.Label(string.Format(Style.LABLE_DATABASE_TITLE, dataBaseName));
 
-        EditorGUILayout.BeginToggleGroup(Style.LAYOUT_PREFABS,true);
-        DoPrefabs(window);
-        EditorGUILayout.EndFadeGroup();
-        DoWalls(window);
+        window.showPrefabs = EditorGUILayout.Foldout(window.showPrefabs, Style.LAYOUT_PREFABS);
+        if(window.showPrefabs)
+            DoPrefabs(window);
+     
+        window.showWalls = EditorGUILayout.Foldout(window.showWalls, Style.LAYOUT_WALLS);
+        if(window.showWalls)
+            DoWalls(window);
+
+
         DoAddButtons(window);
     }
 
     private void DoWalls(LevelEditor.Editor.PrefabCollectionWindow window)
     {
-        GUILayout.Label("Walls Prefabs");
+        
         EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(window.minSize.x), GUILayout.MinWidth(50));
         int number = 0;
         try

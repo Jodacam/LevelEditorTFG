@@ -55,10 +55,15 @@ public class Level : ScriptableObject {
         runTimeTerrain = new GameObject("Base Level Terrain",typeof(LevelScript),typeof(MeshFilter),typeof(MeshRenderer),typeof(MeshCollider));
         cellCount = new Vector2Int(10,10);
         cellSize = Vector2.one;
-        runTimeTerrain.GetComponent<LevelScript>().InitTerrain(cellSize,cellCount); 
+        runTimeTerrain.GetComponent<LevelScript>().InitTerrain(cellSize,cellCount,this); 
         runTimeTerrain.layer = LayerMask.NameToLayer("LevelTerrain");
     }
 
+    public void LoadLevel(Vector3 position, Transform parent)
+    {
+        runTimeTerrain = Instantiate(terrainPrefab, position,Quaternion.identity,parent);
+        LoadVars();
+    }
 
     #region Variables
 
@@ -96,14 +101,32 @@ public class Level : ScriptableObject {
         }
     }
 
-   
+    public void ScaleGrid()
+    {
+        runTimeTerrain.GetComponent<LevelScript>().CreateMesh(cellSize, cellCount);
+    }
 
     public void SaveVars()
     {
         jsonData = GUIAuxiliar.Serialize(new VariableContainer() { value = varList });
     }
 
-    void LoadVars()
+    /// <summary>
+    /// Save the level into the disk
+    /// </summary>
+    /// <param name="path">path were to save</param>
+    public void SaveItself(string folder)
+    {
+        if (!AssetDatabase.IsValidFolder(folder + "/" + levelName))
+        {
+            AssetDatabase.CreateFolder(folder, levelName);
+        }
+       
+        var levelScript = runTimeTerrain.GetComponent<LevelScript>();
+        levelScript.SaveItself(folder + "/" + levelName + "/");
+        terrainPrefab = PrefabUtility.SaveAsPrefabAsset(runTimeTerrain, folder + "/" + levelName + "/" + levelName + ".prefab");
+    }
+    public void LoadVars()
     {
         if (!string.IsNullOrEmpty(jsonData))
         {
@@ -124,6 +147,8 @@ public class Level : ScriptableObject {
         VariableString e = (VariableString)getData(name, VariableTypes.String);
         return e != null ? e.value : null;
     }
+
+    
 
     public bool GetBool(string name)
     {

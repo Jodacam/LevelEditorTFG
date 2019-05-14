@@ -83,6 +83,9 @@ public static class Style
 
     public static readonly GUIContent BUTTON_TEXT_SAVE_AND_EXIT = EditorGUIUtility.TrTextContent("Save and Exit");
 
+    public static readonly GUIContent LAYOUT_PREFABS = EditorGUIUtility.TrTextContent("Prefabs");
+    public static readonly GUIContent LAYOUT_WALLS = EditorGUIUtility.TrTextContent("Walls");
+
 
 
     #endregion

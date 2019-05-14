@@ -378,8 +378,17 @@ namespace LevelEditor.Editor
                         var terrain = hit.transform.GetComponent<LevelScript>();
                         if(terrain)
                         {
-                            Vector3 position = terrain.GetClampPositon(hit.point,selectObject.CellSize);
-                            selectObject.preview.transform.position = position -selectObject.Pivot+off;
+                            if (!usingWalls)
+                            {
+                                Vector3 position = terrain.GetClampPositon(hit.point, selectObject.CellSize);
+                                selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                                if (e.button == 0 && e.type == EventType.MouseDown)
+                                {
+                                    Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
+                                    terrain.SetObject(selectObject, position - selectObject.Pivot + off);
+                                }
+
+                            }
 
 
                         }

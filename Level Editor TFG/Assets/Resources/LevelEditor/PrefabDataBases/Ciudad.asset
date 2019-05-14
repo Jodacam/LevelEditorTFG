@@ -59,9 +59,9 @@ MonoBehaviour:
     pivot: {x: -0.00000023841858, y: 0, z: -0.00000023841858}
     autoPivot: 1
     autoScale: 1
-    scale: {x: 0.24999991, y: 0.24999991, z: 0.24999991}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 1, y: 0.04999999, z: 0.99999964}
+    scale: {x: 0.74999976, y: 0.74999976, z: 0.74999976}
+    cellSize: {x: 3, y: 3}
+    sizeBounds: {x: 3, y: 0.14999998, z: 2.999999}
   - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: 0, z: 0}
@@ -78,6 +78,14 @@ MonoBehaviour:
     scale: {x: 0.5, y: 0.5, z: 0.5}
     cellSize: {x: 2, y: 2}
     sizeBounds: {x: 2, y: 4.1224756, z: 2}
+  - prefab: {fileID: 100002, guid: 907454fceb5926644ad58437bd9010fb, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.5, y: 0, z: 0.5}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
+    sizeBounds: {x: 1, y: 0.05, z: 1}
   Walls:
   - prefab: {fileID: 100002, guid: 6a3e21eeec3687442a040ff6217d65d7, type: 3}
     preview: {fileID: 0}

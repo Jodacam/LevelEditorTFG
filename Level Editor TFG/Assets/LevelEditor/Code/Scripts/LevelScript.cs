@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
 /// Class that contains the MonoBehaviour of the level. It Contains its Terrain and Objects.
 /// </summary>
-public class LevelScript : MonoBehaviour {
-    
+public class LevelScript : MonoBehaviour
+{
+
     [SerializeField]
     MeshFilter terrainMesh;
     [SerializeField]
@@ -27,43 +29,104 @@ public class LevelScript : MonoBehaviour {
     {
 
         Mesh newMesh = new Mesh();
+        newMesh.name = "Procedural";
         Vector3 startPoint = Vector3.zero;
-        Vector3 endPoint = new Vector3(cellSize.x*cellCount.x,0,cellSize.y*cellCount.y);
-        Vector3 zPoint = new Vector3(0,0,cellSize.y*cellCount.y);
-        Vector3 xPoint = new Vector3(cellSize.x*cellCount.x,0,0);
-        List<Vector3> vertex = new List<Vector3>(){startPoint,zPoint,endPoint,xPoint};
-        int[] triangles = {0,1,2,0,2,3};
+        Vector3 endPoint = new Vector3(cellSize.x * cellCount.x, 0, cellSize.y * cellCount.y);
+        Vector3 zPoint = new Vector3(0, 0, cellSize.y * cellCount.y);
+        Vector3 xPoint = new Vector3(cellSize.x * cellCount.x, 0, 0);
+        List<Vector3> vertex = new List<Vector3>() { startPoint, zPoint, endPoint, xPoint };
+        int[] triangles = { 0, 1, 2, 0, 2, 3 };
         newMesh.SetVertices(vertex);
-        newMesh.SetTriangles(triangles,0);
+        newMesh.SetTriangles(triangles, 0);
         var renderer = GetComponent<MeshRenderer>();
         renderer.sharedMaterial = new Material(Shader.Find(RegionTerrain.GridTerrainProperties.MATERIAL_GRID_SHADER));
-        renderer.sharedMaterial.SetFloat(RegionTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEX,cellSize.x);
-        renderer.sharedMaterial.SetFloat(RegionTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY,cellSize.y);
+        renderer.sharedMaterial.SetFloat(RegionTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEX, cellSize.x);
+        renderer.sharedMaterial.SetFloat(RegionTerrain.GridTerrainProperties.SHADER_PROPERTY_GRIDSCALEY, cellSize.y);
         terrainMesh.sharedMesh = newMesh;
-        terrainMeshCollider.sharedMesh = newMesh;
-        centerCellOffset = new Vector3(cellSize.x*0.5f,0,cellSize.y*0.5f);
+        terrainMeshCollider.sharedMesh = terrainMesh.sharedMesh;
+        centerCellOffset = new Vector3(cellSize.x * 0.5f, 0, cellSize.y * 0.5f);
     }
 
-    public void InitTerrain(Vector2 cellSize, Vector2Int cellCount)
+    public void InitTerrain(Vector2 cellSize, Vector2Int cellCount, Level owner)
     {
 
-        if(terrainMesh == null){
-            terrainMesh = GetComponent<MeshFilter>(); 
+        if (terrainMesh == null)
+        {
+            terrainMesh = GetComponent<MeshFilter>();
         }
-        if (terrainMeshCollider== null){
+        if (terrainMeshCollider == null)
+        {
             terrainMeshCollider = GetComponent<MeshCollider>();
         }
-        CreateMesh(cellSize,cellCount);
+        this.owner = owner;
+        CreateMesh(cellSize, cellCount);
     }
 
-    public void ScaleMesh(Vector2 cellSize, Vector2Int cellCount){
-        CreateMesh(cellSize,cellCount);
+    public void ScaleMesh(Vector2 cellSize, Vector2Int cellCount)
+    {
+        CreateMesh(cellSize, cellCount);
     }
 
+
+    /// <summary>
+    /// Gets the position of the cell.
+    /// </summary>
+    /// <param name="point">Point where the mouse touch</param>
+    /// <param name="cellSize">Size of the object</param>
+    /// <returns>Position on the field</returns>
     public Vector3 GetClampPositon(Vector3 point, Vector2Int cellSize)
     {
-        Vector3 mousePositionClamp = new Vector3(Mathf.FloorToInt(point.x),Mathf.FloorToInt(point.y),Mathf.FloorToInt(point.z));
+        return cellSize.x * cellSize.y == 1 ? GetCellPosition(point) : GetCellPosition(point, cellSize);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="cellSize"></param>
+    /// <returns></returns>
+    private Vector3 GetCellPosition(Vector3 point, Vector2Int cellSize)
+    {
+        Vector3 floorPos = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+        Vector3[] positions = new Vector3[cellSize.x * cellSize.y];
+        Vector3 totalPosition = Vector3.zero;
+        for (int i = 0; i < cellSize.x; i++)
+        {
+            for (int j = 0; j < cellSize.y; j++)
+            {
+                Vector3 centerPosition = floorPos + centerCellOffset;
+                centerPosition += new Vector3(i * owner.cellSize.x, 0, j * owner.cellSize.y);
+                positions[i + j * cellSize.x] = centerPosition;
+                totalPosition += centerPosition;
+            }
+        }
+        float n = 1.0f / positions.Length;
+        totalPosition *= n;
+        return totalPosition;
+    }
+
+    private Vector3 GetCellPosition(Vector3 point)
+    {
+        Vector3 mousePositionClamp = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
         mousePositionClamp += centerCellOffset;
         return mousePositionClamp;
     }
+
+#if UNITY_EDITOR
+    public void SaveItself(string path)
+    {
+        string exist = AssetDatabase.GetAssetPath(terrainMesh.sharedMesh);
+        if (string.IsNullOrEmpty(exist))
+        {
+            AssetDatabase.CreateAsset(terrainMesh.sharedMesh, path + terrainMesh.name + ".mesh");
+            AssetDatabase.CreateAsset(GetComponent<MeshRenderer>().sharedMaterial, path + "Material.mat");
+        }
+        
+    }
+
+    public void SetObject(SceneObjectContainer selectObject, Vector3 position,bool instancing = false)
+    {
+        var sceneObject = GUIAuxiliar.Instanciate(selectObject.Prefab, transform, position, selectObject.Rotation, selectObject.Scale, instancing);
+    }
+#endif
 }
