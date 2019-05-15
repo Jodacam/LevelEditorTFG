@@ -385,7 +385,7 @@ namespace LevelEditor.Editor
                                 if (e.button == 0 && e.type == EventType.MouseDown)
                                 {
                                     Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
-                                    terrain.SetObject(selectObject, position - selectObject.Pivot + off);
+                                    terrain.SetObject(selectObject, position - selectObject.Pivot + off,instancing);
                                 }
 
                             }

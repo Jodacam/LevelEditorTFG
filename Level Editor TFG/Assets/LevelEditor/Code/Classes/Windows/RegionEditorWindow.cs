@@ -216,6 +216,11 @@ namespace LevelEditor.Editor
             {
                 NewMap();
             }
+
+            if (GUILayout.Button("Exit"))
+            {
+                Exit();
+            }
         }
 
 

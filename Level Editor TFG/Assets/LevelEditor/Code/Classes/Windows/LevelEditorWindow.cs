@@ -120,6 +120,12 @@ namespace LevelEditor.Editor
             {
                 NewMap();
             }
+
+            
+            if (GUILayout.Button("Exit"))
+            {
+                Exit();
+            }
         }
 
         private void NewMap()

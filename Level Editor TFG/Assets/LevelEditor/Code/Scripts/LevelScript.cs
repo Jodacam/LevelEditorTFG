@@ -17,7 +17,9 @@ public class LevelScript : MonoBehaviour
     [SerializeField]
     public Level owner;
 
-
+    [SerializeField]
+    List<LevelObjectData> listOfObjects;
+    
     private Vector3 centerCellOffset;
     /// <summary>
     /// Creates the map. In regions we have a full Cell System beacuse we only put objects. Here we have a QuadMesh to RayCast, but there is no real Cells.
@@ -74,9 +76,9 @@ public class LevelScript : MonoBehaviour
     /// <param name="point">Point where the mouse touch</param>
     /// <param name="cellSize">Size of the object</param>
     /// <returns>Position on the field</returns>
-    public Vector3 GetClampPositon(Vector3 point, Vector2Int cellSize)
+    public Vector3 GetClampPositon(Vector3 point, Ray ray, Vector2Int cellSize)
     {
-        return cellSize.x * cellSize.y == 1 ? GetCellPosition(point) : GetCellPosition(point, cellSize);
+        return cellSize.x * cellSize.y == 1 ? GetCellPosition(point,ray) : GetCellPosition(point, cellSize,ray);
     }
 
     /// <summary>
@@ -85,7 +87,7 @@ public class LevelScript : MonoBehaviour
     /// <param name="point"></param>
     /// <param name="cellSize"></param>
     /// <returns></returns>
-    private Vector3 GetCellPosition(Vector3 point, Vector2Int cellSize)
+    private Vector3 GetCellPosition(Vector3 point, Vector2Int cellSize, Ray ray)
     {
         Vector3 floorPos = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
         Vector3[] positions = new Vector3[cellSize.x * cellSize.y];
@@ -102,12 +104,46 @@ public class LevelScript : MonoBehaviour
         }
         float n = 1.0f / positions.Length;
         totalPosition *= n;
-        return totalPosition;
+
+
+        float minDistance = float.MaxValue;
+        float actualValue = 0;
+        int selected = -1;
+        for (int i = 0; i<listOfObjects.Count; i++)
+        {
+            if(listOfObjects[i].RayCast(ray, out actualValue))
+            {
+                if(actualValue < minDistance)
+                {
+                    selected = i;
+                    minDistance = actualValue;
+                }
+            }
+        }
+        float h = listOfObjects[selected].height;
+        return totalPosition + new Vector3(0,h,0);
     }
 
-    private Vector3 GetCellPosition(Vector3 point)
+    private Vector3 GetCellPosition(Vector3 point,Ray ray)
     {
-        Vector3 mousePositionClamp = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+        
+
+        float minDistance = float.MaxValue;
+        float actualValue = 0;
+        int selected = -1;
+        for (int i = 0; i<listOfObjects.Count; i++)
+        {
+            if(listOfObjects[i].RayCast(ray, out actualValue))
+            {
+                if(actualValue < minDistance)
+                {
+                    selected = i;
+                    minDistance = actualValue;
+                }
+            }
+        }
+        float h = listOfObjects[selected].height;
+        Vector3 mousePositionClamp = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y) + h, Mathf.FloorToInt(point.z));
         mousePositionClamp += centerCellOffset;
         return mousePositionClamp;
     }
@@ -127,6 +163,8 @@ public class LevelScript : MonoBehaviour
     public void SetObject(SceneObjectContainer selectObject, Vector3 position,bool instancing = false)
     {
         var sceneObject = GUIAuxiliar.Instanciate(selectObject.Prefab, transform, position, selectObject.Rotation, selectObject.Scale, instancing);
+        var dataObject = new LevelObjectData(sceneObject,position);
+        listOfObjects.Add(dataObject);
     }
 #endif
 }
