@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -85,6 +86,12 @@ public static class Style
 
     public static readonly GUIContent LAYOUT_PREFABS = EditorGUIUtility.TrTextContent("Prefabs");
     public static readonly GUIContent LAYOUT_WALLS = EditorGUIUtility.TrTextContent("Walls");
+
+    public const string LABLE_REGION_FIELD  = "Region";
+
+    public const string BUTTON_TEXT_NEW_REGION_CONTAINER = "Add new Region";
+
+    public const string LABEL_CANT_USE_REGIONS  = "You can not use regions while editing other regions";
 
 
 

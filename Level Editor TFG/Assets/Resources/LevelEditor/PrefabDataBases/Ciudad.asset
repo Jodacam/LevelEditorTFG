@@ -22,7 +22,8 @@ MonoBehaviour:
     scale: {x: 0.25000003, y: 0.25000003, z: 0.25000003}
     cellSize: {x: 2, y: 2}
     sizeBounds: {x: 2, y: 3.2042472, z: 2}
-  - prefab: {fileID: 100000, guid: 161dbbb4309c9eb4081f7e6636fbf826, type: 3}
+  - prefab: {fileID: 3826374459254527791, guid: e8fb5104d6c6a7942b226c4e23999771,
+      type: 3}
     preview: {fileID: 0}
     pivot: {x: -0.00000011920929, y: -0.00000014901161, z: 0}
     autoPivot: 1
@@ -30,14 +31,6 @@ MonoBehaviour:
     scale: {x: 0.24999994, y: 0.24999994, z: 0.24999994}
     cellSize: {x: 1, y: 1}
     sizeBounds: {x: 1, y: 0.050000045, z: 0.9999999}
-  - prefab: {fileID: 100000, guid: fe70c4b6f0e82334ab55dca6f225aac8, type: 3}
-    preview: {fileID: 0}
-    pivot: {x: -0.00000011920929, y: -0.000000059604645, z: 0}
-    autoPivot: 1
-    autoScale: 1
-    scale: {x: 0.24999994, y: 0.24999994, z: 0.24999994}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 1, y: 0.050000027, z: 1}
   - prefab: {fileID: 1037655780390000, guid: 794931ad8054d8f4485bc161f83a2a14, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0.000000059604645, y: 0, z: 0.0000004172325}
@@ -46,30 +39,6 @@ MonoBehaviour:
     scale: {x: 0.25, y: 0.25, z: 0.25}
     cellSize: {x: 1, y: 1}
     sizeBounds: {x: 0.9999999, y: 0.0625, z: 1}
-  - prefab: {fileID: 100000, guid: 2ed887472c7eafa429f2abedc1b60e2f, type: 3}
-    preview: {fileID: 0}
-    pivot: {x: -0.2536025, y: 0, z: 0.06362128}
-    autoPivot: 1
-    autoScale: 1
-    scale: {x: 0.20903303, y: 0.20903303, z: 0.20903303}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 0.81779563, y: 1.2447782, z: 1}
-  - prefab: {fileID: 100000, guid: f52618d0451aaf248a6f940e54dd2ddd, type: 3}
-    preview: {fileID: 0}
-    pivot: {x: -0.00000023841858, y: 0, z: -0.00000023841858}
-    autoPivot: 1
-    autoScale: 1
-    scale: {x: 0.74999976, y: 0.74999976, z: 0.74999976}
-    cellSize: {x: 3, y: 3}
-    sizeBounds: {x: 3, y: 0.14999998, z: 2.999999}
-  - prefab: {fileID: 1143307919750216, guid: 3dff328fdba649c44a1d608ec75217d7, type: 3}
-    preview: {fileID: 0}
-    pivot: {x: 0, y: 0, z: 0}
-    autoPivot: 1
-    autoScale: 1
-    scale: {x: 0.5, y: 0.5, z: 0.5}
-    cellSize: {x: 2, y: 2}
-    sizeBounds: {x: 2, y: 1.772338, z: 2}
   - prefab: {fileID: 100000, guid: c129f22187ea2494384ee89fedf8bcd4, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: 0, z: 0}
@@ -78,14 +47,14 @@ MonoBehaviour:
     scale: {x: 0.5, y: 0.5, z: 0.5}
     cellSize: {x: 2, y: 2}
     sizeBounds: {x: 2, y: 4.1224756, z: 2}
-  - prefab: {fileID: 100002, guid: 907454fceb5926644ad58437bd9010fb, type: 3}
+  - prefab: {fileID: 100000, guid: 2ed887472c7eafa429f2abedc1b60e2f, type: 3}
     preview: {fileID: 0}
-    pivot: {x: 0.5, y: 0, z: 0.5}
+    pivot: {x: -0.2536025, y: 0, z: 0.06362128}
     autoPivot: 1
     autoScale: 1
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 0.20903303, y: 0.20903303, z: 0.20903303}
     cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 1, y: 0.05, z: 1}
+    sizeBounds: {x: 0.81779563, y: 1.2447782, z: 1}
   Walls:
   - prefab: {fileID: 100002, guid: 6a3e21eeec3687442a040ff6217d65d7, type: 3}
     preview: {fileID: 0}
@@ -93,13 +62,25 @@ MonoBehaviour:
     autoPivot: 1
     autoScale: 0
     scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
     height: 1.289532
     transitable: 0
-  - prefab: {fileID: 100004, guid: aa1de3faeb2391946b43fb3fef5877d5, type: 3}
+  regions:
+  - prefab: {fileID: 8630392394457215825, guid: a45d9e98e608418439d40c4bd0283311,
+      type: 3}
     preview: {fileID: 0}
-    pivot: {x: 0.243, y: 0, z: 0.04455}
-    autoPivot: 1
+    pivot: {x: 2.5, y: 0, z: 2.5}
+    autoPivot: 0
     autoScale: 0
     scale: {x: 1, y: 1, z: 1}
-    height: 0.9811817
-    transitable: 0
+    cellSize: {x: 5, y: 5}
+    region: {fileID: 11400000, guid: bdd0c85c425ac2046b4df370ed401599, type: 2}
+  - prefab: {fileID: 8150073290690604367, guid: 53f00cbb89e718f4187a6be2500ce7e2,
+      type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 2.5, y: 0, z: 2.5}
+    autoPivot: 0
+    autoScale: 0
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 5, y: 5}
+    region: {fileID: 11400000, guid: dd55cb4c803483748bc8947a1fcf3356, type: 2}

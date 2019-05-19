@@ -9,8 +9,8 @@ public class SceneObjectContainer
 {
     private Container objectInfo;
     public GameObject preview;
-    public int xSize { get { return ((PrefabContainer)objectInfo).cellSize.x; } }
-    public int ySize { get { return ((PrefabContainer)objectInfo).cellSize.x; } }
+    public int xSize { get { return (objectInfo).cellSize.x; } }
+    public int ySize { get { return (objectInfo).cellSize.x; } }
     public GameObject realObject { get { return objectInfo.prefab; } }
     public bool HasObject { get { return objectInfo != null; } }
 
@@ -30,7 +30,7 @@ public class SceneObjectContainer
     //rotacion actual
     public Quaternion Rotation { get { return preview.transform.rotation; } }
     //Tamaño en casilla (Vector2)
-    public Vector2Int CellSize{get{return GetAsPrefab().cellSize;}}
+    public Vector2Int CellSize{get{return objectInfo.cellSize;}}
     //Número de celdas que tiene que ocupar en total.
     public int CellCountSize { get => CellSize.x * CellSize.y; }
     public Vector3 Scale { get => objectInfo.scale; }

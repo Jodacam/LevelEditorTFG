@@ -12,7 +12,7 @@ namespace LevelEditor.Editor
     public class PrefabCollectionWindow : EditorWindow
     {
         #region Static Functions
-        [MenuItem("LevelEditor/PrefabCollection")]
+        [MenuItem("LevelEditor/Prefab Collection Window",false,1)]
         //Creates the main window.
         public static void OpenWindow()
         {
@@ -25,6 +25,8 @@ namespace LevelEditor.Editor
             PrefabCollectionWindow.selectObject = new SceneObjectContainer();
             window.Show();
         }
+
+     
 
         #endregion
 
@@ -100,7 +102,11 @@ namespace LevelEditor.Editor
         public bool showPrefabs = true;
 
         public bool showWalls = true;
-        static int wallPos = 0;
+
+        public bool showRegions = true;
+
+        public bool canUseRegions = true;
+        static int rotationSide = 0;
         #endregion
 
         #region Unity events
@@ -255,8 +261,8 @@ namespace LevelEditor.Editor
                         if (actualMode == Mode.Add || actualMode == Mode.AddInstancing)
                         {
                             selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                            wallPos = (wallPos + 1) % 4;
-                            selectObject.RecalculatePivot(wallPos);
+                            rotationSide = (rotationSide + 1) % 4;
+                            selectObject.RecalculatePivot(rotationSide);
                         }
                         break;
                 }
@@ -380,7 +386,8 @@ namespace LevelEditor.Editor
                         {
                             if (!usingWalls)
                             {
-                                Vector3 position = terrain.GetClampPositon(hit.point, selectObject.CellSize);
+
+                                Vector3 position = terrain.GetClampPositon(hit.point,ray, selectObject.CellSize);
                                 selectObject.preview.transform.position = position - selectObject.Pivot + off;
                                 if (e.button == 0 && e.type == EventType.MouseDown)
                                 {
@@ -405,22 +412,14 @@ namespace LevelEditor.Editor
         {
             var t = hit.transform.GetComponent<RegionTerrain>();
 
-            Vector3 position = t.GetWallClampPosition(hit, wallPos);
+            Vector3 position = t.GetWallClampPosition(hit, rotationSide);
 
             selectObject.preview.transform.position = position - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
                 Undo.RegisterFullObjectHierarchyUndo(t, "Add Wall");
-                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos, off, instancing);
+                t.SetWallIntoCell(selectObject, hit.triangleIndex, rotationSide, off, instancing);
             }
-            /* if (e.control && e.type == EventType.KeyDown)
-            {
-                selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                wallPos = (wallPos + 1) % 4;
-                selectObject.RecalculatePivot(wallPos);
-                
-            }
-            */
         }
 
         private void AddingObject(Event e, Vector3 off, bool instancing)
@@ -435,15 +434,6 @@ namespace LevelEditor.Editor
 
                 t.SetObjetIntoCell(selectObject, hit.triangleIndex, off, instancing);
             }
-
-
-            /*  if (e.control && e.type == EventType.KeyDown)
-             {
-                 selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                 wallPos = (wallPos + 1) % 4;
-                 selectObject.RecalculatePivot(wallPos);
-
-             }*/
         }
 
         private void OnRemove()
@@ -463,6 +453,15 @@ namespace LevelEditor.Editor
                     RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
                     //ter.SetIntoCell(null,hit.triangleIndex);
                     ter.Remove(hit.triangleIndex);
+                }
+                else
+                {
+                    var levels = FindObjectsOfType<LevelScript>();
+                    bool find = false;
+                    for (int i = 0; i < levels.Length && !find; i++)
+                    {
+                        find = levels[i].RemoveAtRay(ray);
+                    }
                 }
 
             }
@@ -491,7 +490,7 @@ namespace LevelEditor.Editor
                 selectObject = new SceneObjectContainer();
             selectObject.SetObjectInfo(container);
             usingWalls = false;
-            wallPos = 0;
+            rotationSide = 0;
         }
 
         public void DeletePrefab(PrefabContainer container)
@@ -527,7 +526,7 @@ namespace LevelEditor.Editor
         {
             selectObject.SetObjectInfo(container);
             usingWalls = true;
-            wallPos = 0;
+            rotationSide = 0;
         }
 
         public void DeletePrefab(WallContainer container)
@@ -549,6 +548,39 @@ namespace LevelEditor.Editor
             EditorUtility.SetDirty(dataBase);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+
+
+        public void SelectPrefab(RegionContainer regionContainer)
+        {
+           selectObject.SetObjectInfo(regionContainer);
+           
+           usingWalls = false;
+           rotationSide = 0;
+        }
+
+        public void Reload(RegionContainer regionContainer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeletePrefab(RegionContainer regionContainer)
+        {
+            dataBase.regions.Remove(regionContainer);
+            if (selectObject.realObject.GetInstanceID() == regionContainer.prefab.GetInstanceID())
+            {
+                selectObject.SetToNull();
+            }
+
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        public void Edit(RegionContainer regionContainer)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

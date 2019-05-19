@@ -10,7 +10,7 @@ namespace LevelEditor.Editor
     public class LevelEditorWindow : EditorWindow
     {
 
-        [MenuItem(Paths.MENU_LEVEL_SCENE)]
+        [MenuItem(Paths.MENU_LEVEL_SCENE,false,0)]
         private static void OpenLevelEditor()
         {
             OpenEditor();
@@ -19,11 +19,13 @@ namespace LevelEditor.Editor
         public static void OpenEditor(Level editLevel = null)
         {
             string pre = GUIAuxiliar.OpenNewScene("Level Editor", out var scene);
-            if(String.IsNullOrEmpty(pre))
+            if (String.IsNullOrEmpty(pre))
             {
                 return;
             }
+
             previousScene = pre;
+            var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
             if (editLevel != null)
             {
                 actualLevel = editLevel;
@@ -35,10 +37,12 @@ namespace LevelEditor.Editor
             else
             {
                 actualLevel = null;
+                window.InitWindow();
             }
-            var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
-            window.titleContent = Style.TITLE_LEVEL_EDITOR_WINDOW;
 
+            window.titleContent = Style.TITLE_LEVEL_EDITOR_WINDOW;
+            Selection.activeGameObject = actualLevel.runTimeTerrain;
+            SceneView.lastActiveSceneView.FrameSelected();
 
             window.maxSize = new Vector2(300, 700);
             window.minSize = new Vector2(300, 300);
@@ -57,7 +61,7 @@ namespace LevelEditor.Editor
             }
         }
 
-
+        bool isPicking = false;
         static Vector2 scrollPosition;
         static Level actualLevel;
 
@@ -75,6 +79,7 @@ namespace LevelEditor.Editor
             levelSerialized.ApplyModifiedProperties();
             GUILayout.EndScrollView();
             DrawSaveAndLoad();
+            CheckPicker();
         }
 
         private void DrawGridProperties()
@@ -83,8 +88,6 @@ namespace LevelEditor.Editor
             Vector2 mapScale = actualLevel.cellSize;
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
-            mapSize.x = Mathf.Clamp(mapSize.x, 1, 100);
-            mapSize.y = Mathf.Clamp(mapSize.y, 1, 100);
 
             if (!mapSize.Equals(actualLevel.cellCount) || !mapScale.Equals(actualLevel.cellSize))
             {
@@ -121,21 +124,52 @@ namespace LevelEditor.Editor
                 NewMap();
             }
 
-            
+
             if (GUILayout.Button("Exit"))
             {
                 Exit();
             }
         }
 
+        private void CheckPicker()
+        {
+            string commandName = Event.current.commandName;
+            if (commandName == RegionEditorWindow.ON_PICK_COMMAND)
+            {
+                if (isPicking)
+                {
+                    Level data = (Level)EditorGUIUtility.GetObjectPickerObject();
+                    if (data != null)
+                    {
+                        GUIAuxiliar.Destroy(actualLevel.runTimeTerrain);
+                        actualLevel = data;
+                        levelSerialized = new SerializedObject(actualLevel);
+                        CreateReorderableList();
+                        Selection.activeGameObject = actualLevel.runTimeTerrain;
+                        SceneView.lastActiveSceneView.FrameSelected();
+
+                    }
+                    isPicking = false;
+                }
+            }
+        }
         private void NewMap()
         {
-            throw new NotImplementedException();
+            GUIAuxiliar.Destroy(actualLevel.runTimeTerrain);
+            actualLevel = null;
+            InitWindow();
+            levelSerialized = new SerializedObject(actualLevel);
+            CreateReorderableList();
+            Selection.activeGameObject = actualLevel.runTimeTerrain;
+            SceneView.lastActiveSceneView.FrameSelected();
+
         }
 
         private void Load()
         {
-            throw new NotImplementedException();
+            int controlID = EditorGUIUtility.GetControlID(FocusType.Passive);
+            isPicking = true;
+            EditorGUIUtility.ShowObjectPicker<Level>(null, false, "", controlID);
         }
 
         private void SaveAndExit()
@@ -164,15 +198,12 @@ namespace LevelEditor.Editor
             actualLevel.SaveItself(Paths.FOLDER_LEVELS);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            //actualLevel.terrainPrefab = PrefabUtility.SaveAsPrefabAsset(actualLevel.runTimeTerrain, Paths.PATH_LEVELS + actualLevel.levelName + "/" + actualLevel.levelName + ".prefab");
-
-
-
-
 
         }
 
-        //Check if something is null. If it is inicialice it.
+        /// <summary>
+        ///  Check if something is null. If it is inicialice it.
+        /// </summary>
         private void InitWindow()
         {
             if (actualLevel == null)
@@ -188,9 +219,6 @@ namespace LevelEditor.Editor
                 {
                     actualLevel = inSceneObject.owner;
                 }
-
-
-
 
                 CreateReorderableList();
             }
@@ -246,7 +274,7 @@ namespace LevelEditor.Editor
             variable.varName = EditorGUI.TextField(headerRect, variable.varName);
 
             EditorGUI.indentLevel--;
-
+            EditorGUI.indentLevel += 2;
             var e = (VariableTypes)EditorGUI.EnumPopup(propRect, "Type", variable.type);
             if (e != variable.type)
             {
@@ -256,7 +284,7 @@ namespace LevelEditor.Editor
             }
             propRect.y += 15;
             variable.ShowGUI(propRect);
-
+            EditorGUI.indentLevel -= 2;
             EditorGUI.indentLevel++;
         }
 

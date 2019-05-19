@@ -61,6 +61,7 @@ public class LevelScript : MonoBehaviour
             terrainMeshCollider = GetComponent<MeshCollider>();
         }
         this.owner = owner;
+        listOfObjects = new List<LevelObjectData>();
         CreateMesh(cellSize, cellCount);
     }
 
@@ -89,7 +90,13 @@ public class LevelScript : MonoBehaviour
     /// <returns></returns>
     private Vector3 GetCellPosition(Vector3 point, Vector2Int cellSize, Ray ray)
     {
-        Vector3 floorPos = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+        float x = Mathf.FloorToInt(point.x/ owner.cellSize.x)*owner.cellSize.x;;
+        float y = Mathf.FloorToInt(point.z/ owner.cellSize.y);
+
+
+
+        
+        Vector3 floorPos = new Vector3(x, Mathf.FloorToInt(point.y), y);
         Vector3[] positions = new Vector3[cellSize.x * cellSize.y];
         Vector3 totalPosition = Vector3.zero;
         for (int i = 0; i < cellSize.x; i++)
@@ -104,23 +111,8 @@ public class LevelScript : MonoBehaviour
         }
         float n = 1.0f / positions.Length;
         totalPosition *= n;
-
-
-        float minDistance = float.MaxValue;
-        float actualValue = 0;
-        int selected = -1;
-        for (int i = 0; i<listOfObjects.Count; i++)
-        {
-            if(listOfObjects[i].RayCast(ray, out actualValue))
-            {
-                if(actualValue < minDistance)
-                {
-                    selected = i;
-                    minDistance = actualValue;
-                }
-            }
-        }
-        float h = listOfObjects[selected].height;
+        int selected = RayCast(ray);
+        float h =selected > -1 ? listOfObjects[selected].height : 0;
         return totalPosition + new Vector3(0,h,0);
     }
 
@@ -128,6 +120,25 @@ public class LevelScript : MonoBehaviour
     {
         
 
+        
+        int selected = RayCast(ray);
+        
+        float h =selected > -1 ? listOfObjects[selected].height : 0;
+
+
+        float x = Mathf.FloorToInt(point.x/ owner.cellSize.x) *owner.cellSize.x;
+        float y = Mathf.FloorToInt(point.z/ owner.cellSize.y) * owner.cellSize.y;
+
+
+
+        Vector3 mousePositionClamp = new Vector3(x, Mathf.FloorToInt(point.y) + h, y);
+        mousePositionClamp += centerCellOffset;
+        return mousePositionClamp;
+    }
+
+
+
+    private int RayCast(Ray ray){
         float minDistance = float.MaxValue;
         float actualValue = 0;
         int selected = -1;
@@ -142,12 +153,28 @@ public class LevelScript : MonoBehaviour
                 }
             }
         }
-        float h = listOfObjects[selected].height;
-        Vector3 mousePositionClamp = new Vector3(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y) + h, Mathf.FloorToInt(point.z));
-        mousePositionClamp += centerCellOffset;
-        return mousePositionClamp;
+        return selected;
     }
 
+
+    public bool RemoveAtRay(Ray ray)
+    {
+        int index = RayCast(ray);
+        if(index!=-1)
+        {
+            RemoveFromIndex(index);
+            return true;
+        }
+        return false;
+    }
+
+    public LevelObjectData RemoveFromIndex(int index)
+    {
+        var data = listOfObjects[index];
+        GUIAuxiliar.Destroy(data.gameObject);
+        listOfObjects.RemoveAt(index);
+        return data;
+    }
 #if UNITY_EDITOR
     public void SaveItself(string path)
     {
@@ -166,5 +193,7 @@ public class LevelScript : MonoBehaviour
         var dataObject = new LevelObjectData(sceneObject,position);
         listOfObjects.Add(dataObject);
     }
+
+
 #endif
 }
