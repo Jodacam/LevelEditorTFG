@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using static PrefabContainer;
 using static Container;
+using UnityEditor.SceneManagement;
 
 namespace LevelEditor.Editor
 {
@@ -12,7 +13,7 @@ namespace LevelEditor.Editor
     public class PrefabCollectionWindow : EditorWindow
     {
         #region Static Functions
-        [MenuItem("LevelEditor/Prefab Collection Window",false,1)]
+        [MenuItem("LevelEditor/Prefab Collection Window", false, 1)]
         //Creates the main window.
         public static void OpenWindow()
         {
@@ -26,7 +27,7 @@ namespace LevelEditor.Editor
             window.Show();
         }
 
-     
+
 
         #endregion
 
@@ -48,10 +49,14 @@ namespace LevelEditor.Editor
             {
                 var window = PrefabCollectionCreatorWindow.CreateInstance<PrefabCollectionCreatorWindow>();
                 window.title = "Collection Creator";
-                if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
+
+                Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
+
+                /* if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
                 {
                     AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
                 }
+                */
                 window.ShowUtility();
                 window.dataBase = CreateInstance<PrefabDataBase>();
                 window.dataBase.Init();
@@ -361,43 +366,31 @@ namespace LevelEditor.Editor
             Vector3 off = allowOffset ? offset : Vector3.zero;
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-            if(selectObject == null){
+            if (selectObject == null)
+            {
                 selectObject = new SceneObjectContainer();
             }
             if (selectObject.HasObject)
             {
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid","LevelTerrain")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid", "LevelTerrain")))
                 {
-                    if (hit.transform.GetComponent<RegionTerrain>())
+                    if (EditorSceneManager.GetActiveScene().name == "Level Editor")
                     {
-                        if (!usingWalls)
-                        {
-                            AddingObject(e, off, instancing);
-                        }
-                        else
-                        {
-                            AddingWall(e, off, instancing);
-                        }
+                        AddIntoLevel(e,offset,instancing,ray);
                     }
                     else
-                    {    
-                        var terrain = hit.transform.GetComponent<LevelScript>();
-                        if(terrain)
+                    {
+
+                        if (hit.transform.GetComponent<RegionTerrain>())
                         {
                             if (!usingWalls)
                             {
-
-                                Vector3 position = terrain.GetClampPositon(hit.point,ray, selectObject.CellSize);
-                                selectObject.preview.transform.position = position - selectObject.Pivot + off;
-                                if (e.button == 0 && e.type == EventType.MouseDown)
-                                {
-                                    Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
-                                    terrain.SetObject(selectObject, position - selectObject.Pivot + off,instancing);
-                                }
-
+                                AddingObject(e, off, instancing);
                             }
-
-
+                            else
+                            {
+                                AddingWall(e, off, instancing);
+                            }
                         }
 
                     }
@@ -407,7 +400,37 @@ namespace LevelEditor.Editor
         }
 
 
+        private void AddIntoLevel(Event e, Vector3 off, bool instancing,Ray ray)
+        {
+            var terrain = hit.transform.GetComponent<LevelScript>();
+            if (terrain)
+            {
+                if (!usingWalls)
+                {
 
+                    Vector3 position = terrain.GetClampPositon(hit.point, ray, selectObject.CellSize);
+                    selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                    if (e.button == 0 && e.type == EventType.MouseDown)
+                    {
+                        Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
+                        terrain.SetObject(selectObject, position - selectObject.Pivot + off, instancing);
+                    }
+
+                }
+                else
+                {
+                    Vector3 position = terrain.GetWallClampPosition(hit.point, ray, rotationSide);
+                    selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                    if (e.button == 0 && e.type == EventType.MouseDown)
+                    {
+                        Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Wall");
+                        terrain.SetObject(selectObject, position - selectObject.Pivot + off, instancing);
+                    }
+                }
+
+
+            }
+        }
         private void AddingWall(Event e, Vector3 off, bool instancing)
         {
             var t = hit.transform.GetComponent<RegionTerrain>();
@@ -474,10 +497,6 @@ namespace LevelEditor.Editor
 
         #region Prefabs Functions
 
-
-
-
-
         // Calls to the edit window of the prefab Container.
         public void Edit(PrefabContainer container)
         {
@@ -525,6 +544,7 @@ namespace LevelEditor.Editor
         public void SelectPrefab(WallContainer container)
         {
             selectObject.SetObjectInfo(container);
+
             usingWalls = true;
             rotationSide = 0;
         }
@@ -554,15 +574,16 @@ namespace LevelEditor.Editor
 
         public void SelectPrefab(RegionContainer regionContainer)
         {
-           selectObject.SetObjectInfo(regionContainer);
-           
-           usingWalls = false;
-           rotationSide = 0;
+            regionContainer.prefab.GetComponent<MeshCollider>().enabled = false;
+            selectObject.SetObjectInfo(regionContainer);
+            regionContainer.prefab.GetComponent<MeshCollider>().enabled = true;
+            usingWalls = false;
+            rotationSide = 0;
         }
 
         public void Reload(RegionContainer regionContainer)
         {
-            throw new NotImplementedException();
+            regionContainer.Reload(this);
         }
 
         public void DeletePrefab(RegionContainer regionContainer)
@@ -580,9 +601,10 @@ namespace LevelEditor.Editor
 
         public void Edit(RegionContainer regionContainer)
         {
-            throw new NotImplementedException();
+            dataBase.ShowEditWindow(this, regionContainer);
         }
         #endregion
+
     }
 }
 #endif

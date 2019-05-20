@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,7 @@ public static class GUIAuxiliar
     public const string PATH_LEVEL_EDITOR = "Assets/LevelEditor/";
     public const string PATH_LEVEL_EDITOR_ICON = PATH_LEVEL_EDITOR + "UI/Icons/";
     //Todas las funciones de boton que creo que voy a usar, con etiquetas,imagenes o GUIcontents
+    #if UNITY_EDITOR
     #region Button
     public static T Button<T>(Delegate onClick, string label, params GUILayoutOption[] options)
     {
@@ -133,6 +134,7 @@ public static class GUIAuxiliar
     }
 
     #endregion
+    #endif
     #region Objects
     //Cuando usas Destroy en el editor, necesitas usar Destroy Inmediate, pero si estas en play, necesitas usar Destroy
     public static void Destroy(UnityEngine.Object o)
@@ -141,23 +143,30 @@ public static class GUIAuxiliar
         {
             GameObject.Destroy(o);
         }
+
         else
         {
+            #if UNITY_EDITOR
             Undo.DestroyObjectImmediate(o);
-
+            #endif
         }
     }
 
     //Auxiliar function to create a object.
     public static GameObject Instanciate(GameObject prefab, Transform transform, Vector3 position, Quaternion rotation, Vector3 scale, bool instancing = false)
     {
+        #if !UNITY_EDITOR
+        instancing = false;
+        #endif
 
         GameObject realObject;
         if (instancing)
         {
+            #if UNITY_EDITOR
             realObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             realObject.transform.parent = transform;
             realObject.transform.SetPositionAndRotation(position, rotation);
+            #endif
 
         }
         else
@@ -165,11 +174,13 @@ public static class GUIAuxiliar
             realObject = GameObject.Instantiate(prefab, position, rotation, transform);
 
         }
+
         Vector3 realScale = Vector3.Scale(scale, new Vector3(1 / transform.lossyScale.x, 1 / transform.lossyScale.y, 1 / transform.lossyScale.z));
         realObject.transform.localScale = Vector3.Scale(realObject.transform.localScale, realScale);
 
-
+        #if UNITY_EDITOR
         Undo.RegisterCreatedObjectUndo(realObject, "CellCreated");
+        #endif
         return realObject;
     }
 
@@ -184,11 +195,13 @@ public static class GUIAuxiliar
             newPivot = transform.InverseTransformPoint(b.center);
             newPivot.y -= b.extents.y;
         }
-
-        Debug.Log(newPivot);
         return newPivot;
     }
     #endregion
+    
+    
+    #region Utility
+    
     public static string Serialize<T>(T value)
     {
         fsData data;
@@ -214,6 +227,8 @@ public static class GUIAuxiliar
     /// <param name="name">Scene name</param>
     /// <param name="newSceneReference">The new scene created</param>
     /// <returns>The path to the preview scene, so you can store that path and relead that scene from the disk</returns>
+    /// 
+    #if UNITY_EDITOR
     public static string OpenNewScene(string name, out Scene newSceneReference)
     {
         
@@ -225,44 +240,27 @@ public static class GUIAuxiliar
         }
 
         string previewScene = EditorSceneManager.GetActiveScene().path;
-
-
-
+        EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         Scene actual = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         newSceneReference = actual;
         SceneView.lastActiveSceneView.Frame(new Bounds(Vector3.zero, Vector3.one));
         actual.name = name;
         return previewScene;
     }
-    static SceneView.OnSceneFunc pickerCall;
-    public static void SetPickerCallBack<T>(Action<T> callback) where T : UnityEngine.Object
-    {
-        int controlID = EditorGUIUtility.GetControlID(FocusType.Keyboard);
-        EditorGUIUtility.ShowObjectPicker<T>(null, false, "", controlID);
-        pickerCall = (view) => updatePicker(callback);
-
-        SceneView.onSceneGUIDelegate += pickerCall;
-
+    
+    public static string CreateTemporalScene(string path, Scene scene ,string name){
+       
+        string pathToScene = path+name+".unity";
+        EditorSceneManager.SaveScene(scene,pathToScene);
+        return pathToScene;
+        
+        
     }
-    const string ON_PICK_COMMAND = "ObjectSelectorClosed";
-    public static void updatePicker<T>(Action<T> callback) where T : UnityEngine.Object
-    {
-        Debug.Log("Updating");
-        Handles.BeginGUI();
-        if (Event.current != null)
-        {
-            string commandName = Event.current.commandName;
-            if (commandName == "ObjectSelectorUpdated")
-            {
-                Debug.Log("Hello");
-                T pickObject = (T)EditorGUIUtility.GetObjectPickerObject();
-                callback.Invoke(pickObject);
-                SceneView.onSceneGUIDelegate -= pickerCall;
-            }
-        }
-        Handles.EndGUI();
-    }
+
+    #endif
+    #endregion
+    
+  
 
 }
 
-#endif

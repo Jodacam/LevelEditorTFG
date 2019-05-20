@@ -117,10 +117,12 @@ public class Level : ScriptableObject {
     /// <param name="path">path were to save</param>
     public void SaveItself(string folder)
     {
-        if (!AssetDatabase.IsValidFolder(folder + "/" + levelName))
+        Paths.CreateFolderIfNotExist(folder,levelName);
+        /* if (!AssetDatabase.IsValidFolder(folder + "/" + levelName))
         {
             AssetDatabase.CreateFolder(folder, levelName);
         }
+       */
        
         var levelScript = runTimeTerrain.GetComponent<LevelScript>();
         levelScript.SaveItself(folder + "/" + levelName + "/");

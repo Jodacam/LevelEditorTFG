@@ -10,7 +10,7 @@ namespace LevelEditor.Editor
     public class LevelEditorWindow : EditorWindow
     {
 
-        [MenuItem(Paths.MENU_LEVEL_SCENE,false,0)]
+        [MenuItem(Paths.MENU_LEVEL_SCENE, false, 0)]
         private static void OpenLevelEditor()
         {
             OpenEditor();
@@ -25,6 +25,7 @@ namespace LevelEditor.Editor
             }
 
             previousScene = pre;
+            scenePath =  GUIAuxiliar.CreateTemporalScene(Paths.PATH_PREFABS,scene,"Level Editor");
             var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
             if (editLevel != null)
             {
@@ -49,22 +50,28 @@ namespace LevelEditor.Editor
 
             window.Show();
 
+
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_PREFABS, Paths.NAME_LEVELS);
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_LEVELS);
             //We create the folders here.
-            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_LEVELS))
+            /* if (!AssetDatabase.IsValidFolder(Paths.FOLDER_LEVELS))
             {
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_LEVELS);
 
             }
+            
             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_RESOURCE_LEVEL))
             {
                 AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_LEVELS);
             }
+            */
         }
 
         bool isPicking = false;
         static Vector2 scrollPosition;
         static Level actualLevel;
 
+        static string scenePath;
         static string previousScene;
         static SerializedObject levelSerialized;
         public static ReorderableList list;
@@ -143,6 +150,7 @@ namespace LevelEditor.Editor
                     {
                         GUIAuxiliar.Destroy(actualLevel.runTimeTerrain);
                         actualLevel = data;
+                        actualLevel.LoadLevel(Vector3.zero,null);
                         levelSerialized = new SerializedObject(actualLevel);
                         CreateReorderableList();
                         Selection.activeGameObject = actualLevel.runTimeTerrain;
@@ -182,6 +190,7 @@ namespace LevelEditor.Editor
         {
             this.Close();
             var actual = PrefabCollectionWindow.GetWindow<PrefabCollectionWindow>();
+            AssetDatabase.DeleteAsset(scenePath);
             actual.ChangeToNone();
             EditorSceneManager.OpenScene(previousScene);
         }

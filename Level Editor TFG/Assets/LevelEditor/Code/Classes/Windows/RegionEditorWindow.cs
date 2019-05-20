@@ -16,11 +16,11 @@ namespace LevelEditor.Editor
 
 
         #region Static Functions
-        [MenuItem(Paths.MENU_REGION_EDITOR,false,3)]
+        [MenuItem(Paths.MENU_REGION_EDITOR, false, 3)]
         //Creates the main window.
         public static void OpenWindow()
         {
-             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
+            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_MAPS);
 
             RegionEditorWindow window = (RegionEditorWindow)EditorWindow.GetWindow(typeof(RegionEditorWindow));
@@ -45,7 +45,7 @@ namespace LevelEditor.Editor
 
             RegionEditorWindow window = (RegionEditorWindow)EditorWindow.GetWindow(typeof(RegionEditorWindow));
 
-             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
+            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_MAPS);
             window.ReStart();
             if (region != null)
@@ -53,7 +53,7 @@ namespace LevelEditor.Editor
                 Editlevel = region;
                 window.LoadGrid();
             }
-            
+
             window.FindLevel();
             Selection.activeObject = Editlevel.terrainGrid.gameObject;
             SceneView.lastActiveSceneView.FrameSelected();
@@ -64,7 +64,7 @@ namespace LevelEditor.Editor
 
 
 
-        [MenuItem(Paths.MENU_REGION_SCENE,false,0)]
+        [MenuItem(Paths.MENU_REGION_SCENE, false, 0)]
         public static void OpenRegionScene()
         {
             //GUIAuxiliar.SetPickerCallBack(new Action<LevelRegion>((value) => Debug.Log(value)));
@@ -236,13 +236,14 @@ namespace LevelEditor.Editor
          */
         void Save()
         {
-            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR))
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_REGIONS);
+            /* if (!AssetDatabase.IsValidFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR))
             {
 
                 AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES, Paths.NAME_LEVEL_EDITOR);
                 AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_REGIONS);
             }
-
+            */
 
 
             Editlevel.SaveVars();
@@ -252,9 +253,12 @@ namespace LevelEditor.Editor
                 AssetDatabase.CreateAsset(Editlevel, Paths.PATH_REGIONS + Editlevel.name + ".asset");
             }
 
-            if (!AssetDatabase.IsValidFolder(Paths.PATH_MAPS + Editlevel.name))
-                AssetDatabase.CreateFolder(Paths.FOLDER_MAPS, Editlevel.name);
 
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_MAPS, Editlevel.name);
+
+            /* if (!AssetDatabase.IsValidFolder(Paths.PATH_MAPS + Editlevel.name))
+                AssetDatabase.CreateFolder(Paths.FOLDER_MAPS, Editlevel.name);
+            */
 
             exist = AssetDatabase.GetAssetPath(Editlevel.terrainMesh);
             if (string.IsNullOrEmpty(exist))
@@ -276,7 +280,7 @@ namespace LevelEditor.Editor
         {
             Save();
             Exit();
-           
+
         }
 
         private void Exit()
