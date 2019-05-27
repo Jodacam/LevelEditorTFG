@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using LevelEditor.Editor;
-[CustomEditor(typeof(LevelScript))]
-public class LevelScriptEditor : Editor
+
+namespace LevelEditor.EditorScripts
 {
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(LevelScript))]
+    public class LevelScriptEditor : Editor
     {
-        base.OnInspectorGUI();
-        var terrain = Selection.activeGameObject.GetComponent<LevelScript>();
-        if (GUILayout.Button("Edit"))
+        public override void OnInspectorGUI()
         {
-            LevelEditorWindow.OpenEditor(terrain.owner);
+            base.OnInspectorGUI();
+            var terrain = Selection.activeGameObject.GetComponent<LevelScript>();
+            if (GUILayout.Button("Edit"))
+            {
+                LevelEditorWindow.OpenEditor(terrain.owner);
+            }
         }
     }
 }

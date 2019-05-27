@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
   m_Name: New Level
   m_EditorClassIdentifier: 
-  jsonData: '{"value":[]}'
-  levelName: Ciudad
+  jsonData: '{"value":[{"value":100,"type":"Int","varName":"Poblacion","$type":"LevelEditor.VariableInt"}]}'
+  levelName: New Level
   runTimeTerrain: {fileID: 0}
-  cellCount: {x: 10, y: 10}
+  cellCount: {x: 11, y: 11}
   cellSize: {x: 1, y: 1}
-  terrainPrefab: {fileID: 8672084529740894334, guid: a3ab1cdb31000214897900076f72238b,
-    type: 3}
+  terrainPrefab: {fileID: 0}

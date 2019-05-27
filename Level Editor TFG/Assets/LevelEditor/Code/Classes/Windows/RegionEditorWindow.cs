@@ -6,10 +6,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditorInternal;
 using UnityEditor.SceneManagement;
-using static LevelRegion;
+using static LevelEditor.LevelRegion;
 using UnityEngine.SceneManagement;
 
-namespace LevelEditor.Editor
+namespace LevelEditor.EditorScripts
 {
     public class RegionEditorWindow : EditorWindow
     {
@@ -48,6 +48,7 @@ namespace LevelEditor.Editor
             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_MAPS);
             window.ReStart();
+            window.titleContent = Style.TITLE_REGION_EDITOR_WINDOW;
             if (region != null)
             {
                 Editlevel = region;

@@ -3,11 +3,11 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
-using static PrefabContainer;
-using static Container;
+using static LevelEditor.PrefabContainer;
+using static LevelEditor.Container;
 using UnityEditor.SceneManagement;
-
-namespace LevelEditor.Editor
+using LevelEditor;
+namespace LevelEditor.EditorScripts
 {
     //Ventana para la colleción de prfab y poder añadir objetos o selccionarlos.
     public class PrefabCollectionWindow : EditorWindow
@@ -192,7 +192,7 @@ namespace LevelEditor.Editor
                 if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
                 {
                     var terrain = hit.transform.GetComponent<RegionTerrain>();
-                    var selectedCell = terrain.GetCell(hit.triangleIndex);
+                    var selectedCell = terrain.GetCell(hit.point);
                     selectedCell.Edit(this);
 
                 }
@@ -409,7 +409,9 @@ namespace LevelEditor.Editor
                 {
 
                     Vector3 position = terrain.GetClampPositon(hit.point, ray, selectObject.CellSize);
+                    Vector2 cellScale = terrain.owner.cellSize;
                     selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                    selectObject.SetAutoScale(cellScale);
                     if (e.button == 0 && e.type == EventType.MouseDown)
                     {
                         Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
@@ -441,7 +443,7 @@ namespace LevelEditor.Editor
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
                 Undo.RegisterFullObjectHierarchyUndo(t, "Add Wall");
-                t.SetWallIntoCell(selectObject, hit.triangleIndex, rotationSide, off, instancing);
+                t.SetWallIntoCell(selectObject, hit.point, rotationSide, off, instancing);
             }
         }
 
@@ -455,7 +457,7 @@ namespace LevelEditor.Editor
             {
                 Undo.RegisterFullObjectHierarchyUndo(t, "AddObject");
 
-                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off, instancing);
+                t.SetObjetIntoCell(selectObject, hit.point, off, instancing);
             }
         }
 
@@ -475,7 +477,7 @@ namespace LevelEditor.Editor
                 {
                     RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
                     //ter.SetIntoCell(null,hit.triangleIndex);
-                    ter.Remove(hit.triangleIndex);
+                    ter.Remove(hit.point);
                 }
                 else
                 {

@@ -8,7 +8,8 @@ using UnityEditor.SceneManagement;
 using FullSerializer;
 using static UnityEditor.EditorApplication;
 using UnityEngine.SceneManagement;
-
+using LevelEditor.EditorScripts;
+using LevelEditor;
 
 //Para facilitarme algunas funciones, como crear botones, o abrir popUps.
 public static class GUIAuxiliar

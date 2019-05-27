@@ -1,14 +1,23 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using static Level;
+using static LevelEditor.Level;
 using UnityEditor.SceneManagement;
 using System;
 
-namespace LevelEditor.Editor
+namespace LevelEditor.EditorScripts
 {
     public class LevelEditorWindow : EditorWindow
     {
+
+
+        [MenuItem("LevelEditor/Create Package")]
+        private static void CreatePackage()
+        {
+            string[] projectContent = new string[] { Paths.FOLDER_LEVEL_EDITOR, "ProjectSettings/TagManager.asset" };
+            AssetDatabase.ExportPackage(projectContent, "package.unitypackage", ExportPackageOptions.Interactive | ExportPackageOptions.Recurse | ExportPackageOptions.IncludeDependencies);
+            Debug.Log("Project Exported");
+        }
 
         [MenuItem(Paths.MENU_LEVEL_SCENE, false, 0)]
         private static void OpenLevelEditor()
@@ -25,7 +34,7 @@ namespace LevelEditor.Editor
             }
 
             previousScene = pre;
-            scenePath =  GUIAuxiliar.CreateTemporalScene(Paths.PATH_PREFABS,scene,"Level Editor");
+            scenePath = GUIAuxiliar.CreateTemporalScene(Paths.PATH_PREFABS, scene, "Level Editor");
             var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
             if (editLevel != null)
             {
@@ -96,6 +105,9 @@ namespace LevelEditor.Editor
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
 
+            mapSize.x = Mathf.Max(1, mapSize.x);
+            mapSize.y = Mathf.Max(1, mapSize.y);
+
             if (!mapSize.Equals(actualLevel.cellCount) || !mapScale.Equals(actualLevel.cellSize))
             {
                 actualLevel.cellCount = mapSize;
@@ -150,7 +162,7 @@ namespace LevelEditor.Editor
                     {
                         GUIAuxiliar.Destroy(actualLevel.runTimeTerrain);
                         actualLevel = data;
-                        actualLevel.LoadLevel(Vector3.zero,null);
+                        actualLevel.LoadLevel(Vector3.zero, null);
                         levelSerialized = new SerializedObject(actualLevel);
                         CreateReorderableList();
                         Selection.activeGameObject = actualLevel.runTimeTerrain;

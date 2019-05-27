@@ -23,7 +23,7 @@ public static class Paths
     public const string PATH_DATA_BASE = PATH_RESOURCES_LEVEL_EDITOR + "PrefabDataBases/";
 
     public const string PATH_RESOURCES_LEVEL_EDITOR = PATH_RESOURCES + "LevelEditor/";
-    public const string NAME_REGIONS = "Regions";
+    public const string NAME_REGIONS = "Regionss";
 
     public const string NAME_MAPS = "Regions";
 
@@ -76,7 +76,7 @@ public static class Paths
         string folder = parentFolder + "/" + name;
         if (!AssetDatabase.IsValidFolder(folder))
         {
-            folder = AssetDatabase.CreateFolder(CreateFolderIfNotExist(parentFolder), name);
+            AssetDatabase.CreateFolder(CreateFolderIfNotExist(parentFolder), name);
         }
         return folder;
     }
@@ -107,10 +107,10 @@ public static class Paths
                 }
                 parentFolder += split[split.Length-2];
 
-                folder = AssetDatabase.CreateFolder(CreateFolderIfNotExist(parentFolder), folderName);
+                AssetDatabase.CreateFolder(CreateFolderIfNotExist(parentFolder), folderName);
             }
         }
-        return folder;
+        return folderPath;
     }
 
     #endregion

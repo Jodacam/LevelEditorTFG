@@ -34,6 +34,7 @@ Shader "LevelEditor/GridShow"
 	{
 		float2 uv : TEXCOORD0;
 		float4 vertex : SV_POSITION;
+		float2 local : TEXCOORD1;
 	};
 
 	
@@ -42,6 +43,7 @@ Shader "LevelEditor/GridShow"
 		v2f o;
 		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.uv = mul(unity_ObjectToWorld, v.vertex).xz;
+		o.local = v.vertex.xz;
 		return o;
 	}
 
@@ -68,7 +70,7 @@ Shader "LevelEditor/GridShow"
 
 			fixed4 frag (v2f i) : SV_Target
 			{              
-				fixed r = DrawGrid(i.uv, _GridSizeX, _GridSizeY,0.03);
+				fixed r = DrawGrid(i.local, _GridSizeX, _GridSizeY,0.03);
 				return float4(0.8*r,0,0,_Alpha);
 			}
 			ENDCG

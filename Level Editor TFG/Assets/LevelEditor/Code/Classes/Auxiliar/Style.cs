@@ -10,6 +10,8 @@ public static class Style
     
 
     public static readonly GUIContent TITLE_LEVEL_EDITOR_WINDOW = EditorGUIUtility.TrTextContentWithIcon("Level Editor Window",MessageType.Info);
+
+    public static readonly GUIContent TITLE_REGION_EDITOR_WINDOW = EditorGUIUtility.TrTextContentWithIcon("Region Editor Window",MessageType.Info);
     public static readonly GUIContent TITLE_PREFAB_COLLECTION_WINDOW = EditorGUIUtility.TrTextContentWithIcon("Prefab Collection Window",MessageType.Info);
     
     public const string BUTTON_TEXT_SAVE = "Save Level";
