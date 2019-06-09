@@ -19,7 +19,7 @@ namespace LevelEditor
 
         private Vector3 internalPivot;
         //Tamaño del objeto.
-        public Vector3 Size { get { return ((PrefabContainer)objectInfo).sizeBounds; } }
+        public Vector3 Size { get { return objectInfo.sizeBounds; } }
         // Pivot del objeto
         public Vector3 Pivot { get { return Vector3.Scale(internalPivot, objectInfo.scale); } }
 

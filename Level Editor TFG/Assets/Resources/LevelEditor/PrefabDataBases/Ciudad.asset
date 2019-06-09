@@ -28,17 +28,17 @@ MonoBehaviour:
     pivot: {x: -0.00000011920929, y: -0.00000014901161, z: 0}
     autoPivot: 1
     autoScale: 1
-    scale: {x: 0.7499998, y: 0.7499998, z: 0.7499998}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 1, y: 0.050000045, z: 0.9999999}
+    scale: {x: 0.49999988, y: 0.49999988, z: 0.49999988}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 2, y: 0.10000009, z: 1.9999998}
   - prefab: {fileID: 1037655780390000, guid: 794931ad8054d8f4485bc161f83a2a14, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0.000000059604645, y: 0, z: 0.0000004172325}
     autoPivot: 1
     autoScale: 1
-    scale: {x: 0.75, y: 0.75, z: 0.75}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 0.9999999, y: 0.0625, z: 1}
+    scale: {x: 0.5, y: 0.5, z: 0.5}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 1.9999998, y: 0.125, z: 2}
   - prefab: {fileID: 100000, guid: c129f22187ea2494384ee89fedf8bcd4, type: 3}
     preview: {fileID: 0}
     pivot: {x: 0, y: 0, z: 0}
@@ -76,9 +76,9 @@ MonoBehaviour:
     pivot: {x: 0.00000017881393, y: 0, z: 0.00000047683716}
     autoPivot: 1
     autoScale: 1
-    scale: {x: 0.75, y: 0.75, z: 0.75}
-    cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 0.9999999, y: 0.049999997, z: 1}
+    scale: {x: 0.5, y: 0.5, z: 0.5}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 1.9999998, y: 0.099999994, z: 2}
   - prefab: {fileID: 1817002793791402, guid: d3563796ab2fa2d4ba462eb11916b77f, type: 3}
     preview: {fileID: 0}
     pivot: {x: -0.0000010728836, y: 0, z: 0}
@@ -111,6 +111,22 @@ MonoBehaviour:
     scale: {x: 0.25, y: 0.25, z: 0.25}
     cellSize: {x: 2, y: 2}
     sizeBounds: {x: 2, y: 1.9321374, z: 2}
+  - prefab: {fileID: 1075854357430192, guid: 0fae572718d091f4db8cde077bdf2d76, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.000000059604645, y: 0, z: 0.0000004172325}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.5, y: 0.5, z: 0.5}
+    cellSize: {x: 2, y: 2}
+    sizeBounds: {x: 1.9999998, y: 0.125, z: 2}
+  - prefab: {fileID: 1977470886905136, guid: 31d5af46872794c47831f7a6da72a909, type: 3}
+    preview: {fileID: 0}
+    pivot: {x: 0.00000023841858, y: 0, z: 0.16479445}
+    autoPivot: 1
+    autoScale: 1
+    scale: {x: 0.25, y: 0.25, z: 0.25}
+    cellSize: {x: 2, y: 3}
+    sizeBounds: {x: 2, y: 0.6792804, z: 1.0878218}
   Walls:
   - prefab: {fileID: 100002, guid: 6a3e21eeec3687442a040ff6217d65d7, type: 3}
     preview: {fileID: 0}

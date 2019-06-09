@@ -32,7 +32,7 @@ namespace LevelEditor
         public RegionTerrain terrainGrid;
         public GameObject terrainGameObject;
         public Mesh terrainMesh;
-        public string name;
+        public string regionName;
         public Vector2Int mapSize;
         public Vector2 mapScale;
         [SerializeField]
@@ -96,7 +96,7 @@ namespace LevelEditor
 
         private void OnDestroy()
         {
-            Debug.Log(name + "Destroy");
+            Debug.Log(regionName + "Destroy");
         }
 
 

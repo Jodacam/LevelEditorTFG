@@ -17,7 +17,7 @@ namespace LevelEditor
         [HideInInspector]
 
         //Tamaño de la caja contenedora desde el centro del objeto
-        public Vector3 sizeBounds;
+        
 
         private bool autosize = true;
 
@@ -87,8 +87,6 @@ namespace LevelEditor
                     {
                         Bounds b = render.bounds;
                         sizeBounds = Vector3.Scale(b.size, scale);
-
-
                     }
                 }
                 else

@@ -11,7 +11,7 @@ namespace LevelEditor.EditorScripts
     {
 
 
-        [MenuItem("LevelEditor/Create Package")]
+        //[MenuItem("LevelEditor/Create Package")]
         private static void CreatePackage()
         {
             string[] projectContent = new string[] { Paths.FOLDER_LEVEL_EDITOR, "ProjectSettings/TagManager.asset" };
@@ -28,14 +28,16 @@ namespace LevelEditor.EditorScripts
         public static void OpenEditor(Level editLevel = null)
         {
             string pre = GUIAuxiliar.OpenNewScene("Level Editor", out var scene);
+            var window = GUIAuxiliar.OpenEditorWindow<LevelEditorWindow>(Style.TITLE_LEVEL_EDITOR_WINDOW);
             if (String.IsNullOrEmpty(pre))
             {
+                
                 return;
             }
 
             previousScene = pre;
             scenePath = GUIAuxiliar.CreateTemporalScene(Paths.PATH_PREFABS, scene, "Level Editor");
-            var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
+            
             if (editLevel != null)
             {
                 actualLevel = editLevel;

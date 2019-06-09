@@ -1,17 +1,21 @@
 
-    using UnityEngine;
-    using UnityEditor;
-    using System;
-    using LevelEditor;
-    public static class LevelLoader
+using UnityEngine;
+using UnityEditor;
+using System;
+using LevelEditor;
+public static class LevelLoader
+{
+    public static Level GetLevel(string name)
     {
-        public static LevelRegion GetLevel(string name)
+
+        if (String.IsNullOrEmpty(name))
         {
-
-          LevelRegion l = (LevelRegion) Resources.Load(name,typeof(LevelRegion));
-          l.LoadVariable();
-          return l;
-
+            return null;
         }
+        Level l = (Level)Resources.Load(Paths.RESOURCES_PATH_LEVELS + name, typeof(Level));
+        l?.LoadVars();
+        return l;
 
     }
+
+}

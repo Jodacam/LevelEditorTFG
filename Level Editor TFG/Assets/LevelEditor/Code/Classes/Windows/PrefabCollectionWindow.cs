@@ -17,10 +17,7 @@ namespace LevelEditor.EditorScripts
         //Creates the main window.
         public static void OpenWindow()
         {
-            PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
-
-
-            window.titleContent = Style.TITLE_PREFAB_COLLECTION_WINDOW;
+            PrefabCollectionWindow window = GUIAuxiliar.OpenEditorWindow<PrefabCollectionWindow>(Style.TITLE_PREFAB_COLLECTION_WINDOW);
             window.minSize = new Vector2(350, 250);
             window.maxSize = new Vector2(350, 1000);
             PrefabCollectionWindow.selectObject = new SceneObjectContainer();
@@ -47,8 +44,9 @@ namespace LevelEditor.EditorScripts
             protected PrefabCollectionWindow owner;
             public static PrefabCollectionCreatorWindow CreateWindow(PrefabCollectionWindow owner)
             {
-                var window = PrefabCollectionCreatorWindow.CreateInstance<PrefabCollectionCreatorWindow>();
-                window.title = "Collection Creator";
+
+
+                var window = GUIAuxiliar.OpenEditorWindow<PrefabCollectionCreatorWindow>("Collection Creator");
 
                 Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
 
@@ -72,7 +70,7 @@ namespace LevelEditor.EditorScripts
 
             private void OnGUI()
             {
-                GUILayout.Label(title);
+                GUILayout.Label(titleContent);
                 dataBase.dataBaseName = EditorGUILayout.TextField("Name", dataBase.dataBaseName);
                 if (GUILayout.Button("Create"))
                 {
@@ -82,7 +80,7 @@ namespace LevelEditor.EditorScripts
                     }
                     AssetDatabase.CreateAsset(dataBase, Paths.PATH_DATA_BASE + dataBase.dataBaseName + ".asset");
                     owner.OnCreateDataBase(dataBase);
-                    this.Close();
+                    Close();
                 }
             }
 
@@ -376,7 +374,7 @@ namespace LevelEditor.EditorScripts
                 {
                     if (EditorSceneManager.GetActiveScene().name == "Level Editor")
                     {
-                        AddIntoLevel(e,offset,instancing,ray);
+                        AddIntoLevel(e, offset, instancing, ray);
                     }
                     else
                     {
@@ -400,7 +398,7 @@ namespace LevelEditor.EditorScripts
         }
 
 
-        private void AddIntoLevel(Event e, Vector3 off, bool instancing,Ray ray)
+        private void AddIntoLevel(Event e, Vector3 off, bool instancing, Ray ray)
         {
             var terrain = hit.transform.GetComponent<LevelScript>();
             if (terrain)
@@ -507,11 +505,19 @@ namespace LevelEditor.EditorScripts
 
         public void SelectPrefab(PrefabContainer container)
         {
-            if (selectObject == null)
-                selectObject = new SceneObjectContainer();
-            selectObject.SetObjectInfo(container);
-            usingWalls = false;
-            rotationSide = 0;
+            string sceneName = EditorSceneManager.GetActiveScene().name;
+            if (sceneName.Equals("Level Editor") || sceneName.Equals("Region Editor"))
+            {
+                if (selectObject == null)
+                    selectObject = new SceneObjectContainer();
+                selectObject.SetObjectInfo(container);
+                usingWalls = false;
+                rotationSide = 0;
+            }
+            else
+            {
+                Debug.Log("You can only edit level in at the level editor scenes");
+            }
         }
 
         public void DeletePrefab(PrefabContainer container)

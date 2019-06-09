@@ -258,6 +258,18 @@ public static class GUIAuxiliar
         
     }
 
+    public static T OpenEditorWindow<T>(string title) where T : EditorWindow
+    {
+        var window = LevelEditorWindow.GetWindow<T>();
+        window.titleContent = EditorGUIUtility.TrTextContent(title);
+        return window;
+    }
+     public static T OpenEditorWindow<T>(GUIContent title) where T : EditorWindow
+     {
+        var window = LevelEditorWindow.GetWindow<T>();
+        window.titleContent = title;
+        return window;
+     }
     #endif
     #endregion
     

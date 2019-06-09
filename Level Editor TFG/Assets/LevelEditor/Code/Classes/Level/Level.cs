@@ -162,17 +162,17 @@ namespace LevelEditor
 
         public bool GetBool(string name)
         {
-            VariableBool e = (VariableBool)getData(name, VariableTypes.String);
+            VariableBool e = (VariableBool)getData(name, VariableTypes.Boolean);
             return e != null ? e.value : false;
         }
         public int GetInt(string name)
         {
-            VariableInt e = (VariableInt)getData(name, VariableTypes.String);
+            VariableInt e = (VariableInt)getData(name, VariableTypes.Int);
             return e != null ? e.value : int.MinValue;
         }
         public float GetFloat(string name)
         {
-            VariableFloat e = (VariableFloat)getData(name, VariableTypes.String);
+            VariableFloat e = (VariableFloat)getData(name, VariableTypes.Float);
             return e != null ? e.value : float.MinValue;
         }
 

@@ -26,8 +26,7 @@ namespace LevelEditor
             public static ContainerWindowCreator CreateWindow(EditorWindow owner, PrefabDataBase data, Container tipe)
             {
 
-                ContainerWindowCreator window = CreateInstance<ContainerWindowCreator>();
-                window.title = "Create Prefab";
+                var window = GUIAuxiliar.OpenEditorWindow<ContainerWindowCreator>("Create Prefab");
                 window.edit = false;
                 window = DoStyle(owner, data, tipe, window);
                 return window;
@@ -38,8 +37,7 @@ namespace LevelEditor
             public static ContainerWindowCreator CreateEditWindow(EditorWindow owner, PrefabDataBase data, Container tipe)
             {
 
-                ContainerWindowCreator window = CreateInstance<ContainerWindowCreator>();
-                window.title = "Edit Prefab";
+                var window = GUIAuxiliar.OpenEditorWindow<ContainerWindowCreator>("Create Prefab");
                 window.edit = true;
                 window = DoStyle(owner, data, tipe, window);
                 return window;
@@ -107,7 +105,8 @@ namespace LevelEditor
             window.showRegions = EditorGUILayout.Foldout(window.showRegions, Style.LABLE_REGION_FIELD);
             if (window.showRegions)
             {
-                window.canUseRegions = EditorGUILayout.Toggle(window.canUseRegions);
+                //window.canUseRegions = EditorGUILayout.Toggle(window.canUseRegions);
+                
                 if (window.canUseRegions)
                     DrawCollection(regions, window);
                 else

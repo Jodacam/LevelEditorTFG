@@ -171,8 +171,9 @@ namespace LevelEditor
             Vector2 scrollPosition;
             public static CellEditWindow CreateWindow(Cell owner)
             {
-                var window = CellEditWindow.CreateInstance<CellEditWindow>();
-                window.title = "Cell Editor";
+                
+
+                var window = GUIAuxiliar.OpenEditorWindow<CellEditWindow>("Cell Editor");
                 window.owner = owner;
                 window.maxSize = new Vector2(400, 250);
                 window.minSize = window.maxSize;
@@ -187,7 +188,7 @@ namespace LevelEditor
             {
                 scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, false, false);
                 GUILayout.Label("Cell Properties");
-                owner.cellInfo = EditorGUILayout.IntField("Cell Info", owner.cellInfo);
+                //owner.cellInfo = EditorGUILayout.IntField("Cell Info", owner.cellInfo);
                 GUILayout.Label("Objects");
                 EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(minSize.x), GUILayout.MinWidth(50));
                 int number = 0;

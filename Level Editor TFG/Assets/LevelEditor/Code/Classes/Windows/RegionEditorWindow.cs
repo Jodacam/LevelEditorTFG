@@ -16,7 +16,7 @@ namespace LevelEditor.EditorScripts
 
 
         #region Static Functions
-        [MenuItem(Paths.MENU_REGION_EDITOR, false, 3)]
+        //[MenuItem(Paths.MENU_REGION_EDITOR, false, 3)]
         //Creates the main window.
         public static void OpenWindow()
         {
@@ -37,18 +37,19 @@ namespace LevelEditor.EditorScripts
         {
 
             previousScene = GUIAuxiliar.OpenNewScene("Region Editor", out var actualScene);
+            RegionEditorWindow window = GUIAuxiliar.OpenEditorWindow<RegionEditorWindow>(Style.TITLE_REGION_EDITOR_WINDOW);
             if (String.IsNullOrEmpty(previousScene))
             {
                 return;
             }
 
 
-            RegionEditorWindow window = (RegionEditorWindow)EditorWindow.GetWindow(typeof(RegionEditorWindow));
+            //RegionEditorWindow window = (RegionEditorWindow)EditorWindow.GetWindow(typeof(RegionEditorWindow));
 
             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_MAPS))
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_MAPS);
             window.ReStart();
-            window.titleContent = Style.TITLE_REGION_EDITOR_WINDOW;
+           
             if (region != null)
             {
                 Editlevel = region;
@@ -251,11 +252,11 @@ namespace LevelEditor.EditorScripts
             string exist = AssetDatabase.GetAssetPath(Editlevel);
             if (string.IsNullOrEmpty(exist))
             {
-                AssetDatabase.CreateAsset(Editlevel, Paths.PATH_REGIONS + Editlevel.name + ".asset");
+                AssetDatabase.CreateAsset(Editlevel, Paths.PATH_REGIONS + Editlevel.regionName + ".asset");
             }
 
 
-            Paths.CreateFolderIfNotExist(Paths.FOLDER_MAPS, Editlevel.name);
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_MAPS, Editlevel.regionName);
 
             /* if (!AssetDatabase.IsValidFolder(Paths.PATH_MAPS + Editlevel.name))
                 AssetDatabase.CreateFolder(Paths.FOLDER_MAPS, Editlevel.name);
@@ -264,12 +265,12 @@ namespace LevelEditor.EditorScripts
             exist = AssetDatabase.GetAssetPath(Editlevel.terrainMesh);
             if (string.IsNullOrEmpty(exist))
             {
-                AssetDatabase.CreateAsset(Editlevel.terrainMesh, Paths.PATH_MAPS + Editlevel.name + "/" + Editlevel.terrainMesh.name + ".mesh");
-                AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.sharedMaterial, Paths.PATH_MAPS + Editlevel.name + "/Material.mat");
+                AssetDatabase.CreateAsset(Editlevel.terrainMesh, Paths.PATH_MAPS + Editlevel.regionName + "/" + Editlevel.terrainMesh.name + ".mesh");
+                AssetDatabase.CreateAsset(Editlevel.terrainGrid.meshRenderer.sharedMaterial, Paths.PATH_MAPS + Editlevel.regionName + "/Material.mat");
             }
 
 
-            Editlevel.terrainGameObject = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject, Paths.PATH_MAPS + Editlevel.name + "/" + Editlevel.name + ".prefab");
+            Editlevel.terrainGameObject = PrefabUtility.SaveAsPrefabAsset(Editlevel.terrainGrid.gameObject, Paths.PATH_MAPS + Editlevel.regionName + "/" + Editlevel.regionName + ".prefab");
             EditorUtility.SetDirty(Editlevel);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -299,7 +300,7 @@ namespace LevelEditor.EditorScripts
                 DestroyImmediate(Editlevel.terrainGrid.gameObject);
             Editlevel = (LevelRegion)CreateInstance(typeof(LevelRegion));
             levelSerialized = new SerializedObject(Editlevel);
-            Editlevel.name = "New Level";
+            Editlevel.regionName = "New Level";
             Editlevel.mapSize = new Vector2Int(10, 10);
             Editlevel.xcellSize = 1;
             Editlevel.ycellSize = 1;

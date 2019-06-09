@@ -53,6 +53,9 @@ public static class Paths
 
     public const string MENU_EDITOR = "LevelEditor/";
 
+    public  const string RESOURCES_PATH_LEVELS = "LevelEditor/Levels/";
+    
+
     public const string MENU_REGION_EDITOR = "LevelEditor/RegionEditorWindow";
 
     public const string MENU_REGION_SCENE = MENU_EDITOR + "Open Region Editor";

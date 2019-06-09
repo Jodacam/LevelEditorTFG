@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6f10814c45f8d5409e2fc8f833eb0eb, type: 3}
-  m_Name: Cruce
+  m_Name: Nivel de Octave
   m_EditorClassIdentifier: 
-  jsonData: '{"value":[{"value":"Centro","type":"String","varName":"Distrito","$type":"LevelEditor.VariableString"},{"value":100,"type":"Int","varName":"Poblacion","$type":"LevelEditor.VariableInt"}]}'
-  levelName: Cruce
+  jsonData: '{"value":[]}'
+  levelName: Nivel de Octave
   runTimeTerrain: {fileID: 0}
-  cellCount: {x: 11, y: 11}
-  cellSize: {x: 3, y: 3}
-  terrainPrefab: {fileID: 8748254868440361481, guid: ff0084d31e0f93044adc5fb377749949,
-    type: 3}
+  cellCount: {x: 10, y: 10}
+  cellSize: {x: 1, y: 1}
+  terrainPrefab: {fileID: 0}

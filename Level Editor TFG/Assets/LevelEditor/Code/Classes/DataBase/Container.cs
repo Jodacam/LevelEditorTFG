@@ -21,6 +21,7 @@ namespace LevelEditor
         public Texture2D preview;
 
 
+        public Vector3 sizeBounds;
         //Pivot del objeto. El objeto se va a colocar aqui. lo que tengo que saber es ver donde está el pivot y Render.Bound.Center.
         //En la funcion AutoPivotGUI se puede ver como se puede calcular el pivot del objeto. El pivot, se coloca no en el centro geometrico si no en en el plano XZ.
         public Vector3 pivot;
