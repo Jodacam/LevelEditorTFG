@@ -19,6 +19,12 @@ public static class Style
     public const string BUTTON_TEXT_LOAD = "Load Level";
 
     public const string BUTTON_TEXT_NEW = "New Level";
+
+    public const string BUTTON_TEXT_SAVE_REGION = "Save Region";
+
+    public const string BUTTON_TEXT_LOAD_REGION = "Load Region";
+
+    public const string BUTTON_TEXT_NEW_REGION = "New Region";
     public const string BUTTON_TEXT_NEW_PREFAB = "Add Prefab";
     public const string BUTTON_TEXT_NEW_WALL = "Add new wall prefab";
 

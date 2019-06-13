@@ -191,7 +191,7 @@ namespace LevelEditor.EditorScripts
 
         private void DoSaveAndLoad()
         {
-            if (GUILayout.Button(Style.BUTTON_TEXT_SAVE))
+            if (GUILayout.Button(Style.BUTTON_TEXT_SAVE_REGION))
             {
                 Save();
             }
@@ -201,12 +201,12 @@ namespace LevelEditor.EditorScripts
                 SaveAndExit();
             }
 
-            if (GUILayout.Button(Style.BUTTON_TEXT_LOAD))
+            if (GUILayout.Button(Style.BUTTON_TEXT_LOAD_REGION))
             {
                 Load();
             }
 
-            if (GUILayout.Button(Style.BUTTON_TEXT_NEW))
+            if (GUILayout.Button(Style.BUTTON_TEXT_NEW_REGION))
             {
                 NewMap();
             }

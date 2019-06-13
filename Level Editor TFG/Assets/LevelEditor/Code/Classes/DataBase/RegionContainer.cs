@@ -13,7 +13,7 @@ namespace LevelEditor
 
         [SerializeField]
         public LevelRegion region;
-
+        public new bool autoScale = false;
 
 
 

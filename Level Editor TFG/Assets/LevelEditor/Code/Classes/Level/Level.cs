@@ -132,6 +132,7 @@ namespace LevelEditor
             }
            */
             SaveVars();
+           
             var levelScript = runTimeTerrain.GetComponent<LevelScript>();
             levelScript.SaveItself(folder + "/" + levelName + "/");
             terrainPrefab = PrefabUtility.SaveAsPrefabAsset(runTimeTerrain, folder + "/" + levelName + "/" + levelName + ".prefab");

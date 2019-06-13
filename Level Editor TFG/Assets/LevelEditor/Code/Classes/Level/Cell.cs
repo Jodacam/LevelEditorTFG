@@ -90,6 +90,7 @@ namespace LevelEditor
                 return;
             }
             ObjectInfo info = objectList.Last();
+            
             GUIAuxiliar.Destroy(info.gameObject);
             objectList.Remove(info);
 

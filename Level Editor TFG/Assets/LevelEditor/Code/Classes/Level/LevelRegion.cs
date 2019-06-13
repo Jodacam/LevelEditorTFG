@@ -12,7 +12,7 @@ namespace LevelEditor
         //Clase para guardar todos los string necesarios para la serialización del nivel. Suele ser mucho más sencillo si tengo que cambiar una variable.
         public static class LevelProperties
         {
-            public const string NAME = "name";
+            public const string NAME = "regionName";
 
         }
 

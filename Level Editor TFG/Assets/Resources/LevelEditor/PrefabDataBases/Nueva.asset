@@ -16,11 +16,31 @@ MonoBehaviour:
   prefabList:
   - prefab: {fileID: 1131628691654494, guid: 5c6ccde0684f68f4f9de1e388495c480, type: 3}
     preview: {fileID: 0}
+    sizeBounds: {x: 7.999999, y: 12.816987, z: 7.999999}
     pivot: {x: 0, y: 0, z: 0}
     autoPivot: 0
     autoScale: 0
     scale: {x: 1, y: 1, z: 1}
     cellSize: {x: 1, y: 1}
-    sizeBounds: {x: 7.999999, y: 12.816987, z: 7.999999}
-  Walls: []
-  regions: []
+  Walls:
+  - prefab: {fileID: 100004, guid: d409ee334c107044ea178af21c389152, type: 3}
+    preview: {fileID: 0}
+    sizeBounds: {x: 0, y: 0, z: 0}
+    pivot: {x: 0.243, y: 0, z: 0.04455}
+    autoPivot: 1
+    autoScale: 0
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 1, y: 1}
+    height: 0.9811817
+    transitable: 1
+  regions:
+  - prefab: {fileID: 8395525226625021560, guid: 16effccd85da61c44930d5e3390ba9f8,
+      type: 3}
+    preview: {fileID: 0}
+    sizeBounds: {x: 0, y: 0, z: 0}
+    pivot: {x: 5, y: 0, z: 5}
+    autoPivot: 0
+    autoScale: 0
+    scale: {x: 1, y: 1, z: 1}
+    cellSize: {x: 10, y: 10}
+    region: {fileID: 11400000, guid: 8690e17b90259a64393cf779fa7e44de, type: 2}

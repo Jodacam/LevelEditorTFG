@@ -4,6 +4,7 @@ using UnityEditorInternal;
 using static LevelEditor.Level;
 using UnityEditor.SceneManagement;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace LevelEditor.EditorScripts
 {
@@ -11,7 +12,7 @@ namespace LevelEditor.EditorScripts
     {
 
 
-        //[MenuItem("LevelEditor/Create Package")]
+        [MenuItem("LevelEditor/Create Package")]
         private static void CreatePackage()
         {
             string[] projectContent = new string[] { Paths.FOLDER_LEVEL_EDITOR, "ProjectSettings/TagManager.asset" };
@@ -206,7 +207,11 @@ namespace LevelEditor.EditorScripts
             var actual = PrefabCollectionWindow.GetWindow<PrefabCollectionWindow>();
             AssetDatabase.DeleteAsset(scenePath);
             actual.ChangeToNone();
+            if(previousScene!= "."){
             EditorSceneManager.OpenScene(previousScene);
+            }else{
+                EditorSceneManager.OpenScene(SceneManager.GetSceneByBuildIndex(0).path);
+            }
         }
 
         private void Save()
@@ -253,6 +258,12 @@ namespace LevelEditor.EditorScripts
             if (list == null)
             {
                 CreateReorderableList();
+            }
+
+            if(actualLevel!= null){
+                if(actualLevel.runTimeTerrain == null){
+                    actualLevel.runTimeTerrain = FindObjectOfType<LevelScript>().gameObject;
+                }
             }
 
         }

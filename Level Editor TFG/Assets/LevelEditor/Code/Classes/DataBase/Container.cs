@@ -26,7 +26,7 @@ namespace LevelEditor
         //En la funcion AutoPivotGUI se puede ver como se puede calcular el pivot del objeto. El pivot, se coloca no en el centro geometrico si no en en el plano XZ.
         public Vector3 pivot;
         public bool autoPivot;
-        public bool autoScale = false;
+        public bool autoScale = true;
         protected Vector3 realScale;
         public Vector3 scale = Vector3.one;
 

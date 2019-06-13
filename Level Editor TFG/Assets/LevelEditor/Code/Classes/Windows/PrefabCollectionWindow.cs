@@ -420,7 +420,10 @@ namespace LevelEditor.EditorScripts
                 else
                 {
                     Vector3 position = terrain.GetWallClampPosition(hit.point, ray, rotationSide);
+                     Vector2 cellScale = terrain.owner.cellSize;
+                    selectObject.SetAutoScale(cellScale);
                     selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                   
                     if (e.button == 0 && e.type == EventType.MouseDown)
                     {
                         Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Wall");
