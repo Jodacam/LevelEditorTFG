@@ -2,16 +2,26 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using static Level;
+using static LevelEditor.Level;
 using UnityEditor.SceneManagement;
 using System;
+using UnityEngine.SceneManagement;
 
-namespace LevelEditor.Editor
+namespace LevelEditor.EditorScripts
 {
     public class LevelEditorWindow : EditorWindow
     {
 
-        [MenuItem(Paths.MENU_LEVEL_SCENE,false,0)]
+
+        [MenuItem("LevelEditor/Create Package")]
+        private static void CreatePackage()
+        {
+            string[] projectContent = new string[] { Paths.FOLDER_LEVEL_EDITOR, "ProjectSettings/TagManager.asset" };
+            AssetDatabase.ExportPackage(projectContent, "package.unitypackage", ExportPackageOptions.Interactive | ExportPackageOptions.Recurse | ExportPackageOptions.IncludeDependencies);
+            Debug.Log("Project Exported");
+        }
+
+        [MenuItem(Paths.MENU_LEVEL_SCENE, false, 0)]
         private static void OpenLevelEditor()
         {
             OpenEditor();
@@ -20,13 +30,16 @@ namespace LevelEditor.Editor
         public static void OpenEditor(Level editLevel = null)
         {
             string pre = GUIAuxiliar.OpenNewScene("Level Editor", out var scene);
+            var window = GUIAuxiliar.OpenEditorWindow<LevelEditorWindow>(Style.TITLE_LEVEL_EDITOR_WINDOW);
             if (String.IsNullOrEmpty(pre))
             {
+                
                 return;
             }
 
             previousScene = pre;
-            var window = LevelEditorWindow.GetWindow<LevelEditorWindow>();
+            scenePath = GUIAuxiliar.CreateTemporalScene(Paths.PATH_PREFABS, scene, "Level Editor");
+            
             if (editLevel != null)
             {
                 actualLevel = editLevel;
@@ -50,22 +63,28 @@ namespace LevelEditor.Editor
 
             window.Show();
 
+
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_PREFABS, Paths.NAME_LEVELS);
+            Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_LEVELS);
             //We create the folders here.
-            if (!AssetDatabase.IsValidFolder(Paths.FOLDER_LEVELS))
+            /* if (!AssetDatabase.IsValidFolder(Paths.FOLDER_LEVELS))
             {
                 AssetDatabase.CreateFolder(Paths.FOLDER_PREFABS, Paths.NAME_LEVELS);
 
             }
+            
             if (!AssetDatabase.IsValidFolder(Paths.FOLDER_RESOURCE_LEVEL))
             {
                 AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_LEVELS);
             }
+            */
         }
 
         bool isPicking = false;
         static Vector2 scrollPosition;
         static Level actualLevel;
 
+        static string scenePath;
         static string previousScene;
         static SerializedObject levelSerialized;
         public static ReorderableList list;
@@ -89,6 +108,9 @@ namespace LevelEditor.Editor
             Vector2 mapScale = actualLevel.cellSize;
             mapSize = EditorGUILayout.Vector2IntField(Style.LABLE_MAP_SIZE, mapSize);
             mapScale = EditorGUILayout.Vector2Field(Style.LABLE_MAP_SCALE, mapScale);
+
+            mapSize.x = Mathf.Max(1, mapSize.x);
+            mapSize.y = Mathf.Max(1, mapSize.y);
 
             if (!mapSize.Equals(actualLevel.cellCount) || !mapScale.Equals(actualLevel.cellSize))
             {
@@ -144,6 +166,7 @@ namespace LevelEditor.Editor
                     {
                         GUIAuxiliar.Destroy(actualLevel.runTimeTerrain);
                         actualLevel = data;
+                        actualLevel.LoadLevel(Vector3.zero, null);
                         levelSerialized = new SerializedObject(actualLevel);
                         CreateReorderableList();
                         Selection.activeGameObject = actualLevel.runTimeTerrain;
@@ -183,8 +206,13 @@ namespace LevelEditor.Editor
         {
             this.Close();
             var actual = PrefabCollectionWindow.GetWindow<PrefabCollectionWindow>();
+            AssetDatabase.DeleteAsset(scenePath);
             actual.ChangeToNone();
+            if(previousScene!= "."){
             EditorSceneManager.OpenScene(previousScene);
+            }else{
+                EditorSceneManager.OpenScene(SceneManager.GetSceneByBuildIndex(0).path);
+            }
         }
 
         private void Save()
@@ -231,6 +259,12 @@ namespace LevelEditor.Editor
             if (list == null)
             {
                 CreateReorderableList();
+            }
+
+            if(actualLevel!= null){
+                if(actualLevel.runTimeTerrain == null){
+                    actualLevel.runTimeTerrain = FindObjectOfType<LevelScript>().gameObject;
+                }
             }
 
         }

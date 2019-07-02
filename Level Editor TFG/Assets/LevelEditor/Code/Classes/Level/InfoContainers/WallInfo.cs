@@ -18,6 +18,7 @@ namespace LevelEditor
             transitable = true;
 
         }
+        
         public WallInfo(SceneObjectContainer c, Transform t, Vector3 position, bool instancing)
         {
             var wallInfo = c.GetAsWall();
@@ -28,6 +29,7 @@ namespace LevelEditor
             prefabObject = GUIAuxiliar.Instanciate(wallInfo.prefab, t, c.preview.transform.position, c.preview.transform.rotation, Vector3.one, instancing);
 
         }
+        
         public GameObject prefabObject;
         public Vector3 position;
         public float height;

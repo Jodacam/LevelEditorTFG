@@ -65,7 +65,7 @@ public static class Paths
     #endregion
 
     #region Auxiliar Functions
-
+    #if UNITY_EDITOR
     /// <summary>
     /// Check if a folder exist, if it exist return that folder.
     /// If do not exist, firts check if the parent folder exist, a recursively create the folders.
@@ -115,7 +115,7 @@ public static class Paths
         }
         return folderPath;
     }
-
+#endif
     #endregion
 
 

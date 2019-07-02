@@ -3,28 +3,28 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
-using static PrefabContainer;
-using static Container;
-
-namespace LevelEditor.Editor
+using static LevelEditor.PrefabContainer;
+using static LevelEditor.Container;
+using UnityEditor.SceneManagement;
+using LevelEditor;
+namespace LevelEditor.EditorScripts
 {
     //Ventana para la colleción de prfab y poder añadir objetos o selccionarlos.
     public class PrefabCollectionWindow : EditorWindow
     {
         #region Static Functions
-        [MenuItem("LevelEditor/Prefab Collection Window",false,1)]
+        [MenuItem("LevelEditor/Prefab Collection Window", false, 1)]
         //Creates the main window.
         public static void OpenWindow()
         {
-            PrefabCollectionWindow window = (PrefabCollectionWindow)GetWindow(typeof(PrefabCollectionWindow));
-
-
-            window.titleContent = Style.TITLE_PREFAB_COLLECTION_WINDOW;
+            PrefabCollectionWindow window = GUIAuxiliar.OpenEditorWindow<PrefabCollectionWindow>(Style.TITLE_PREFAB_COLLECTION_WINDOW);
             window.minSize = new Vector2(350, 250);
             window.maxSize = new Vector2(350, 1000);
             PrefabCollectionWindow.selectObject = new SceneObjectContainer();
             window.Show();
         }
+
+
 
         #endregion
 
@@ -44,12 +44,17 @@ namespace LevelEditor.Editor
             protected PrefabCollectionWindow owner;
             public static PrefabCollectionCreatorWindow CreateWindow(PrefabCollectionWindow owner)
             {
-                var window = PrefabCollectionCreatorWindow.CreateInstance<PrefabCollectionCreatorWindow>();
-                window.title = "Collection Creator";
-                if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
+
+
+                var window = GUIAuxiliar.OpenEditorWindow<PrefabCollectionCreatorWindow>("Collection Creator");
+
+                Paths.CreateFolderIfNotExist(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
+
+                /* if (!AssetDatabase.IsValidFolder(Paths.FOLDER_DATA_BASE))
                 {
                     AssetDatabase.CreateFolder(Paths.FOLDER_RESOURCES_LEVEL_EDITOR, Paths.NAME_DATA_BASE);
                 }
+                */
                 window.ShowUtility();
                 window.dataBase = CreateInstance<PrefabDataBase>();
                 window.dataBase.Init();
@@ -65,7 +70,7 @@ namespace LevelEditor.Editor
 
             private void OnGUI()
             {
-                GUILayout.Label(title);
+                GUILayout.Label(titleContent);
                 dataBase.dataBaseName = EditorGUILayout.TextField("Name", dataBase.dataBaseName);
                 if (GUILayout.Button("Create"))
                 {
@@ -75,7 +80,7 @@ namespace LevelEditor.Editor
                     }
                     AssetDatabase.CreateAsset(dataBase, Paths.PATH_DATA_BASE + dataBase.dataBaseName + ".asset");
                     owner.OnCreateDataBase(dataBase);
-                    this.Close();
+                    Close();
                 }
             }
 
@@ -100,7 +105,11 @@ namespace LevelEditor.Editor
         public bool showPrefabs = true;
 
         public bool showWalls = true;
-        static int wallPos = 0;
+
+        public bool showRegions = true;
+
+        public bool canUseRegions = true;
+        static int rotationSide = 0;
         #endregion
 
         #region Unity events
@@ -181,7 +190,7 @@ namespace LevelEditor.Editor
                 if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
                 {
                     var terrain = hit.transform.GetComponent<RegionTerrain>();
-                    var selectedCell = terrain.GetCell(hit.triangleIndex);
+                    var selectedCell = terrain.GetCell(hit.point);
                     selectedCell.Edit(this);
 
                 }
@@ -190,6 +199,7 @@ namespace LevelEditor.Editor
 
         private void OnGUI()
         {
+            showRegions = EditorSceneManager.GetActiveScene().name == "Level Editor";
             EditorGUI.BeginChangeCheck();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
 
@@ -255,8 +265,8 @@ namespace LevelEditor.Editor
                         if (actualMode == Mode.Add || actualMode == Mode.AddInstancing)
                         {
                             selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                            wallPos = (wallPos + 1) % 4;
-                            selectObject.RecalculatePivot(wallPos);
+                            rotationSide = (rotationSide + 1) % 4;
+                            selectObject.RecalculatePivot(rotationSide);
                         }
                         break;
                 }
@@ -311,7 +321,7 @@ namespace LevelEditor.Editor
             EditorGUILayout.EndHorizontal();
             if (dataBase != null)
             {
-
+                
                 dataBase.ShowGUI(this);
             }
             else
@@ -355,43 +365,31 @@ namespace LevelEditor.Editor
             Vector3 off = allowOffset ? offset : Vector3.zero;
             Vector2 guiPosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
-            if(selectObject == null){
+            if (selectObject == null)
+            {
                 selectObject = new SceneObjectContainer();
             }
             if (selectObject.HasObject)
             {
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid","LevelTerrain")))
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid", "LevelTerrain")))
                 {
-                    if (hit.transform.GetComponent<RegionTerrain>())
+                    if (EditorSceneManager.GetActiveScene().name == "Level Editor")
                     {
-                        if (!usingWalls)
-                        {
-                            AddingObject(e, off, instancing);
-                        }
-                        else
-                        {
-                            AddingWall(e, off, instancing);
-                        }
+                        AddIntoLevel(e, offset, instancing, ray);
                     }
                     else
-                    {    
-                        var terrain = hit.transform.GetComponent<LevelScript>();
-                        if(terrain)
+                    {
+
+                        if (hit.transform.GetComponent<RegionTerrain>())
                         {
                             if (!usingWalls)
                             {
-
-                                Vector3 position = terrain.GetClampPositon(hit.point,ray, selectObject.CellSize);
-                                selectObject.preview.transform.position = position - selectObject.Pivot + off;
-                                if (e.button == 0 && e.type == EventType.MouseDown)
-                                {
-                                    Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
-                                    terrain.SetObject(selectObject, position - selectObject.Pivot + off,instancing);
-                                }
-
+                                AddingObject(e, off, instancing);
                             }
-
-
+                            else
+                            {
+                                AddingWall(e, off, instancing);
+                            }
                         }
 
                     }
@@ -401,27 +399,54 @@ namespace LevelEditor.Editor
         }
 
 
+        private void AddIntoLevel(Event e, Vector3 off, bool instancing, Ray ray)
+        {
+            var terrain = hit.transform.GetComponent<LevelScript>();
+            if (terrain)
+            {
+                if (!usingWalls)
+                {
 
+                    Vector3 position = terrain.GetClampPositon(hit.point, ray, selectObject.CellSize);
+                    Vector2 cellScale = terrain.owner.cellSize;
+                    selectObject.preview.transform.position = position - selectObject.Pivot + off;
+                    selectObject.SetAutoScale(cellScale);
+                    if (e.button == 0 && e.type == EventType.MouseDown)
+                    {
+                        Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Object");
+                        terrain.SetObject(selectObject, position - selectObject.Pivot + off, instancing);
+                    }
+
+                }
+                else
+                {
+                    Vector3 position = terrain.GetWallClampPosition(hit.point, ray, rotationSide);
+                    Vector2 cellScale = terrain.owner.cellSize;
+                    selectObject.SetAutoScale(cellScale);
+                    selectObject.preview.transform.position = position - selectObject.Pivot + off;
+
+                    if (e.button == 0 && e.type == EventType.MouseDown)
+                    {
+                        Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Wall");
+                        terrain.SetObject(selectObject, position - selectObject.Pivot + off, instancing);
+                    }
+                }
+
+
+            }
+        }
         private void AddingWall(Event e, Vector3 off, bool instancing)
         {
             var t = hit.transform.GetComponent<RegionTerrain>();
 
-            Vector3 position = t.GetWallClampPosition(hit, wallPos);
+            Vector3 position = t.GetWallClampPosition(hit, rotationSide);
 
             selectObject.preview.transform.position = position - selectObject.Pivot + off;
             if (e.button == 0 && e.type == EventType.MouseDown)
             {
                 Undo.RegisterFullObjectHierarchyUndo(t, "Add Wall");
-                t.SetWallIntoCell(selectObject, hit.triangleIndex, wallPos, off, instancing);
+                t.SetWallIntoCell(selectObject, hit.point, rotationSide, off, instancing);
             }
-            /* if (e.control && e.type == EventType.KeyDown)
-            {
-                selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                wallPos = (wallPos + 1) % 4;
-                selectObject.RecalculatePivot(wallPos);
-                
-            }
-            */
         }
 
         private void AddingObject(Event e, Vector3 off, bool instancing)
@@ -434,17 +459,8 @@ namespace LevelEditor.Editor
             {
                 Undo.RegisterFullObjectHierarchyUndo(t, "AddObject");
 
-                t.SetObjetIntoCell(selectObject, hit.triangleIndex, off, instancing);
+                t.SetObjetIntoCell(selectObject, hit.point, off, instancing);
             }
-
-
-            /*  if (e.control && e.type == EventType.KeyDown)
-             {
-                 selectObject.preview.transform.RotateAround(selectObject.WorldPivot, new Vector3(0, 1, 0), 90);
-                 wallPos = (wallPos + 1) % 4;
-                 selectObject.RecalculatePivot(wallPos);
-
-             }*/
         }
 
         private void OnRemove()
@@ -459,11 +475,14 @@ namespace LevelEditor.Editor
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
 
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
+                if (EditorSceneManager.GetActiveScene().name == "Region Editor")
                 {
-                    RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
-                    //ter.SetIntoCell(null,hit.triangleIndex);
-                    ter.Remove(hit.triangleIndex);
+                    if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
+                    {
+                        RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
+                        //ter.SetIntoCell(null,hit.triangleIndex);
+                        ter.Remove(hit.point);
+                    }
                 }
                 else
                 {
@@ -485,10 +504,6 @@ namespace LevelEditor.Editor
 
         #region Prefabs Functions
 
-
-
-
-
         // Calls to the edit window of the prefab Container.
         public void Edit(PrefabContainer container)
         {
@@ -497,11 +512,19 @@ namespace LevelEditor.Editor
 
         public void SelectPrefab(PrefabContainer container)
         {
-            if (selectObject == null)
-                selectObject = new SceneObjectContainer();
-            selectObject.SetObjectInfo(container);
-            usingWalls = false;
-            wallPos = 0;
+            string sceneName = EditorSceneManager.GetActiveScene().name;
+            if (sceneName.Equals("Level Editor") || sceneName.Equals("Region Editor"))
+            {
+                if (selectObject == null)
+                    selectObject = new SceneObjectContainer();
+                selectObject.SetObjectInfo(container);
+                usingWalls = false;
+                rotationSide = 0;
+            }
+            else
+            {
+                Debug.Log("You can only edit level in at the level editor scenes");
+            }
         }
 
         public void DeletePrefab(PrefabContainer container)
@@ -536,8 +559,9 @@ namespace LevelEditor.Editor
         public void SelectPrefab(WallContainer container)
         {
             selectObject.SetObjectInfo(container);
+
             usingWalls = true;
-            wallPos = 0;
+            rotationSide = 0;
         }
 
         public void DeletePrefab(WallContainer container)
@@ -560,7 +584,42 @@ namespace LevelEditor.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
+
+
+
+        public void SelectPrefab(RegionContainer regionContainer)
+        {
+            regionContainer.prefab.GetComponent<MeshCollider>().enabled = false;
+            selectObject.SetObjectInfo(regionContainer);
+            regionContainer.prefab.GetComponent<MeshCollider>().enabled = true;
+            usingWalls = false;
+            rotationSide = 0;
+        }
+
+        public void Reload(RegionContainer regionContainer)
+        {
+            regionContainer.Reload(this);
+        }
+
+        public void DeletePrefab(RegionContainer regionContainer)
+        {
+            dataBase.regions.Remove(regionContainer);
+            if (selectObject.realObject.GetInstanceID() == regionContainer.prefab.GetInstanceID())
+            {
+                selectObject.SetToNull();
+            }
+
+            EditorUtility.SetDirty(dataBase);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        public void Edit(RegionContainer regionContainer)
+        {
+            dataBase.ShowEditWindow(this, regionContainer);
+        }
         #endregion
+
     }
 }
 #endif

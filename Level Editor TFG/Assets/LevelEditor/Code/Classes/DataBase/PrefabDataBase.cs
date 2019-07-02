@@ -2,10 +2,9 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System;
-using static LevelEditor.PrefabContainer;
-using static LevelEditor.Container;
+#if UNITY_EDITOR
 using LevelEditor.EditorScripts;
-
+#endif
 
 namespace LevelEditor
 {

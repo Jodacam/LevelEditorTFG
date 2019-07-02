@@ -28,7 +28,7 @@ public class LevelObjectData
 
     public LevelObjectData(GameObject sceneObject, Vector3 position)
     {
-         gameObject = sceneObject;
+        gameObject = sceneObject;
         this.position = position;
         renderComponents = sceneObject.GetComponentsInChildren<Renderer>();
         CalculateBounds();
@@ -40,11 +40,12 @@ public class LevelObjectData
         if(renderComponents.Length > 0)
         {
             Bounds b = renderComponents[0].bounds;
-            for (int i = 0; i < renderComponents.Length; i++)
+            for (int i = 1; i < renderComponents.Length; i++)
             {
                 b.Encapsulate(renderComponents[i].bounds);
             }
             renderBounds = b;
+            
         }
     }
 
@@ -60,6 +61,8 @@ public class LevelObjectData
     /// <returns></returns>
     public bool RayCast(Ray ray, out float distance)
     {
+        
+        CalculateBounds();
         bool intersect = renderBounds.IntersectRay(ray, out distance);
         return intersect;
     }

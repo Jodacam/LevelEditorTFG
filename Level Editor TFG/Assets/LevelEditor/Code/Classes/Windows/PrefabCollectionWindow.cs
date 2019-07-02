@@ -199,6 +199,7 @@ namespace LevelEditor.EditorScripts
 
         private void OnGUI()
         {
+            showRegions = EditorSceneManager.GetActiveScene().name == "Level Editor";
             EditorGUI.BeginChangeCheck();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
 
@@ -320,7 +321,7 @@ namespace LevelEditor.EditorScripts
             EditorGUILayout.EndHorizontal();
             if (dataBase != null)
             {
-
+                
                 dataBase.ShowGUI(this);
             }
             else
@@ -420,10 +421,10 @@ namespace LevelEditor.EditorScripts
                 else
                 {
                     Vector3 position = terrain.GetWallClampPosition(hit.point, ray, rotationSide);
-                     Vector2 cellScale = terrain.owner.cellSize;
+                    Vector2 cellScale = terrain.owner.cellSize;
                     selectObject.SetAutoScale(cellScale);
                     selectObject.preview.transform.position = position - selectObject.Pivot + off;
-                   
+
                     if (e.button == 0 && e.type == EventType.MouseDown)
                     {
                         Undo.RegisterFullObjectHierarchyUndo(terrain, "Add Wall");
@@ -474,11 +475,14 @@ namespace LevelEditor.EditorScripts
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(guiPosition);
 
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
+                if (EditorSceneManager.GetActiveScene().name == "Region Editor")
                 {
-                    RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
-                    //ter.SetIntoCell(null,hit.triangleIndex);
-                    ter.Remove(hit.point);
+                    if (Physics.Raycast(ray, out hit, float.PositiveInfinity, LayerMask.GetMask("Grid")))
+                    {
+                        RegionTerrain ter = hit.transform.GetComponent<RegionTerrain>();
+                        //ter.SetIntoCell(null,hit.triangleIndex);
+                        ter.Remove(hit.point);
+                    }
                 }
                 else
                 {

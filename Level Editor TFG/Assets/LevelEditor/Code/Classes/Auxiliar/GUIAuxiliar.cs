@@ -1,15 +1,18 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using UnityEngine;
 using UnityEditor;
+#if UNITY_EDITOR
 using UnityEditor.SceneManagement;
+#endif
 using FullSerializer;
-using static UnityEditor.EditorApplication;
+
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
 using LevelEditor.EditorScripts;
-using LevelEditor;
+#endif
+
 
 //Para facilitarme algunas funciones, como crear botones, o abrir popUps.
 public static class GUIAuxiliar
@@ -167,6 +170,8 @@ public static class GUIAuxiliar
             realObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             realObject.transform.parent = transform;
             realObject.transform.SetPositionAndRotation(position, rotation);
+            #else
+            realObject = GameObject.Instantiate(prefab, position, rotation, transform);
             #endif
 
         }

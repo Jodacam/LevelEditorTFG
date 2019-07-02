@@ -354,7 +354,9 @@ namespace LevelEditor
 
         public void Remove(Vector3 triangleIndex)
         {
+            #if UNITY_EDITOR
             Undo.RegisterFullObjectHierarchyUndo(this, "Remove cell");
+            #endif
             GetCell(triangleIndex).RemoveLast();
 
 

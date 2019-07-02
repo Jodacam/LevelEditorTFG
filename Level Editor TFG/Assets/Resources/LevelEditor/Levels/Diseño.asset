@@ -17,4 +17,5 @@ MonoBehaviour:
   runTimeTerrain: {fileID: 0}
   cellCount: {x: 50, y: 50}
   cellSize: {x: 1, y: 1}
-  terrainPrefab: {fileID: 0}
+  terrainPrefab: {fileID: 6958307776269023577, guid: ca5415c1c5cbedd4cb4486cbfe037891,
+    type: 3}

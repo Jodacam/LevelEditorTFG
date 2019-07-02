@@ -1,8 +1,9 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.SceneManagement;
+
+
 using System.Collections.Generic;
-using System;
+
 
 namespace LevelEditor
 {
@@ -108,7 +109,7 @@ namespace LevelEditor
                     break;
             }
         }
-
+#if UNITY_EDITOR
         public void ScaleGrid()
         {
             runTimeTerrain.GetComponent<LevelScript>().CreateMesh(cellSize, cellCount);
@@ -137,6 +138,7 @@ namespace LevelEditor
             levelScript.SaveItself(folder + "/" + levelName + "/");
             terrainPrefab = PrefabUtility.SaveAsPrefabAsset(runTimeTerrain, folder + "/" + levelName + "/" + levelName + ".prefab");
         }
+        #endif
         public void LoadVars()
         {
             if (!string.IsNullOrEmpty(jsonData))

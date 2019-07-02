@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -331,3 +332,4 @@ namespace LevelEditor.EditorScripts
         }
     }
 }
+#endif

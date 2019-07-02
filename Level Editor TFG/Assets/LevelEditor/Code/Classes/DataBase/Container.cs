@@ -93,7 +93,7 @@ namespace LevelEditor
                 scale = EditorGUILayout.Vector3Field("Scale Multiplier", scale);
             }
         }
-
+#endif
         public void CalculateScale(Vector2 DesirableSize)
         {
             Renderer render = prefab.GetComponentInChildren<Renderer>();
@@ -104,7 +104,7 @@ namespace LevelEditor
             float finalSize = xMult >= zMult ? zMult : xMult;
             scale = new Vector3(finalSize, finalSize, finalSize);
         }
-#endif
+
 
 
 

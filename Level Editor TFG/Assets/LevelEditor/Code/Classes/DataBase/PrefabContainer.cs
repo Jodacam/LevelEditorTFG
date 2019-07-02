@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
+#if UNITY_EDITOR
 using LevelEditor.EditorScripts;
-using static LevelEditor.Container;
+#endif
 
 namespace LevelEditor
 {
